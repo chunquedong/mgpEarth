@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>FastEarth Demo</title>
+    <style>
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten {
+        border: 0px none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+  <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <script type="text/javascript" src="fastEarthApi.js"></script>
+    <script type='text/javascript'>
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      fastEarthInit('canvas', w, h, function(fastEarth){
+          fastEarth.addSkybox(1, 20000, Number.MAX_VALUE);
+          fastEarth.addSkybox(0, 0, 20000);
+
+          let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
+          fastEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
+          //fastEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
+          //fastEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
+          //fastEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", elevationUri);
+
+          //121.48612, 31.24166
+          fastEarth.setPosition(121.507762, 31.233975, 13);
+          
+          fastEarth.addGroundGltf("gltf", "/data/shanghai/scene.gltf",
+          121.507762+0.006, 31.233975-0.003, 118, true, {
+            "rotateX" : 3.1415926/2,
+            "rotateY" : 245/360.0*3.1415926*2,
+            "scale": 520
+          });
+
+          fastEarth.addLight("light", 140, 0, 28, 28, 28);
+
+          setTimeout(() => {
+            fastEarth.rotateTo(70, 360, 8000);
+          }, 1000);
+      });
+   </script>
+</body>
+</html>

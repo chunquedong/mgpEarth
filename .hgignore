@@ -1,0 +1,18 @@
+syntax: glob
+Makefile
+fastEarth/Makefile.fastEarth
+*.pro.user
+example/Makefile.test
+ext/fastEarthAndroid/obj/
+ext/fastEarthAndroid/bin/
+*.5pre1
+ext/fastEarthAndroid/libs/
+ext/fastEarthAndroid/gen/
+ext/fastEarthAndroid/jni/com_fastearth_engine_MainJni.h
+ext/fastEarthAndroid/jni/libthirdparty.a
+ext/fastEarthAndroid/.settings/org.eclipse.jdt.core.prefs
+.DS_Store
+ext/fastEarth/fastEarth.xcodeproj/xcuserdata
+*.user.3.2-pre1
+*.user.3.3-pre1
+ext/fastEarth/fastEarth.xcodeproj/project.xcworkspace/xcuserdata/

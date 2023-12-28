@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>FastEarth Demo</title>
+    <style>
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten {
+        border: 0px none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+  <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <script type="text/javascript" src="fastEarthApi.js"></script>
+    <script type='text/javascript'>
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      fastEarthInit('canvas', w, h, function(fastEarth){
+          fastEarth.addSkybox(1, 20000, Number.MAX_VALUE);
+          fastEarth.addSkybox(0, 0, 20000);
+
+          let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
+          fastEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
+          //fastEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
+          //fastEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
+          //fastEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", elevationUri);
+
+          fastEarth.setPosition(-100, 34.218175, 1);
+          
+          fastEarth.addGeoLayer("points", "http://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_populated_places_simple.geojson");
+          fastEarth.addGeoLayer("polygon", "http://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson", {
+            "queryElevation" : true,
+            "lineStyle": {
+              "lineWidth": 1,
+              "depthTest": true
+            },
+            "polygonStyle": {
+              "fillColor": [0.5,0.7,0.6,0.6],
+            }
+          });
+
+          fastEarth.onPickNode = function(path, name, index, properties) {
+              console.log("pick:"+name+"/"+index+": "+properties);
+              return true;
+          };
+      });
+   </script>
+</body>
+</html>
