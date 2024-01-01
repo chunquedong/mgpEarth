@@ -290,13 +290,13 @@ void EarthCtrl::onRightDrag(int dx, int dy) {
     setRotationZ(rotationZ + (dx / 10.0));
 }
 void EarthCtrl::onDoubleClick(int dx, int dy) {
-    Vector3 minTarget;
+    /*Vector3 minTarget;
     Coord2D coord(dx, dy);
     if (getScreenGroundPoint(coord, minTarget)) {
         Coord2D pos;
         GeoCoordSys::xyzToBl(minTarget, pos);
         animation->moveTo(pos.x, pos.y, 500);
-    }
+    }*/
 }
 void EarthCtrl::onClick(int x, int y) {
     if (!_sceneView) return;
