@@ -7,7 +7,8 @@
 #### 需要安装的软件
 - JDK
 - Python 3
-- Emscript
+- Node.js
+- Emscripten
 - fanx
 - fmake
 
