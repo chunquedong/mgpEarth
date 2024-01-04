@@ -5,7 +5,6 @@
 #include "feCtrl/EarthApp.h"
 #include "feGeo/GeoLayer.h"
 #include "feObjects/GroundNode.h"
-#include "feObjects/RouteLine.h"
 #include "feModel/GeoCoordSys.h"
 #include "feGeo/Building.h"
 #include "feElevation/Elevation.h"
