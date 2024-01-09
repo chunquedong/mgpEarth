@@ -278,4 +278,122 @@ void fe_rotateTo(MyEarthApp* self, float rx, float rz, uint64_t time) {
     self->getEarthCtrl()->getAnimation()->rotateTo(rx, rz, time);
 }
 
+
+EMSCRIPTEN_KEEPALIVE
+void fe_addMultiModel(MyEarthApp* self, const char* name, const char* uri, bool lighting, char* options) {
+    MultiModel* model = new MultiModel(uri);
+    model->setName(name);
+    //model->app = self;
+    model->lighting = lighting;
+    
+    if (options && *options) {
+        JsonAllocator allocator;
+        JsonParser parser(&allocator);
+        Value* value0 = parser.parse(options);
+
+        if (!value0 || parser.get_error()[0] != 0) {
+            printf("parser options json error: %s\n", parser.get_error());
+        }
+        else {
+        }
+    }
+
+    self->addGeoNode(UPtr<GeoNode>(model));
+}
+
+EMSCRIPTEN_KEEPALIVE
+int fe_updateModelInstance(MyEarthApp* self, const char* name, int id, float lng, float lat, float height, char* options) {
+    Node* node = self->getView()->getScene()->findNode(name);
+    MultiModel* multiModel = dynamic_cast<MultiModel*>(node);
+    //printf("@@:%p,%s\n", node, name);
+    if (!multiModel) return -1;
+
+    TrackModel* model = NULL;
+    if (id == -1) {
+        model = new TrackModel();
+    }
+    else {
+        model = multiModel->get(id);
+        if (!model) return -1;
+    }
+
+    std::vector<Coord2D> cpath;
+    cpath.push_back(Coord2D(lng, lat));
+
+    //track->pose.translate(i*100, 0, 0);
+    //track->pose.scale(10);
+    //track->pose.rotateZ(MATH_PI);
+    //track->pose.rotateX(MATH_PI / 2);
+    if (options && *options) {
+        JsonAllocator allocator;
+        JsonParser parser(&allocator);
+        Value* value0 = parser.parse(options);
+
+        if (!value0 || parser.get_error()[0] != 0) {
+            printf("parser options json error: %s\n", parser.get_error());
+        }
+        else {
+            Value* translateZ = value0->get("translateZ");
+            if (translateZ) {
+                model->pose.translate(0, 0, translateZ->as_float());
+            }
+
+            Value* rotateX = value0->get("rotateX");
+            if (rotateX) {
+                model->pose.rotateX(rotateX->as_float());
+            }
+
+            Value* rotateY = value0->get("rotateY");
+            if (rotateY) {
+                model->pose.rotateY(rotateY->as_float());
+            }
+
+            Value* rotateZ = value0->get("rotateZ");
+            if (rotateZ) {
+                model->pose.rotateZ(rotateZ->as_float());
+            }
+
+            Value* scale = value0->get("scale");
+            if (scale) {
+                model->pose.scale(scale->as_float());
+            }
+
+            Value* speed = value0->get("speed");
+            if (speed) {
+                model->speed = speed->as_float();
+            }
+
+            Value* path = value0->get("path");
+            if (path) {
+                cpath.clear();
+                for (auto it = path->begin(); it != path->end(); ++it) {
+                    float x = it->as_float();
+                    ++it;
+                    float y = it->as_float();
+                    cpath.push_back(Coord2D(x, y));
+                }
+            }
+        }
+    }
+
+    model->setFromLonLat(cpath, height);
+
+    if (id == -1) {
+        model->start();
+        return multiModel->add(UPtr<TrackModel>(model));
+    }
+    else {
+        model->reset();
+        model->start();
+        return id;
+    }
+}
+
+EMSCRIPTEN_KEEPALIVE
+void fe_removeModelInstance(MyEarthApp* self, const char* name, int id) {
+    MultiModel* multiModel = dynamic_cast<MultiModel*>(self->getView()->getScene()->findNode(name));
+    if (!multiModel) return;
+    multiModel->remove(id);
+}
+
 }

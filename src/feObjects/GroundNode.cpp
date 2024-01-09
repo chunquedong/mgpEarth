@@ -173,7 +173,7 @@ void MultiModel::update(float elapsedTime) {
 }
 
 int MultiModel::add(UPtr<TrackModel> inst) {
-    int id = _instances.size();
+    int id = ++_idCount;
     _instances[id] = std::move(inst);
     return id;
 }

@@ -140,3 +140,37 @@ FeApp.prototype.rotateTo = function(rx, rz, time) {
     this.Module.ccall('fe_rotateTo', null, ["number","number","number","number"],
         [this.app, rx, rz, time]);
 }
+
+
+FeApp.prototype.addMultiModel = function(name, uri, lighting, options) {
+    if (options) {
+        options = JSON.stringify(options);
+    }
+    else {
+        options = null;
+    }
+    this.Module.ccall('fe_addMultiModel', null, ["number","string","string","number","string"],
+        [this.app, name, uri, lighting, options]);
+}
+
+FeApp.prototype.updateModelInstance = function(name, instId, lng, lat, height, options) {
+    if (options) {
+        options = JSON.stringify(options);
+    }
+    else {
+        options = null;
+    }
+    return this.Module.ccall('fe_updateModelInstance', "number", ["number","string","number","number","number","number","string"],
+        [this.app, name, instId, lng, lat, height, options]);
+}
+
+FeApp.prototype.removeModelInstance = function(name, instId) {
+    if (options) {
+        options = JSON.stringify(options);
+    }
+    else {
+        options = null;
+    }
+    this.Module.ccall('fe_removeModelInstance', null, ["number","string","number"],
+        [this.app, name, instId]);
+}

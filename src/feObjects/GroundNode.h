@@ -62,6 +62,7 @@ public:
 
 class MultiModel : public GltfNode {
     UPtr<Node> _templateModel;
+    int _idCount = 0;
     std::map<int, UPtr<TrackModel> > _instances;
 public:
     MultiModel(const char* uri);

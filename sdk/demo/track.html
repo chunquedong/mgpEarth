@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>FastEarth Demo</title>
+    <style>
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten {
+        border: 0px none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+  <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <script type="text/javascript" src="fastEarthApi.js"></script>
+    <script type='text/javascript'>
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      fastEarthInit('canvas', w, h, function(fastEarth){
+          fastEarth.addSkybox(1, 0, Number.MAX_VALUE);
+
+          //let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
+          //fastEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri, {"elevationMaxLevel":13});
+          //fastEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
+          //fastEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
+          fastEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", null, {"maxLevel":16});
+          
+          fastEarth.setPosition(108.964164, 34.218175, 12);
+
+          fastEarth.addMultiModel("car", "/data/gltf/seatLeon.gltf", false, null);
+
+          // fastEarth.addModelInstance("car", 108.964164, 34.218175, 0, {
+          //   "rotateX" : -3.1415926/2,
+          //   "rotateZ" : 3.1415926,
+          //   "scale": 100
+          // });
+
+          for (var i = 0; i < 32; ++i) {
+            for (var j = 0; j < 32; ++j) {
+              path = [];
+              let x = 108.964164 + i * 0.002 - 0.03;
+              let y = 34.218175 + j* 0.002 - 0.02;
+
+              path.push(x);
+              path.push(y);
+              path.push(x+0.005*Math.random());
+              path.push(y+0.005*Math.random());
+
+              fastEarth.updateModelInstance("car", -1, 108.964164, 34.218175, 0, {
+                "rotateX" : -3.1415926/2,
+                "rotateZ" : 3.1415926,
+                "scale": 10,
+                "path" : path,
+                "speed": 30 * Math.random() + 20,
+              });
+            }
+          }
+
+        //   setTimeout(() => {
+        //     fastEarth.rotateTo(70, 360, 2000);
+        //   }, 1000);
+      });
+   </script>
+</body>
+</html>
