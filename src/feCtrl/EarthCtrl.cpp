@@ -186,6 +186,12 @@ void EarthCtrl::setRotationX(double rotX) {
 
 void EarthCtrl::setRotationZ(double rotZ) {
     rotationZ = rotZ;
+    while (rotationZ > 360) {
+        rotationZ -= 360;
+    }
+    while (rotationZ < 0) {
+        rotationZ += 360;
+    }
     invalidateCamera();
 }
 

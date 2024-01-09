@@ -16,6 +16,7 @@
 FE_BEGIN_NAMESPACE
 PF_USING_NAMESPACE
 class EarthApp;
+
 class GroundModel : public GltfNode {
     uint64_t lastUpdateTime;
 protected:
@@ -35,20 +36,43 @@ public:
     bool updateHeight(int stickMethod = 1);
 };
 
-class TrackModel : public GltfNode {
+class TrackModel : public Refable {
     int lastPointIndex = 0;
-    uint64_t lastTime = 0;
+    //uint64_t lastTime = 0;
     double segmentOffset = 0;
     bool isRuning = false;
+    Node* _node = nullptr;
 public:
     double speed = 15;
     Matrix pose;
     std::vector<Vector3> path;
+
+    TrackModel();
+    
+    void setNode(Node* node);
+    Node* getNode() { return _node; }
+
     void setFromLonLat(std::vector<Coord2D>& path2d, double height);
-    TrackModel(const char* uri);
+    
     virtual void update(float elapsedTime);
     void start();
     void stop();
+    void reset();
+};
+
+class MultiModel : public GltfNode {
+    UPtr<Node> _templateModel;
+    std::map<int, UPtr<TrackModel> > _instances;
+public:
+    MultiModel(const char* uri);
+
+    int add(UPtr<TrackModel> inst);
+    void remove(int id);
+    TrackModel* get(int id);
+
+    virtual void update(float elapsedTime) override;
+protected:
+    virtual void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
 };
 
 FE_END_NAMESPACE

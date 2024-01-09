@@ -73,7 +73,11 @@ void GroundModel::update(float elapsedTime) {
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-TrackModel::TrackModel(const char* uri): GltfNode(uri) {
+TrackModel::TrackModel() {
+}
+
+void TrackModel::setNode(Node* node) {
+    _node = node;
 }
 
 void TrackModel::setFromLonLat(std::vector<Coord2D>& path2d, double height) {
@@ -86,9 +90,22 @@ void TrackModel::setFromLonLat(std::vector<Coord2D>& path2d, double height) {
 }
 
 void TrackModel::update(float elapsedTime) {
-    GltfNode::update(elapsedTime);
+    //GltfNode::update(elapsedTime);
     if (!isRuning) return;
-    if (loadState != 2) return;
+    if (!_node) return;
+
+    if (path.size() == 0) return;
+    if (path.size() == 1) {
+        Vector3& target = path[0];
+
+        Vector3 dir; target.normalize(&dir);
+        Matrix lookAtMatrix;
+        Matrix::createLookAt(target + dir * 100, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
+        _node->setMatrix(lookAtMatrix * pose);
+
+        isRuning = false;
+        return;
+    }
 
     double advance = elapsedTime / 1000.0 * speed;
     Vector3 target;
@@ -123,11 +140,62 @@ void TrackModel::update(float elapsedTime) {
     Matrix lookAtMatrix;
     Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
 
-    this->setMatrix(lookAtMatrix * pose);
+    _node->setMatrix(lookAtMatrix * pose);
 }
 void TrackModel::start() {
     isRuning = true;
 }
 void TrackModel::stop() {
     isRuning = false;
+}
+void TrackModel::reset() {
+    lastPointIndex = 0;
+    segmentOffset = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+MultiModel::MultiModel(const char* uri) : GltfNode(uri) {
+}
+
+void MultiModel::update(float elapsedTime) {
+    for (auto it = _instances.begin(); it != _instances.end(); ++it) {
+        TrackModel* model = it->second.get();
+        if (_templateModel.get() && model->getNode() == nullptr) {
+            UPtr<Node> node = GltfModel::makeTemplateInstance(_templateModel.get());
+            model->setNode(node.get());
+            this->addChild(std::move(node));
+        }
+        model->update(elapsedTime);
+    }
+    GeoNode::update(elapsedTime);
+}
+
+int MultiModel::add(UPtr<TrackModel> inst) {
+    int id = _instances.size();
+    _instances[id] = std::move(inst);
+    return id;
+}
+void MultiModel::remove(int id) {
+    auto it = _instances.find(id);
+    if (it != _instances.end()) {
+        Node* node = it->second->getNode();
+        if (node) {
+            node->remove();
+        }
+        _instances.erase(it);
+    }
+}
+TrackModel* MultiModel::get(int id) {
+    return _instances[id].get();
+}
+
+void MultiModel::onReceive(Task* task, NetResponse& res, MultiRequest* req) {
+    if (res.decodeResult) {
+        Node* node = (Node*)res.decodeResult;
+        _templateModel = (UPtr<Node>(node));
+        loadState = 2;
+        this->setBoundsDirty();
+    }
 }

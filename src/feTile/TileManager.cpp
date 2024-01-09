@@ -33,7 +33,7 @@ TileManager::~TileManager() {
     auto it = sendedTask.begin();
     while (it != sendedTask.end()) {
         it->second->cancel();
-        it->second->release();
+        //it->second->release();
         ++it;
     }
     sendedTask.clear();

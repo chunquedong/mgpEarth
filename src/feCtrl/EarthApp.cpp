@@ -147,7 +147,11 @@ void EarthApp::initialize() {
     getView()->setScene(std::move(scene));
 
     addAtmosphere();
-    //addTestMesh(getView()->getScene(), 6378137.0*2);
+
+#if _DEBUG
+    addTestMesh(getView()->getScene(), 6378137.0 * 2);
+#endif // _DEBUG
+
 
     earthCtrl->_sceneView = getView();
 }
