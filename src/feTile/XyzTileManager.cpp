@@ -202,8 +202,14 @@ void XyzTileManager::onReceive(Task* task, NetResponse &res) {
         }
     }
     else if (res.decodeResult) {
-        Image* image = (Image*)res.decodeResult;
-        SAFE_RELEASE(image);
+        if (elevation.get()) {
+            Image* image = (Image*)res.decodeResult;
+            SAFE_RELEASE(image);
+        }
+        else {
+            TileGeom* image = (TileGeom*)res.decodeResult;
+            SAFE_RELEASE(image);
+        }
     }
 
     onTaskDone(*tile);
