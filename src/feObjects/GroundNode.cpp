@@ -81,6 +81,9 @@ void TrackModel::setNode(Node* node) {
 }
 
 void TrackModel::setFromLonLat(std::vector<Coord2D>& path2d, double height) {
+    reset();
+    path.clear();
+
     Vector3 target;
     for (auto position : path2d) {
         //double lastGroundHeight = OfflineElevation::cur()->getHeight(position.x, position.y, 18);

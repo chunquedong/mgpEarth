@@ -34,6 +34,9 @@ fastEarthInit = function(canvasId, w, h, onInitialize) {
             [w*window.devicePixelRatio, h*window.devicePixelRatio]);
         fastEarth = app;
     });
+
+    var canvas = document.getElementById(canvasId);
+    fixGlfw(canvas);
 }
 
 FeApp.prototype.setCanvasSize = function(w, h) {
