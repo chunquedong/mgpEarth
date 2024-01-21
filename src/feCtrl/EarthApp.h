@@ -15,7 +15,7 @@
 FE_BEGIN_NAMESPACE
 
 
-class EarthApp : public Game, public PickerListener, public Refable {
+class EarthApp : public Application, public PickerListener, public Refable {
     Node *earth;
     Node* atmosphere = NULL;
     Node* _skybox = NULL;

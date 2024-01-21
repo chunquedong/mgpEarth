@@ -37,7 +37,7 @@ EarthApp::~EarthApp()
 void EarthApp::finalize() {
     font.clear();
     earthCtrl->finalize();
-    Game::finalize();
+    Application::finalize();
 }
 
 void EarthApp::drawLocationText() {
@@ -60,7 +60,7 @@ void EarthApp::drawLocationText() {
 }
 
 void EarthApp::render(float elapsedTime) {
-    Game::render(elapsedTime);
+    Application::render(elapsedTime);
     font->start();
     Rectangle* viewport = getView()->getViewport();
     int padding = 10;
@@ -75,7 +75,7 @@ void EarthApp::render(float elapsedTime) {
 void EarthApp::update(float elapsedTime) {
 
     earthCtrl->updateCamera(elapsedTime , *getView()->getCamera(), *getView()->getViewport());
-    Game::update(elapsedTime);
+    Application::update(elapsedTime);
 
     bool visiable = earthCtrl->getDistanceToSurface() < 400000;
     if (atmosphere) atmosphere->getDrawable()->setVisiable(!visiable);
@@ -280,7 +280,7 @@ Node* EarthApp::add3dtiles(const char* name, const char* uri, const Coord2D& coo
 
 bool EarthApp::mouseEvent(MotionEvent &event)
 {
-    if (Game::mouseEvent(event)) {
+    if (Application::mouseEvent(event)) {
         return true;
     }
     gesture.onPress(&event);
