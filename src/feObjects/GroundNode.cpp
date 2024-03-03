@@ -166,7 +166,7 @@ void MultiModel::update(float elapsedTime) {
     for (auto it = _instances.begin(); it != _instances.end(); ++it) {
         TrackModel* model = it->second.get();
         if (_templateModel.get() && model->getNode() == nullptr) {
-            UPtr<Node> node = GltfModel::makeTemplateInstance(_templateModel.get());
+            UPtr<Node> node = _templateModel->clone();// GltfModel::makeTemplateInstance(_templateModel.get());
             model->setNode(node.get());
             this->addChild(std::move(node));
         }

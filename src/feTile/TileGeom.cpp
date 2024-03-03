@@ -16,7 +16,7 @@
 FE_USING_NAMESPACE
 
 TileGeom::TileGeom() : _mesh(NULL), _material(NULL), texture(NULL) {
-    setRenderPass(Drawable::Custom);
+    //setRenderPass(Drawable::Custom);
     _highlightType = Drawable::No;
     _pickMask = 2;
 }

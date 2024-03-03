@@ -117,7 +117,7 @@ void* Building::decodeFile(const char* path, NetResponse& res, MultiRequest* req
     UPtr<Stream> stream(new Buffer((uint8_t*)res.result.data(), res.result.size(), false));
     decodeBuilding(mesh.get(), stream.get(), translation, heightScale);
 
-    mesh->setRenderPass(Drawable::Custom);
+    mesh->setRenderLayer(Drawable::Custom);
 
     Node* node = Node::createForComponent(std::move(mesh)).take();
     node->setTranslation(translation);
