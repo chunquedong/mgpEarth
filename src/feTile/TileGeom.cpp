@@ -15,7 +15,7 @@
 
 FE_USING_NAMESPACE
 
-TileGeom::TileGeom() : _mesh(NULL), _material(NULL), texture(NULL) {
+TileGeom::TileGeom(PyramidGrid* pyramid) : _mesh(NULL), _material(NULL), texture(NULL), _pyramid(pyramid) {
     //setRenderPass(Drawable::Custom);
     _highlightType = Drawable::No;
     _pickMask = 2;
@@ -36,7 +36,7 @@ static Material *makeMaterial(Material *material, Tile &tile, Image *image) {
     //ShaderProgram *effect = loadShaderProgram("fe.TileView");
     UPtr<Texture> texture;
     if (image) {
-        texture = Texture::create(image);
+        texture = Texture::create(uniqueFromInstant(image));
     } else {
         texture = Texture::create("../../fastEarth/res/earth.jpg", false);
         if (!texture.get()) {
@@ -81,13 +81,20 @@ UPtr<Mesh> TileGeom::makeMesh(double radius, Vector &center, int lod, Tile &tile
   
     //------------------------------------------------------
     int w,h;
-    PyramidGrid::getDefault()->tileScreenSize(w, h);
+    _pyramid->tileScreenSize(w, h);
   
     Envelope mactorEnv;
-    PyramidGrid::getDefault()->tileEnvelope(tile, mactorEnv);
+    _pyramid->tileEnvelope(tile, mactorEnv);
 
     Envelope blEnv;
-    PyramidGrid::getDefault()->tileEnvelopeBL(tile, blEnv);
+    _pyramid->tileEnvelopeBL(tile, blEnv);
+
+    if (blEnv.minX() < -180) {
+        blEnv._minX = -180;
+    }
+    else if (blEnv.maxX() > 180) {
+        blEnv._maxX = 180;
+    }
 
     double mactorX = mactorEnv.minX();
     double mactorY = mactorEnv.minY();

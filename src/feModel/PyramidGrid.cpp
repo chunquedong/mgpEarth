@@ -30,6 +30,16 @@ PyramidGrid *PyramidGrid::getDefault() {
   return instance;
 }
 
+PyramidGrid* PyramidGrid::getBD() {
+    static PyramidGrid* instance = NULL;
+    if (instance == NULL) {
+        Envelope env;
+        env.init(-33554432, -33554432, 33554432, 33554432);
+        instance = new PyramidGrid(env);
+    }
+    return instance;
+}
+
 void PyramidGrid::tileEnvelope(Tile &tile, Envelope &env) {
   int num = 1 << tile.z;
   double tileWidth = width / num;

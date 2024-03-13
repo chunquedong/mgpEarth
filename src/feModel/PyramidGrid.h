@@ -29,7 +29,7 @@ public:
   PyramidGrid(Envelope &env);
 
   static PyramidGrid *getDefault();
-
+  static PyramidGrid* getBD();
   /**
    * get the tile envelope
    */

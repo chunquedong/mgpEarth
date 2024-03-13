@@ -53,6 +53,8 @@ protected:
     virtual void* decode(Task* task, NetResponse &res);
     virtual void onReceive(Task* task, NetResponse &res);
     virtual void tryInit(TileDataPtr &data, bool isOverview);
+
+    virtual TileDataPtr getParent(TileDataPtr t);
 };
 
 

@@ -18,6 +18,7 @@ PF_USING_NAMESPACE
 FE_BEGIN_NAMESPACE
 
 class ElevationQuery;
+class PyramidGrid;
 
 class TileGeom : public Drawable {
     UPtr<Mesh> _mesh;
@@ -26,10 +27,11 @@ class TileGeom : public Drawable {
     UPtr<Texture> texture;
     Vector3 tranlation;
 public:
+    PyramidGrid* _pyramid;
     Vector3 getTranlation() { return tranlation; }
     Mesh* getMesh() { return _mesh.get(); }
 
-    TileGeom();
+    TileGeom(PyramidGrid* pyramid);
     ~TileGeom();
     void init(Image *image, Tile &tile, Tile* elevationTile, ElevationQuery* elevation);
 

@@ -17,7 +17,7 @@ FE_BEGIN_NAMESPACE
  * 2D Rectangle range
  */
 class Envelope {
-private:
+public:
   double _minX;
   double _minY;
   double _maxX;

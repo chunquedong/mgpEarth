@@ -9,11 +9,17 @@
 #include "feTile/DataActor.h"
 
 XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nullptr), viewScale(1.6) {
-    pyramid = PyramidGrid::getDefault();
-    Tile rootTile;
-    root = TileDataPtr(new TileData(rootTile, pyramid));
     maxLevel = 19;
     minLevel = 2;
+    if (mgp::StringUtil::contains(uri, "bdimg")) {
+        pyramid = PyramidGrid::getBD();
+        minLevel = 3;
+    }
+    else {
+        pyramid = PyramidGrid::getDefault();
+    }
+    Tile rootTile;
+    root = TileDataPtr(new TileData(rootTile, pyramid));
 }
 
 XyzTileManager::~XyzTileManager() {
@@ -143,21 +149,32 @@ bool XyzTileManager::isFitLod(TileDataPtr &tileData, Camera &camera, Rectangle &
 bool XyzTileManager::getUri(TileKey key, std::string &uri, std::string &file) {
     Tile tile = key.tile;
     uri = this->uri;
-    mgp::StringUtil::replace(uri, "{x}", std::to_string(tile.x));
-    mgp::StringUtil::replace(uri, "{y}", std::to_string(tile.y));
-    mgp::StringUtil::replace(uri, "{z}", std::to_string(tile.z));
+
     mgp::StringUtil::replace(uri, "{random}", std::to_string(rand() % 3));
 
-    //TMS
-    if (mgp::StringUtil::contains(uri, "{-y}")) {
-        int y = (int)pow(2.0, tile.z) - 1 - tile.y;
-        mgp::StringUtil::replace(uri, "{-y}", std::to_string(y));
+    if (mgp::StringUtil::contains(uri, "bdimg")) {
+        int halfSize = (int)pow(2.0, tile.z - 1);
+        int x = -halfSize + tile.x;
+        mgp::StringUtil::replace(uri, "{x}", std::to_string(x));
+        int y = halfSize - 1 - tile.y;
+        mgp::StringUtil::replace(uri, "{y}", std::to_string(y));
+        mgp::StringUtil::replace(uri, "{z}", std::to_string(tile.z));
     }
-
-    if (mgp::StringUtil::contains(uri, "{q}")) {
+    else if (mgp::StringUtil::contains(uri, "{q}")) {
         std::string quadKey;
         tile.toQuadKey(quadKey);
         mgp::StringUtil::replace(uri, "{q}", quadKey);
+    }
+    else {
+        mgp::StringUtil::replace(uri, "{x}", std::to_string(tile.x));
+        mgp::StringUtil::replace(uri, "{y}", std::to_string(tile.y));
+        mgp::StringUtil::replace(uri, "{z}", std::to_string(tile.z));
+        
+        //TMS
+        if (mgp::StringUtil::contains(uri, "{-y}")) {
+            int y = (int)pow(2.0, tile.z) - 1 - tile.y;
+            mgp::StringUtil::replace(uri, "{-y}", std::to_string(y));
+        }
     }
 
     char buffer[256];
@@ -180,7 +197,7 @@ void* XyzTileManager::decode(Task* task, NetResponse &res) {
     }
     else {
         TileKey* tile = static_cast<TileKey*>(res.id);
-        TileGeom *geometry = new TileGeom();
+        TileGeom *geometry = new TileGeom(pyramid);
         geometry->init(image, tile->tile, NULL, NULL);
         SAFE_RELEASE(image);
         return geometry;
@@ -232,7 +249,7 @@ struct MakeDataTask : public Task {
         TileData* tileView = dynamic_cast<TileData*>(tileData.get());
         //check again
         if (tileView->image.get() && !tileView->geometry.get()) {
-            TileGeom* geometry = new TileGeom();
+            TileGeom* geometry = new TileGeom(manager->pyramid);
             geometry->init(tileView->image.get(), tileView->tile(), &tileView->elevationTile(), evlevationQuery.get());
             tileView->geometry = UPtr<TileGeom>(geometry);
             manager->setResultDirty();
@@ -255,5 +272,12 @@ void XyzTileManager::tryInit(TileDataPtr& tileData, bool isOverview) {
             }
         }
     }
+}
+
+TileDataPtr XyzTileManager::getParent(TileDataPtr t) {
+    if (t->tileKey().tile.z <= this->minLevel) {
+        return TileDataPtr();
+    }
+    return TileManager::getParent(t);
 }
 

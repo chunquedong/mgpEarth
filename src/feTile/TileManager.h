@@ -99,7 +99,7 @@ protected:
 protected:
     virtual void onTaskDone(TileKey key);
     virtual SPtr<Task> load(TileKey key);
-    TileDataPtr getParent(TileDataPtr t);
+    virtual TileDataPtr getParent(TileDataPtr t);
 protected:
     virtual TileDataPtr getRoot() = 0;
     virtual TileDataPtr makeTileData(TileKey key) = 0;
