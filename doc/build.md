@@ -21,6 +21,7 @@
 请联系作者获取预编译的第三方库。
 
 #### 运行构建
+需要先配置fmake配置文件，见fmake项目的readme文件中的Emscripten配置。
 ```
 sh build.sh
 ```

@@ -44,3 +44,6 @@ cd server
 npm start
 ```
 
+### 了解更多
+- API文档见sdk/api/fe_api.js
+- 示例代码：sdk/demo/
