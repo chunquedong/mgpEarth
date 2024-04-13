@@ -42,9 +42,10 @@ void GeoCoordSys::blToXyz(const Coord2D p, Vector &out, double radius)
   return out.set(x, y, z);
 }
 
-void GeoCoordSys::xyzToBl(Vector &vec, Coord2D &p)
+void GeoCoordSys::xyzToBl(const Vector &vec_, Coord2D &p)
 {
-  vec.normalize();
+  Vector3 vec;
+  vec_.normalize(&vec);
 
   double y = asin(vec.z);
   double x = atan2(vec.y, vec.x);

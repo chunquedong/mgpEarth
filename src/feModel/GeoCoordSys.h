@@ -40,7 +40,7 @@ public:
 
   static void blToXyz(const Coord2D p, Vector &out, double radius);
 
-  static void xyzToBl(Vector &vec, Coord2D &p);
+  static void xyzToBl(const Vector &vec, Coord2D &p);
 
   void toMercator(Coord2D *p);
 
