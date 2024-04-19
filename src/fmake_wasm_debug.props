@@ -1,5 +1,5 @@
-name = fastEarthApi
-summary = fastEarthApi
+name = mgpEarthApi
+summary = mgpEarthApi
 outType = exe
 version = 1.0
 depends = mgpCore 1.0, mgpModules 1.0, mgpPro 1.0, jsonc 2.0, draco 1.4.1

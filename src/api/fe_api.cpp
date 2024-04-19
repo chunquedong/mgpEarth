@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2023, chunquedong/yangjiandong
  *
- * This file is part of fastEarth project
+ * This file is part of mgpEarth project
  * Licensed under the GNU GENERAL PUBLIC LICENSE Version 3
  *
  */
-#include "FastEarth.h"
+#include "mgpEarth.h"
 #include "mgp_pro.h"
 #include "jparser.hpp"
 
@@ -60,7 +60,7 @@ extern "C" {
 EMSCRIPTEN_KEEPALIVE
 MyEarthApp* fe_createApp(int w, int h) {
     MyEarthApp* instance = new MyEarthApp();
-    Platform::run("fastEarth", w, h);
+    Platform::run("mgpEarth", w, h);
     return instance;
 }
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2023, chunquedong/yangjiandong
  *
- * This file is part of fastEarth project
+ * This file is part of mgpEarth project
  * Licensed under the GNU GENERAL PUBLIC LICENSE Version 3
  *
  */

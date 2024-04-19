@@ -4,15 +4,15 @@
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3
  *
  */
-let fastEarth;
+let mgpEarth;
 FeApp = function() {}
 
 function fe_onInitialize(app) {
-    FeApp.onInitialize(fastEarth);
+    FeApp.onInitialize(mgpEarth);
 }
 
 function fe_onPickNode(app, path, name, index, properties) {
-    if (fastEarth.onPickNode) {
+    if (mgpEarth.onPickNode) {
         /**
          * 鼠标拾取回调
          * @path 拾取对象的结点路径
@@ -20,20 +20,20 @@ function fe_onPickNode(app, path, name, index, properties) {
          * @index 拾取到的子对象索引信息。例如表示第几个子对象。
          * @properties 属性信息，例如geojson的要素属性。
          */
-        return fastEarth.onPickNode(fastEarth.Module.UTF8ToString(path), fastEarth.Module.UTF8ToString(name),
-             index, fastEarth.Module.UTF8ToString(properties));
+        return mgpEarth.onPickNode(mgpEarth.Module.UTF8ToString(path), mgpEarth.Module.UTF8ToString(name),
+             index, mgpEarth.Module.UTF8ToString(properties));
     }
     return true;
 }
 
 /**
- * 初始化fastEarth模块
+ * 初始化mgpEarth模块
  * @canvasId 要显示的html canvas id
  * @w 显示宽带
  * @h 显示高度
  * @onInitialize 初始化后的回调
  */
-fastEarthInit = function(canvasId, w, h, onInitialize) {
+mgpEarthInit = function(canvasId, w, h, onInitialize) {
     createMyModule({
         printErr: function() {
             console.warn(Array.prototype.slice.call(arguments).join(" "));
@@ -46,7 +46,7 @@ fastEarthInit = function(canvasId, w, h, onInitialize) {
         app.canvasId = canvasId;
         app.app = Module.ccall('fe_createApp', "number", ["number", "number"], 
             [w*window.devicePixelRatio, h*window.devicePixelRatio]);
-        fastEarth = app;
+            mgpEarth = app;
     });
 
     var canvas = document.getElementById(canvasId);

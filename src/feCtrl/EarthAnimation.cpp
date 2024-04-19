@@ -79,7 +79,7 @@ bool AnimChannel::update(float elapsedTime) {
     return true;
 }
 
-void fastEarth::EarthAnimation::fling(float dx, float dy)
+void EarthAnimation::fling(float dx, float dy)
 {
     if (fabs(dx) <= 1 && fabs(dy) <=1) {
         return;

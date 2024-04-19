@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>FastEarth Demo</title>
+    <title>mgpEarth Demo</title>
     <style>
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten {
@@ -17,27 +17,27 @@
   </head>
   <body>
   <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-    <script type="text/javascript" src="fastEarthApi.js"></script>
+    <script type="text/javascript" src="mgpEarthApi.js"></script>
     <script type='text/javascript'>
       let w = window.innerWidth;
       let h = window.innerHeight;
-      fastEarthInit('canvas', w, h, function(fastEarth){
-          fastEarth.addSkybox(1, 20000, Number.MAX_VALUE);
-          fastEarth.addSkybox(0, 0, 20000);
+      mgpEarthInit('canvas', w, h, function(mgpEarth){
+          mgpEarth.addSkybox(1, 20000, Number.MAX_VALUE);
+          mgpEarth.addSkybox(0, 0, 20000);
 
           let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
-          fastEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
-          //fastEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
-          //fastEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
-          //fastEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", elevationUri);
+          mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
+          //mgpEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
+          //mgpEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
+          //mgpEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", elevationUri);
           
-          fastEarth.setPosition(108.964164, 34.218175, 0);
-          fastEarth.zoomTo(15, 5000);
+          mgpEarth.setPosition(108.964164, 34.218175, 0);
+          mgpEarth.zoomTo(15, 5000);
 
-          fastEarth.add3dtiles("da_yan_ta", "/3dtiles/qx-dyt/0/root.json", 108.964164, 34.218175, 35, false);
+          mgpEarth.add3dtiles("da_yan_ta", "/3dtiles/qx-dyt/0/root.json", 108.964164, 34.218175, 35, false);
 
           setTimeout(() => {
-            fastEarth.rotateTo(70, 360, 8000);
+            mgpEarth.rotateTo(70, 360, 8000);
           }, 5000);
       });
    </script>

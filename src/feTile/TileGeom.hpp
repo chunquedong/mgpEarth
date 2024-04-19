@@ -1,6 +1,6 @@
 //
 //  TileGeom.hpp
-//  fastEarth
+//  mgpEarth
 //
 //  Created by yangjiandong on 2017/5/21.
 //  Copyright © 2017年 yangjiandong. All rights reserved.

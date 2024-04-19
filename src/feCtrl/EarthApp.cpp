@@ -20,7 +20,7 @@ extern OfflineElevation* g_defaultOfflineElevation;
 
 EarthApp::EarthApp() : earth(nullptr)
 {
-    printf("FastEarth 1.0\n");
+    printf("mgpEarth 1.0\n");
     font = Font::create("res/ui/sans.ttf");
     earthCtrl = new EarthCtrl();
     gesture.listener = earthCtrl;
@@ -66,7 +66,7 @@ void EarthApp::render(float elapsedTime) {
     int padding = 10;
     int fontSize = 13;
     float y = viewport->height / Toolkit::cur()->getScreenScale() - fontSize - padding;
-    font->drawText(L"FastEarth", padding, y, Vector4::one(), fontSize, wcslen(L"FastEarth"));
+    font->drawText(L"mgpEarth", padding, y, Vector4::one(), fontSize, wcslen(L"mgpEarth"));
     font->finish(NULL);
 
     drawLocationText();

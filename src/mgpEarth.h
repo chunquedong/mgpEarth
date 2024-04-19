@@ -1,5 +1,5 @@
-#ifndef FASTEARTH_H
-#define FASTEARTH_H
+#ifndef MGP_EARTH_H
+#define MGP_EARTH_H
 
 
 #include "feCtrl/EarthApp.h"

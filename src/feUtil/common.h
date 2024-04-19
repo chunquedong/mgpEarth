@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2023, chunquedong/yangjiandong
  *
- * This file is part of fastEarth project
+ * This file is part of mgpEarth project
  * all rights reserved
  *
  */
@@ -12,9 +12,9 @@
 
 #define PF_USING_NAMESPACE using namespace mgp;
 
-#define FE_BEGIN_NAMESPACE namespace fastEarth {
+#define FE_BEGIN_NAMESPACE namespace mgpEarth {
 #define FE_END_NAMESPACE }
-#define FE_USING_NAMESPACE using namespace fastEarth;
+#define FE_USING_NAMESPACE using namespace mgpEarth;
 
 
 /**
