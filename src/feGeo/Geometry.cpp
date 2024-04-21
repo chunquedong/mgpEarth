@@ -12,9 +12,6 @@ using namespace jc;
 FE_USING_NAMESPACE
 
 void FeatureCollection::add(Feature* f) {
-    if (this->type != GeometryType::Mix && f->geometry.type != this->type) {
-        GP_ERROR("geometry type error:%d", f->geometry.type);
-    }
     features.push_back(f);
 }
 

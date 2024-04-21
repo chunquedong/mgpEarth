@@ -3,6 +3,10 @@ mgpEarth 3D GIS Engine
 
 [快速开始](start.md)
 
+[矢量图层](geolayer.md)
+
+[3D模型加载](gltf.md)
+
 [部署](deploy.md)
 
 [授权协议](license.md)

@@ -29,7 +29,15 @@
           mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
 
           
-          mgpEarth.addEmptyGeoLayer("poi", 1);
+          mgpEarth.addEmptyGeoLayer("poi", 1, {
+            "labelStyle": {
+              "iconSize": 60,
+              "iconImage": "res/image/m2.png",
+              "labelAlign": 1,
+              "iconColor": [1.0, 0.0, 0.0, 1.0],
+              "sphereCulling": false
+            }
+          });
           mgpEarth.addGeoFeature("poi", 1, new Float32Array([108.964164, 34.218175, 100]), {id:"123",name:"test1"} );
           mgpEarth.addGeoFeature("poi", 1, new Float32Array([108.964164+0.1, 34.218175, 100]), {id:"124",name:"test2"} );
           mgpEarth.removeGeoFeature("poi", "id", "123");
@@ -60,7 +68,7 @@
               return true;
           };
 
-          mgpEarth.setPosition(108.964164, 34.218175, 1);
+          mgpEarth.setPosition(108.964164, 34.218175, 8);
       });
    </script>
 </body>

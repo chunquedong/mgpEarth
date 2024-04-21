@@ -25,7 +25,7 @@
           mgpEarth.addSkybox(1, 20000, Number.MAX_VALUE);
           mgpEarth.addSkybox(0, 0, 20000);
 
-          let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
+          let elevationUri = null;
           mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
           //mgpEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
           //mgpEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);

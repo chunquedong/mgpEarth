@@ -2,6 +2,8 @@
 
 ## 开始使用
 
+mgpEarth提供C、C++、Javascript API接口。这里以JS接口为例来说明。
+
 1.增加mgpEarthApi代码链接
 ```
 <script type="text/javascript" src="mgpEarthApi.js"></script>
@@ -45,6 +47,7 @@ npm start
 ```
 
 注意：高程的数据国内访问不太稳定，导致不显示地图，可以把elevationUri设置为空来解决。
+
 
 ### 了解更多
 - API文档见sdk/api/fe_api.js
