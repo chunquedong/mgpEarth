@@ -11,6 +11,36 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
+void FeatureCollection::add(Feature* f) {
+    if (this->type != GeometryType::Mix && f->geometry.type != this->type) {
+        GP_ERROR("geometry type error:%d", f->geometry.type);
+    }
+    features.push_back(f);
+}
+
+int FeatureCollection::remove(const std::string& fieldName, const std::string& value, bool one) {
+    int n = 0;
+    for (auto it = features.begin(); it != features.end();) {
+        Feature* f = *it;
+        auto found = f->properties.find(fieldName);
+        if (found == f->properties.end()) {
+            ++it;
+            continue;
+        }
+        if (found->second == value) {
+            it = features.erase(it);
+            delete f;
+            ++n;
+            if (one) {
+                break;
+            }
+            continue;
+        }
+        ++it;
+    }
+    return n;
+}
+
 FeatureCollection::~FeatureCollection() {
     for (auto it = features.begin(); it != features.end(); ++it) {
         delete *it;

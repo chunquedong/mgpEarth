@@ -14,7 +14,7 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
-GeoLayer::GeoLayer(const char* uri): GeoNode(uri), featureCollection(NULL), height(0), outlineHeightOffset(100),
+GeoLayer::GeoLayer(const char* uri): GeoNode(uri), height(0), outlineHeightOffset(100),
         fillPolygon(true), strokePolygon(true), queryElevation(false) {
     labelStyle.sphereCulling = true;
     lineStyle.lineWidth = 1;
@@ -28,7 +28,6 @@ GeoLayer::GeoLayer(const char* uri): GeoNode(uri), featureCollection(NULL), heig
     request->setSaveToFile(false);
 }
 GeoLayer::~GeoLayer() {
-    if (featureCollection) delete featureCollection;
 }
 
 void* GeoLayer::decodeFile(const char* path, NetResponse& res, MultiRequest* req) {
@@ -44,13 +43,72 @@ void* GeoLayer::decodeFile(const char* path, NetResponse& res, MultiRequest* req
         return node.take();
     }
 
-    FeatureCollection* fc = new FeatureCollection();
+    UPtr<FeatureCollection> fc(new FeatureCollection());
     if (!fc->parse(res.result)) {
-        delete fc;
         return NULL;
     }
-    featureCollection = fc;
-    return makeNode(fc);
+    featureCollection = std::move(fc);
+    return makeNode(featureCollection.get());
+}
+
+void GeoLayer::initEmpty(GeometryType geoType) {
+    UPtr<FeatureCollection> fc(new FeatureCollection());
+    fc->type = geoType;
+    featureCollection = std::move(fc);
+
+    this->removeAllChildren();
+
+    UPtr<LabelSet> label = LabelSet::create(labelStyle);
+    UPtr<mgp::Line> line = Line::create(lineStyle);
+    UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
+
+    this->addChild(Node::createForComponent(std::move(label)));
+    this->addChild(Node::createForComponent(std::move(line)));
+    this->addChild(Node::createForComponent(std::move(polygon)));
+}
+
+void GeoLayer::updateData() {
+    LabelSet* label = nullptr;
+    mgp::Line* line = nullptr;
+    mgp::Polygon* polygon = nullptr;
+
+    std::vector<Drawable*> list;
+    this->getAllDrawable(list);
+    for (int i = 0; i < list.size(); ++i) {
+        Drawable* drawable = list[i];
+        if (LabelSet* label_ = dynamic_cast<LabelSet*>(drawable)) {
+            label = label_;
+        }
+        else if (Line* line_ = dynamic_cast<Line*>(drawable)) {
+            line = line_;
+        }
+        if (Polygon* polygon_ = dynamic_cast<Polygon*>(drawable)) {
+            polygon = polygon_;
+        }
+    }
+
+    if (label) {
+        label->clear();
+    }
+    if (line) {
+        line->start();
+    }
+    if (polygon) {
+        polygon->start();
+    }
+
+    FeatureCollection* fc = featureCollection.get();
+    for (auto it = fc->features.begin(); it != fc->features.end(); ++it) {
+        Feature* feature = *it;
+        addGeometry(feature, &feature->geometry, label, NULL, line, polygon);
+    }
+
+    if (line) {
+        line->finish();
+    }
+    if (polygon) {
+        polygon->finish();
+    }
 }
 
 Node* GeoLayer::makeNode(FeatureCollection* fc) {
@@ -60,8 +118,9 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
 
     UPtr<LabelSet> label = LabelSet::create(labelStyle);
     UPtr<mgp::Line> line = Line::create(lineStyle);
-    line->start();
     UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
+
+    line->start();
     polygon->start();
 
     for (auto it = fc->features.begin(); it != fc->features.end(); ++it) {
@@ -69,40 +128,14 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
         addGeometry(feature, &feature->geometry, label.get(), NULL, line.get(), polygon.get());
     }
 
-    if (label->size() > 0) {
-        return Node::createForComponent(std::move(label)).take();
-    }
+    line->finish();
+    polygon->finish();
 
-    if (polygon->getBatchSize()) {
-        polygon->finish();
-        if (line->getBatchSize()) {
-            line->finish();
-            UPtr<Node> node = Node::create();
-            node->addChild(Node::createForComponent(std::move(line)));
-            node->addChild(Node::createForComponent(std::move(polygon)));
-            return node.take();
-        }
-        else {
-            return Node::createForComponent(std::move(polygon)).take();
-        }
-    }
-    
-    if (line->getBatchSize()) {
-        line->finish();
-        return Node::createForComponent(std::move(line)).take();
-    }
-
-    // UPtr<Node> node = Node::create();
-    // node->addChild(Node::createForComponent(std::move(label)));
-
-    // line->finish();
-    // node->addChild(Node::createForComponent(std::move(line)));
-
-    // polygon->finish();
-    // node->addChild(Node::createForComponent(std::move(polygon)));
-
-    // return node.take();
-    return NULL;
+    UPtr<Node> node = Node::create();
+    node->addChild(Node::createForComponent(std::move(label)));
+    node->addChild(Node::createForComponent(std::move(line)));
+    node->addChild(Node::createForComponent(std::move(polygon)));
+    return node.take();
 }
 
 //void GeoLayer::onReceive(Task* task, NetResponse &res) {
@@ -400,23 +433,23 @@ bool GeoLayer::loadOptions(char* json_str) {
 
     Value* labelStyle = value0->get("labelStyle");
     if (labelStyle) {
-        Value* iconSize = polygonStyle->get("iconSize");
+        Value* iconSize = labelStyle->get("iconSize");
         if (iconSize) {
             road->labelStyle.iconSize = iconSize->as_float();
         }
-        Value* fontSize = polygonStyle->get("fontSize");
+        Value* fontSize = labelStyle->get("fontSize");
         if (fontSize) {
             road->labelStyle.fontSize = fontSize->as_int();
         }
-        Value* iconImage = polygonStyle->get("iconImage");
+        Value* iconImage = labelStyle->get("iconImage");
         if (iconImage) {
             road->labelStyle.iconImage = iconImage->as_str();
         }
-        Value* fontName = polygonStyle->get("fontName");
+        Value* fontName = labelStyle->get("fontName");
         if (fontName) {
             road->labelStyle.fontName = fontName->as_str();
         }
-        Value* iconRect = polygonStyle->get("iconRect");
+        Value* iconRect = labelStyle->get("iconRect");
         if (iconRect) {
             if (iconRect && iconRect->size() == 4) {
                 auto c = iconRect->begin();
@@ -430,10 +463,20 @@ bool GeoLayer::loadOptions(char* json_str) {
                 //++c;
             }
         }
-        Value* labelAlign = polygonStyle->get("labelAlign");
+        Value* labelAlign = labelStyle->get("labelAlign");
         if (labelAlign) {
             road->labelStyle.labelAlign = (LabelStyle::LabelAlign)labelAlign->as_int();
         }
+        Value* sphereCulling = labelStyle->get("sphereCulling");
+        if (sphereCulling) {
+            road->labelStyle.sphereCulling = sphereCulling->as_bool();
+        }
+
+        Value* coverStrategy = labelStyle->get("coverStrategy");
+        if (coverStrategy) {
+            road->labelStyle.coverStrategy = coverStrategy->as_int();
+        }
+
         parserColor(labelStyle, "fontColor", road->labelStyle.fontColor);
         parserColor(labelStyle, "iconColor", road->labelStyle.iconColor);
     }

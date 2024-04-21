@@ -54,10 +54,13 @@ public:
     bool parse(jc::Value* feature);
 };
 
-class FeatureCollection {
+class FeatureCollection : public mgp::Refable {
 public:
     GeometryType type;
     std::vector<Feature*> features;
+
+    void add(Feature* f);
+    int remove(const std::string& fieldName, const std::string& value, bool one = true);
 
     FeatureCollection(): type(GeometryType::Unknow) {}
     ~FeatureCollection();

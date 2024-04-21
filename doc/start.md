@@ -22,7 +22,7 @@
           mgpEarth.addSkybox(0, 0, 20000);
 
           //增加影像图层
-          let elevationUri = "/terrain/{z}/{x}/{y}.pngraw?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
+          let elevationUri = null;
           mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
 
           //设置初始位置
@@ -43,6 +43,8 @@ const dataPath = "C:/mgpearth-sdk/data";
 cd server
 npm start
 ```
+
+注意：高程的数据国内访问不太稳定，导致不显示地图，可以把elevationUri设置为空来解决。
 
 ### 了解更多
 - API文档见sdk/api/fe_api.js

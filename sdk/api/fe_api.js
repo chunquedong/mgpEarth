@@ -129,8 +129,9 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *      lineStyle： 线样式 {depthTest： 是否深度测试，lineWidth： 线宽带度， dashLen：虚线长度，isFlowing： 流动效果，hasGlow：发光效果，lineColor：线颜色，flowColor：流动颜色}
  *      polygonStyle： 多边形样式 {depthTest： 是否深度测试， fillColor：填充颜色}
  *      labelStyle： 标注文字样式 {iconSize： 图标大小，fontSize：字体大小，iconImage： 图标图片路径，fontName： 字体名称，iconRect：图标在图片中的区域，
- *                      labelAlign： 图标和文字对齐方式， 1：文字在左边,2：文字填充图标，3：文字在下方，4：文字在上方。
+ *                      labelAlign： 图标和文字对齐方式， 0：文字在右边,1：文字填充图标，2：文字在下方，3：文字在上方。
  *                      fontColor： 文字颜色[r,g,b,a]， iconColor： 图标颜色[r,g,b,a]（会乘在图片颜色上）
+ *                      sphereCulling: 是否通过法线剔除label, coverStrategy: 0:不允许相互压盖，1：允许压盖。
  *                  }
  */
 FeApp.prototype.addGeoLayer = function(name, uri, options) {
@@ -326,4 +327,55 @@ FeApp.prototype.removeModelInstance = function(name, instId) {
     }
     this.Module.ccall('fe_removeModelInstance', null, ["number","string","number"],
         [this.app, name, instId]);
+}
+
+/**
+ * 创建新的几何图层
+ * @name 图层名称
+ * @geotype 几何类型：（Point：1，LineString：3，Polygon：5）
+ * @options 见addGeoLayer的options参数
+ */
+FeApp.prototype.addEmptyGeoLayer = function(name, geotype, options) {
+    if (options) {
+        options = JSON.stringify(options);
+    }
+    else {
+        options = null;
+    }
+    this.Module.ccall('fe_addEmptyGeoLayer', null, ["number","string","number","string"],
+        [this.app, name, geotype, options]);
+}
+
+/**
+ * 为几何图层增加对象
+ * @name 图层名称
+ * @geotype 几何类型：（Point：1，LineString：3，Polygon：5）
+ * @coords 坐标数组，Float32Array类型，格式[经度，维度，高度， 经度，维度，高度,...]
+ * @options 见addGeoLayer的options参数
+ */
+FeApp.prototype.addGeoFeature = function(name, geotype, coords, attributes) {
+    if (attributes) {
+        attributes = JSON.stringify(attributes);
+    }
+    else {
+        attributes = null;
+    }
+    let pointNum = coords.length / 3;
+    let buf = new Int8Array(coords.buffer);
+
+    let res = this.Module.ccall('fe_addGeoFeature', "number", ["number","string","number", "array", "number", "string"],
+        [this.app, name, geotype, buf, pointNum, attributes]);
+    return res;
+}
+
+/**
+ * 删除几何图层的对象
+ * @name 图层名称
+ * @fieldName 字段名
+ * @value 删除等于此值的对象
+ * @return 返回删除对象的个数
+ */
+FeApp.prototype.removeGeoFeature = function(name, fieldName, value) {
+    return this.Module.ccall('fe_removeGeoFeature', "number", ["number","string","string","string"],
+        [this.app, name, fieldName, value]);
 }

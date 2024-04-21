@@ -21,7 +21,7 @@ PF_USING_NAMESPACE
 
 class GeoLayer : public GeoNode {
 public:
-    FeatureCollection* featureCollection;
+    UPtr<FeatureCollection> featureCollection;
     mgp::LineStyle lineStyle;
     mgp::PolyonStyle polygonStyle;
     mgp::LabelStyle labelStyle;
@@ -36,7 +36,11 @@ public:
     ~GeoLayer();
 
     virtual void* decodeFile(const char* path, NetResponse& lastRes, MultiRequest* req) override;
+protected:
     Node* makeNode(FeatureCollection* fc);
+public:
+    void initEmpty(GeometryType geoType);
+    void updateData();
 
     void write(Stream* file);
     bool read(Stream* file);

@@ -3,7 +3,7 @@ summary = mgpEarth
 outType = lib
 version = 1.0
 depends = mgpCore 1.0, mgpModules 1.0, mgpPro 1.0, glfw 3.3.8, glew 2.2.0, openal 1.22.2, bullet 3.24, freetype 2.4.12, jsonc 2.0, ljs 1.0, curl 8.0.1, zlib 1.0, jsonc 2.0
-srcDirs = fe3dtiles/,feCtrl/,feModel/,feTile/,feUtil/,feGeo/,feObjects/,feElevation/
+srcDirs = fe3dtiles/,feCtrl/,feModel/,feTile/,feUtil/,feGeo/,feObjects/,feElevation/,api/c_api.cpp
 incDir = ./
 win32.defines = UNICODE,GP_NO_LUA_BINDINGS,GP_GLFW
 extConfigs.cppflags = -std=c++14
