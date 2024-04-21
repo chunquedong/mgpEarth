@@ -442,4 +442,18 @@ int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeature(EarthApp* self, const char* name, c
     return res;
 }
 
+float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name) {
+    GeoNode* layer = dynamic_cast<GeoNode*>(self->getView()->getScene()->findNode(name));
+    if (layer) {
+        return layer->getProgress();
+    }
+
+    TileLayer* tlayer = dynamic_cast<TileLayer*>(self->getView()->getScene()->findNode(name));
+    if (tlayer) {
+        return tlayer->getProgress();
+    }
+
+    return -1;
+}
+
 }

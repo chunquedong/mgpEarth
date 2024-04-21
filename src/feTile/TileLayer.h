@@ -18,7 +18,7 @@ class TileLayer : public Node {
     TileManager* tileManager;
     //DelayUpdater delayUpdater;
 public:
-
+    float getProgress();
     //void setViewDirty() { delayUpdater.setDirty(); }
     //unsigned int draw(RenderInfo* view) override;
     virtual void update(float elapsedTime) override;

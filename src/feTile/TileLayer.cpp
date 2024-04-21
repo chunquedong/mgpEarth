@@ -35,3 +35,7 @@ void TileLayer::update(float elapsedTime) {
     
     Node::update(elapsedTime);
 }
+
+float TileLayer::getProgress() {
+    return tileManager->getProgress();
+}

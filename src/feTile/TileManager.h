@@ -76,7 +76,7 @@ protected:
 private:
     //send task container for cancle
     HashMap<TileKey, SPtr<Task> > sendedTask;
-    
+    float _progress = 0;
 protected:
     bool resultDirty;
 public:
@@ -90,6 +90,8 @@ public:
     void setResultDirty() { resultDirty = true; }
 
     void releaseCache();
+
+    float getProgress();
 private:
     void searchTiles(TileDataPtr &tileView, Camera &camera, Rectangle &viewport, Matrix& modelMatrix
                   , int &count);

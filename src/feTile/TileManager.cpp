@@ -118,6 +118,13 @@ void TileManager::getResult(std::vector<TileDataPtr>& resultList) {
         ++itr;
     }
 
+    if (curSearchSet.size() == 0) {
+        _progress = 1.0;
+    }
+    else {
+        _progress = resultList.size() / (float)curSearchSet.size();
+    }
+
     for (auto it = fallbacks.begin(); it != fallbacks.end(); ++it) {
         TileDataPtr tileView = it->second;
         tileView->setAsFallback(true);
@@ -125,6 +132,10 @@ void TileManager::getResult(std::vector<TileDataPtr>& resultList) {
     }
     
     resultDirty = false;
+}
+
+float TileManager::getProgress() {
+    return _progress;
 }
 
 bool TileManager::resultChanged() {

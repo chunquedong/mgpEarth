@@ -379,3 +379,14 @@ FeApp.prototype.removeGeoFeature = function(name, fieldName, value) {
     return this.Module.ccall('fe_removeGeoFeature', "number", ["number","string","string","string"],
         [this.app, name, fieldName, value]);
 }
+
+/**
+ * 获取数据下载进度
+ * @name 图层名称
+ * @return 返回0-1，1表示加载完成。
+ * 注意：如果是gltf数据可能只是下载进度，不包括解析进度。
+ */
+FeApp.prototype.getLoadProgress = function(name) {
+    return this.Module.ccall('fe_getLoadProgress', "number", ["number","string"],
+        [this.app, name]);
+}
