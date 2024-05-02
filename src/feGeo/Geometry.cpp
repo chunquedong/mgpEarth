@@ -38,6 +38,12 @@ int FeatureCollection::remove(const std::string& fieldName, const std::string& v
     return n;
 }
 
+void FeatureCollection::removeAt(int index) {
+    GP_ASSERT(index >= 0);
+    GP_ASSERT(index < features.size());
+    features.erase(features.begin()+index);
+}
+
 FeatureCollection::~FeatureCollection() {
     for (auto it = features.begin(); it != features.end(); ++it) {
         delete *it;

@@ -43,6 +43,7 @@ class TrackModel : public Refable {
     bool isRuning = false;
     Node* _node = nullptr;
 public:
+    int _id;
     double speed = 15;
     Matrix pose;
     std::vector<Vector3> path;

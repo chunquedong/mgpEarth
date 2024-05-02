@@ -17,11 +17,11 @@ function fe_onPickNode(app, path, name, index, properties) {
          * 鼠标拾取回调
          * @path 拾取对象的结点路径
          * @name 拾取到的对象名称
-         * @index 拾取到的子对象索引信息。例如表示第几个子对象。
+         * @indexOrId 拾取到的子对象索引信息。例如表示第几个子对象或者对象的ID。
          * @properties 属性信息，例如geojson的要素属性。
          */
         return mgpEarth.onPickNode(mgpEarth.Module.UTF8ToString(path), mgpEarth.Module.UTF8ToString(name),
-             index, mgpEarth.Module.UTF8ToString(properties));
+            indexOrId, mgpEarth.Module.UTF8ToString(properties));
     }
     return true;
 }
@@ -390,3 +390,71 @@ FeApp.prototype.getLoadProgress = function(name) {
     return this.Module.ccall('fe_getLoadProgress', "number", ["number","string"],
         [this.app, name]);
 }
+
+/**
+ * 同步调用拾取接口
+ * @param {*} name 需要拾取的对象名称，传null表示在所有对象中拾取
+ * @param {*} x 屏幕坐标x，单位物理像素，非dp像素
+ * @param {*} y 屏幕坐标y，单位物理像素，非dp像素
+ * @returns 如果有拾取结果返回[对象名称,[lng,lat,height]]，拾取失败返回null.
+ */
+FeApp.prototype.syncPick = function(name, x, y) {
+    let outName = Module._malloc(256);
+    let outCoord = Module._malloc(24);
+    let rc = this.Module.ccall('fe_syncPick', "number", ["number","string","number","number", "number", "number"],
+        [this.app, name, x, y, outName, outCoord]);
+
+    let res = null;
+    if (rc) {
+        let x = this.Module.HEAPF64[outCoord/8];
+        let y = this.Module.HEAPF64[outCoord/8+1];
+        let z = this.Module.HEAPF64[outCoord/8+2];
+
+        res = [this.Module.UTF8ToString(outName),
+            this.xyzToBl(x, y, z)
+        ];
+    }
+
+    this.Module._free(outName);
+    this.Module._free(outCoord);
+    return res;
+}
+
+/**
+ * 空间直角坐标系转经纬度
+ */
+FeApp.prototype.xyzToBl = function(x, y, z) {
+    let outCoord = this.Module.ccall('fe_xyzToBl', "number", ["number","number","number", "number", "number"],
+        [this.app, x, y, z, null]);
+
+    let res = [ 
+                this.Module.HEAPF64[outCoord/8],
+                this.Module.HEAPF64[outCoord/8+1],
+                this.Module.HEAPF64[outCoord/8+2]
+            ];
+    return res;
+}
+
+/**
+ * 纬度转空间直角坐标系经
+ */
+FeApp.prototype.blToXyz = function(lng, lat, height) {
+    let outCoord = this.Module.ccall('fe_blToXyz', "number", ["number","number","number", "number", "number"],
+        [this.app, lng, lat, height, null]);
+
+    let res = [ 
+                this.Module.HEAPF64[outCoord/8],
+                this.Module.HEAPF64[outCoord/8+1],
+                this.Module.HEAPF64[outCoord/8+2]
+            ];
+    return res;
+}
+
+/**
+ * 清除高亮
+ */
+FeApp.prototype.clearHighlight = function() {
+    this.Module.ccall('fe_clearHighlight', null, ["number"],
+        [this.app]);
+}
+

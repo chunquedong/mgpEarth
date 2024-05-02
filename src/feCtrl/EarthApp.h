@@ -50,7 +50,7 @@ public:
 protected:
     virtual bool onPick(float x, float y, RayQuery& result) override;
 
-    virtual bool onPickNode(const std::string& path, Node* layer, Drawable* drawable, int index);
+    virtual bool onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex);
 };
 
 FE_END_NAMESPACE

@@ -43,6 +43,7 @@ const dataPath = "C:/mgpearth-sdk/data";
 5.启动后端服务
 ```
 cd server
+npm install
 npm start
 ```
 

@@ -456,4 +456,76 @@ float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name) 
     return -1;
 }
 
+bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* drawableName, double* target) {
+    RayQuery query;
+    Picker& picker = self->getEarthCtrl()->picker;
+    Camera* _camera = self->getView()->getCamera();
+    Node* _node = NULL;
+    if (name && *name) {
+        self->getView()->getScene()->findNode(name);
+    }
+    else {
+        _node = self->getView()->getScene()->getRootNode();
+    }
+    Rectangle& viewport = *self->getView()->getViewport();
+    if (picker.pick(x, y, _camera, _node, viewport, query)) {
+        picker.clearHighlight();
+        if (query.drawable->getHighlightType() != Drawable::No) {
+            picker.highlight(query.drawable, query.path);
+        }
+
+        if (drawableName) {
+            const char* targetName = query.drawable->getNode()->getName();
+            strncpy(drawableName, targetName, 256);
+        }
+        if (target) {
+            target[0] = query.target.x;
+            target[1] = query.target.y;
+            target[2] = query.target.z;
+        }
+        return true;
+    }
+    else {
+        picker.clearHighlight();
+    }
+    return false;
+}
+
+double* EMSCRIPTEN_KEEPALIVE fe_xyzToBl(EarthApp* self, double x, double y, double z, double* outCoord) {
+    static double staticResult[3];
+    if (!outCoord) {
+        outCoord = staticResult;
+    }
+
+    Coord2D coord;
+    Vector3 point(x, y, z);
+    GeoCoordSys::xyzToBl(point, coord);
+    outCoord[0] = coord.x;
+    outCoord[1] = coord.y;
+    outCoord[2] = point.length() - GeoCoordSys::earth()->getRadius();
+
+    return outCoord;
+}
+
+double* EMSCRIPTEN_KEEPALIVE fe_blToXyz(EarthApp* self, double lng, double lat, double height, double* outCoord) {
+    static double staticResult[3];
+    if (!outCoord) {
+        outCoord = staticResult;
+    }
+
+    Coord2D coord(lng, lat);
+    Vector3 out;
+    GeoCoordSys::blToXyz(coord, out, GeoCoordSys::earth()->getRadius()+height);
+    outCoord[0] = out.x;
+    outCoord[1] = out.y;
+    outCoord[2] = out.z;
+
+    return outCoord;
+}
+
+void EMSCRIPTEN_KEEPALIVE fe_clearHighlight(EarthApp* self) {
+    return self->getEarthCtrl()->picker.clearHighlight();
+}
+
+
 }

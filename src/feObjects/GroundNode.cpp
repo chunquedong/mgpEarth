@@ -101,9 +101,9 @@ void TrackModel::update(float elapsedTime) {
     if (path.size() == 1) {
         Vector3& target = path[0];
 
-        Vector3 dir; target.normalize(&dir);
+        //Vector3 dir; target.normalize(&dir);
         Matrix lookAtMatrix;
-        Matrix::createLookAt(target + dir * 100, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
+        Matrix::createLookAt(target, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
         _node->setMatrix(lookAtMatrix * pose);
 
         isRuning = false;
@@ -167,6 +167,8 @@ void MultiModel::update(float elapsedTime) {
         TrackModel* model = it->second.get();
         if (_templateModel.get() && model->getNode() == nullptr) {
             UPtr<Node> node = _templateModel->clone();// GltfModel::makeTemplateInstance(_templateModel.get());
+            std::string id = std::to_string(model->_id);
+            node->setTag("user_id", id.c_str());
             model->setNode(node.get());
             this->addChild(std::move(node));
         }
@@ -177,6 +179,7 @@ void MultiModel::update(float elapsedTime) {
 
 int MultiModel::add(UPtr<TrackModel> inst) {
     int id = ++_idCount;
+    inst->_id = id;
     _instances[id] = std::move(inst);
     return id;
 }

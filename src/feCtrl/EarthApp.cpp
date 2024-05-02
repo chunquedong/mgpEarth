@@ -61,6 +61,9 @@ void EarthApp::drawLocationText() {
 
 void EarthApp::render(float elapsedTime) {
     Application::render(elapsedTime);
+
+    earthCtrl->picker.render(getView()->getCamera(), getView()->getViewport());
+
     font->start();
     Rectangle* viewport = getView()->getViewport();
     int padding = 10;
@@ -154,6 +157,8 @@ void EarthApp::initialize() {
 
 
     earthCtrl->_sceneView = getView();
+
+    earthCtrl->picker.init(Renderer::cur());
 }
 
 void EarthApp::addAtmosphere() {
@@ -287,18 +292,20 @@ bool EarthApp::mouseEvent(MotionEvent &event)
     return true;
 }
 
-bool EarthApp::onPickNode(const std::string& path, Node* layer, Drawable* drawable, int index) {
+bool EarthApp::onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex) {
     return true;
 }
 
 bool EarthApp::onPick(float x, float y, RayQuery& result) {
     if (result.drawable && result.drawable->getNode()) {
-        int index = 0;
+        int drawableIndex = 0;
         if (result.path.size() > 0) {
-            index = result.path[0];
+            drawableIndex = result.path[0];
         }
         Node* layer = NULL;
         std::string path;
+        long userId = -1;
+
         for (Node* node = result.drawable->getNode(); node != NULL; node = node->getParent()) {
             if (node->getParent() == NULL) {
                 //root
@@ -309,10 +316,13 @@ bool EarthApp::onPick(float x, float y, RayQuery& result) {
             if (geoNode) {
                 layer = geoNode;
             }
+            if (const char* userIds = node->getTag("user_id")) {
+                userId = atol(userIds);
+            }
 
             path = std::string(node->getName()) + "/" + path;
         }
-        return onPickNode(path, layer, result.drawable, index);
+        return onPickNode(path, layer, userId, result.drawable, drawableIndex);
     }
     return true;
 }

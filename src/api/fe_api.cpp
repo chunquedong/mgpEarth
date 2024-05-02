@@ -18,8 +18,8 @@ EM_JS(void, fe_appInitialize, (void* self), {
     fe_onInitialize(self);
 });
 
-EM_JS(bool, fe_appOnPickNode, (void* self, const char* path, const char* name, int index, const char* properties), {
-    return fe_onPickNode(self, path, name, index, properties);
+EM_JS(bool, fe_appOnPickNode, (void* self, const char* path, const char* name, int indexOrId, const char* properties), {
+    return fe_onPickNode(self, path, name, indexOrId, properties);
 });
 
 class MyEarthApp : public EarthApp {
@@ -29,12 +29,13 @@ class MyEarthApp : public EarthApp {
         fe_appInitialize(this);
     }
 
-    bool onPickNode(const std::string& path, Node* layer, Drawable* drawable, int index) {
+    bool onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex) {
         std::string jsonstr;
         //printf("click %s\n", node->getName());
+        int indexOrId = userId;
         GeoLayer* geolayer = dynamic_cast<GeoLayer*>(layer);
-        if (geolayer && geolayer->featureCollection.get() && index < geolayer->featureCollection->features.size()) {
-            auto properties = geolayer->featureCollection->features[index]->properties;
+        if (geolayer && geolayer->featureCollection.get() && drawableIndex < geolayer->featureCollection->features.size()) {
+            auto properties = geolayer->featureCollection->features[drawableIndex]->properties;
 
             jc::JsonAllocator allocator;
             jc::JsonNode* root = allocator.allocNode(jc::Type::Object);
@@ -43,9 +44,13 @@ class MyEarthApp : public EarthApp {
             }
             root->reverse();
             root->to_json(jsonstr);
+            indexOrId = drawableIndex;
+        }
+        else if (userId == -1) {
+            indexOrId = drawableIndex;
         }
 
-        return fe_appOnPickNode(this, path.c_str(), layer->getName(), index, jsonstr.c_str());
+        return fe_appOnPickNode(this, path.c_str(), layer->getName(), indexOrId, jsonstr.c_str());
     }
 };
 
