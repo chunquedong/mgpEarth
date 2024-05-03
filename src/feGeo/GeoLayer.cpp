@@ -249,9 +249,14 @@ void GeoLayer::addPoint(Feature* feature, Geometry* geometry, LabelSet* label, B
     coordToXyz(x, y, z, point, height);
     //Vector point(x, y, z);
     if (feature) {
-        auto it = feature->properties.find(labelField);
-        if (it != feature->properties.end()) {
-            label->add(point, it->second);
+        if (labelField.size() > 0) {
+            auto it = feature->properties.find(labelField);
+            if (it != feature->properties.end()) {
+                label->add(point, it->second);
+            }
+        }
+        else {
+            label->add(point, "");
         }
     }
 }
