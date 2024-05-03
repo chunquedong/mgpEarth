@@ -399,24 +399,25 @@ FeApp.prototype.getLoadProgress = function(name) {
  * @returns 如果有拾取结果返回[对象名称,[lng,lat,height]]，拾取失败返回null.
  */
 FeApp.prototype.syncPick = function(name, x, y) {
-    let outName = Module._malloc(256);
-    let outCoord = Module._malloc(24);
-    let rc = this.Module.ccall('fe_syncPick', "number", ["number","string","number","number", "number", "number"],
-        [this.app, name, x, y, outName, outCoord]);
+    let memory = Module._malloc(24+4+256);
+    let outName = memory = 28;
+    let outCoord = memory;
+    let idOrIndex = memory + 24;
+    let rc = this.Module.ccall('fe_syncPick', "number", ["number","string","number","number", "number", "number", "number"],
+        [this.app, name, x, y, outName, outCoord, idOrIndex]);
 
     let res = null;
     if (rc) {
         let x = this.Module.HEAPF64[outCoord/8];
         let y = this.Module.HEAPF64[outCoord/8+1];
         let z = this.Module.HEAPF64[outCoord/8+2];
-
-        res = [this.Module.UTF8ToString(outName),
+        let id = this.Module.HEAPI32[idOrIndex/4];
+        res = [this.Module.UTF8ToString(outName), id,
             this.xyzToBl(x, y, z)
         ];
     }
 
-    this.Module._free(outName);
-    this.Module._free(outCoord);
+    this.Module._free(memory);
     return res;
 }
 
@@ -448,6 +449,14 @@ FeApp.prototype.blToXyz = function(lng, lat, height) {
                 this.Module.HEAPF64[outCoord/8+2]
             ];
     return res;
+}
+
+/**
+ * 清除高亮
+ */
+FeApp.prototype.setHighlight = function(name, indexOrId) {
+    this.Module.ccall('fe_setHighlight', null, ["number","number","number"],
+        [this.app, name, indexOrId]);
 }
 
 /**

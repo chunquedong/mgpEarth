@@ -111,6 +111,49 @@ void GeoLayer::updateData() {
     }
 }
 
+Drawable* GeoLayer::getDrawable()
+{
+    LabelSet* label = nullptr;
+    mgp::Line* line = nullptr;
+    mgp::Polygon* polygon = nullptr;
+
+    std::vector<Drawable*> list;
+    this->getAllDrawable(list);
+    for (int i = 0; i < list.size(); ++i) {
+        Drawable* drawable = list[i];
+        if (LabelSet* label_ = dynamic_cast<LabelSet*>(drawable)) {
+            label = label_;
+        }
+        else if (Line* line_ = dynamic_cast<Line*>(drawable)) {
+            line = line_;
+        }
+        if (Polygon* polygon_ = dynamic_cast<Polygon*>(drawable)) {
+            polygon = polygon_;
+        }
+    }
+
+    if (featureCollection->type == GeometryType::Point) {
+        return label;
+    }
+    else if (featureCollection->type == GeometryType::LineString) {
+        return line;
+    }
+    else if (featureCollection->type == GeometryType::Polygon) {
+        return polygon;
+    }
+
+    if (polygon && polygon->getBatchSize()) {
+        polygon;
+    }
+    if (line && line->getBatchSize()) {
+        line;
+    }
+    if (label && label->size()) {
+        return label;
+    }
+    return nullptr;
+}
+
 Node* GeoLayer::makeNode(FeatureCollection* fc) {
     if (!fc) {
         return NULL;

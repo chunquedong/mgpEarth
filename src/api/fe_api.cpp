@@ -29,11 +29,11 @@ class MyEarthApp : public EarthApp {
         fe_appInitialize(this);
     }
 
-    bool onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex) {
+    bool onPickNode(PickResult& pickResult) {
         std::string jsonstr;
         //printf("click %s\n", node->getName());
-        int indexOrId = userId;
-        GeoLayer* geolayer = dynamic_cast<GeoLayer*>(layer);
+        int indexOrId = pickResult.userId;
+        GeoLayer* geolayer = dynamic_cast<GeoLayer*>(pickResult.layer);
         if (geolayer && geolayer->featureCollection.get() && drawableIndex < geolayer->featureCollection->features.size()) {
             auto properties = geolayer->featureCollection->features[drawableIndex]->properties;
 
@@ -44,13 +44,13 @@ class MyEarthApp : public EarthApp {
             }
             root->reverse();
             root->to_json(jsonstr);
-            indexOrId = drawableIndex;
+            indexOrId = pickResult.drawableIndex;
         }
         else if (userId == -1) {
-            indexOrId = drawableIndex;
+            indexOrId = pickResult.drawableIndex;
         }
 
-        return fe_appOnPickNode(this, path.c_str(), layer->getName(), indexOrId, jsonstr.c_str());
+        return fe_appOnPickNode(this, pickResult.path.c_str(), pickResult.layer->getName(), indexOrId, jsonstr.c_str());
     }
 };
 

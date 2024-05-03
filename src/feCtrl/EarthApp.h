@@ -47,10 +47,18 @@ public:
     ElevationManager* getElevation() { return elevation.get(); }
     Node* getEarth() { return earth; }
 
+    struct PickResult {
+        std::string path;
+        Node* layer;
+        long userId;
+        Drawable* drawable;
+        int drawableIndex;
+    };
+    static bool getPickResult(RayQuery& result, PickResult& pickResult);
 protected:
     virtual bool onPick(float x, float y, RayQuery& result) override;
 
-    virtual bool onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex);
+    virtual bool onPickNode(PickResult& pickResult);
 };
 
 FE_END_NAMESPACE

@@ -292,11 +292,11 @@ bool EarthApp::mouseEvent(MotionEvent &event)
     return true;
 }
 
-bool EarthApp::onPickNode(const std::string& path, Node* layer, long userId, Drawable* drawable, int drawableIndex) {
+bool EarthApp::onPickNode(PickResult& pickResult) {
     return true;
 }
 
-bool EarthApp::onPick(float x, float y, RayQuery& result) {
+bool EarthApp::getPickResult(RayQuery& result, PickResult& pickResult) {
     if (result.drawable && result.drawable->getNode()) {
         int drawableIndex = 0;
         if (result.path.size() > 0) {
@@ -322,7 +322,24 @@ bool EarthApp::onPick(float x, float y, RayQuery& result) {
 
             path = std::string(node->getName()) + "/" + path;
         }
-        return onPickNode(path, layer, userId, result.drawable, drawableIndex);
+
+        if (!layer) {
+            layer = result.drawable->getNode();
+        }
+        pickResult.layer = layer;
+        pickResult.path = path;
+        pickResult.userId = userId;
+        pickResult.drawable = result.drawable;
+        pickResult.drawableIndex = drawableIndex;
+        return true;
     }
-    return true;
+    return false;
+}
+
+bool EarthApp::onPick(float x, float y, RayQuery& result) {
+    PickResult pickResult;
+    if (getPickResult(result, pickResult)) {
+        return onPickNode(pickResult);
+    }
+    return false;
 }

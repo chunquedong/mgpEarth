@@ -42,6 +42,8 @@ public:
     void initEmpty(GeometryType geoType);
     void updateData();
 
+    Drawable* getDrawable();
+
     void write(Stream* file);
     bool read(Stream* file);
     bool readToNode(Stream* file, Node* node);

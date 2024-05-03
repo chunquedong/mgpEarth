@@ -8,6 +8,7 @@
 #include "feModel/GeoCoordSys.h"
 #include "feGeo/Building.h"
 #include "feElevation/Elevation.h"
+#include "api/fe_api.h"
 
 #endif // FASTEARTH_H
 

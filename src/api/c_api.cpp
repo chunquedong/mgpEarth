@@ -456,28 +456,31 @@ float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name) 
     return -1;
 }
 
-bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* drawableName, double* target) {
+bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* layerName, double* target, long* idOrIndex) {
     RayQuery query;
     Picker& picker = self->getEarthCtrl()->picker;
     Camera* _camera = self->getView()->getCamera();
     Node* _node = NULL;
     if (name && *name) {
-        self->getView()->getScene()->findNode(name);
+        _node = self->getView()->getScene()->findNode(name);
     }
     else {
         _node = self->getView()->getScene()->getRootNode();
     }
     Rectangle& viewport = *self->getView()->getViewport();
     if (picker.pick(x, y, _camera, _node, viewport, query)) {
-        picker.clearHighlight();
-        if (query.drawable->getHighlightType() != Drawable::No) {
-            picker.highlight(query.drawable, query.path);
-        }
 
-        if (drawableName) {
-            const char* targetName = query.drawable->getNode()->getName();
-            strncpy(drawableName, targetName, 256);
+        EarthApp::PickResult result;
+        if (EarthApp::getPickResult(query, result)) {
+            if (layerName) {
+                const char* targetName = result.layer->getName();
+                strncpy(layerName, targetName, 256);
+            }
+            if (idOrIndex) {
+                *idOrIndex = result.userId != -1 ? result.userId : result.drawableIndex;
+            }
         }
+        
         if (target) {
             target[0] = query.target.x;
             target[1] = query.target.y;
@@ -485,9 +488,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, i
         }
         return true;
     }
-    else {
-        picker.clearHighlight();
-    }
+
     return false;
 }
 
@@ -521,6 +522,40 @@ double* EMSCRIPTEN_KEEPALIVE fe_blToXyz(EarthApp* self, double lng, double lat, 
     outCoord[2] = out.z;
 
     return outCoord;
+}
+
+void EMSCRIPTEN_KEEPALIVE fe_setHighlight(EarthApp* self, const char* name, long idOrIndex) {
+    Node* layer = (self->getView()->getScene()->findNode(name));
+    if (!layer) return;
+    Picker& picker = self->getEarthCtrl()->picker;
+    if (GeoLayer* geoLayer = dynamic_cast<GeoLayer*>(layer)) {
+        picker.clearHighlight();
+        Drawable* drawable = geoLayer->getDrawable();
+        if (drawable->getHighlightType() != Drawable::No) {
+            std::vector<int> path = { idOrIndex };
+            picker.highlight(drawable, path);
+        }
+    }
+    else if (MultiModel* multiModel = dynamic_cast<MultiModel*>(layer)) {
+        picker.clearHighlight();
+        Node* node = multiModel->get(idOrIndex)->getNode();
+
+        std::vector<Drawable*> list;
+        node->getAllDrawable(list);
+        std::vector<int> path;
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            picker.highlight(*it, path);
+        }
+    }
+    else {
+        picker.clearHighlight();
+        std::vector<Drawable*> list;
+        layer->getAllDrawable(list);
+        std::vector<int> path;
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            picker.highlight(*it, path);
+        }
+    }
 }
 
 void EMSCRIPTEN_KEEPALIVE fe_clearHighlight(EarthApp* self) {
