@@ -15,10 +15,11 @@ function fe_onPickNode(app, path, name, index, properties) {
     if (mgpEarth.onPickNode) {
         /**
          * 鼠标拾取回调
-         * @path 拾取对象的结点路径
-         * @name 拾取到的对象名称
-         * @indexOrId 拾取到的子对象索引信息。例如表示第几个子对象或者对象的ID。
-         * @properties 属性信息，例如geojson的要素属性。
+         * @param path 拾取对象的结点路径
+         * @param name 拾取到的对象名称
+         * @param indexOrId 拾取到的子对象索引信息。例如表示第几个子对象或者对象的ID。
+         * @param properties 属性信息，例如geojson的要素属性。
+         * @return 返回false表示不选择
          */
         return mgpEarth.onPickNode(mgpEarth.Module.UTF8ToString(path), mgpEarth.Module.UTF8ToString(name),
             indexOrId, mgpEarth.Module.UTF8ToString(properties));
@@ -28,10 +29,10 @@ function fe_onPickNode(app, path, name, index, properties) {
 
 /**
  * 初始化mgpEarth模块
- * @canvasId 要显示的html canvas id
- * @w 显示宽带
- * @h 显示高度
- * @onInitialize 初始化后的回调
+ * @param canvasId 要显示的html canvas id
+ * @param w 显示宽带
+ * @param h 显示高度
+ * @param onInitialize 初始化后的回调
  */
 mgpEarthInit = function(canvasId, w, h, onInitialize) {
     createMyModule({
@@ -55,8 +56,8 @@ mgpEarthInit = function(canvasId, w, h, onInitialize) {
 
 /**
  * 设置显示canvas大小
- * @w 显示宽带
- * @h 显示高度
+ * @param w 显示宽带
+ * @param h 显示高度
  */
 FeApp.prototype.setCanvasSize = function(w, h) {
     this.Module.setCanvasSize(w*window.devicePixelRatio, h*window.devicePixelRatio);
@@ -67,7 +68,7 @@ FeApp.prototype.setCanvasSize = function(w, h) {
 
 /**
  * 设置显示帧率等调试信息
- * @show 是否显示
+ * @param show 是否显示
  */
 FeApp.prototype.showFps = function(show) {
     this.Module.ccall('fe_showFps', null, ["number","number"],
@@ -76,7 +77,7 @@ FeApp.prototype.showFps = function(show) {
 
 /**
  * 删除显示的对象
- * @name 对象名称，对应创建时设置的名称。
+ * @param name 对象名称，对应创建时设置的名称。
  */
 FeApp.prototype.removeNode = function(name) {
     return this.Module.ccall('fe_removeNode', "number", ["number","string"],
@@ -85,10 +86,10 @@ FeApp.prototype.removeNode = function(name) {
 
 /**
  * 增加瓦片图层
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @elevationUri 地形数据源地址，可以为null。null表示全部0高度。
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param elevationUri 地形数据源地址，可以为null。null表示全部0高度。
+ * @param options 选项json对象，可为空。有下列选项:
  *      minLevel: 最小数据层级，maxLevel最大数据层级，
  *      elevationMinLevel：高程数据最小层级，elevationMaxLevel：高程数据最小层级，elevationScale：高程缩放
  */
@@ -105,9 +106,9 @@ FeApp.prototype.addTileLayer = function(name, uri, elevationUri, options) {
 
 /**
  * 增加天空盒
- * @dark 是否为黑夜模式
- * @min 最小显示距离(camera离地面距离)
- * @max 最大显示距离(camera离地面距离)
+ * @param dark 是否为黑夜模式
+ * @param min 最小显示距离(camera离地面距离)
+ * @param max 最大显示距离(camera离地面距离)
  */
 FeApp.prototype.addSkybox = function(dark, min, max) {
     this.Module.ccall('fe_addSkybox', null, ["number","number","number","number"],
@@ -116,9 +117,9 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
 
 /**
  * 增加geojson图层
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param options 选项json对象，可为空。有下列选项:
  *      maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *      height: 高程
  *      labelField：显示标注文字的字段
@@ -148,9 +149,9 @@ FeApp.prototype.addGeoLayer = function(name, uri, options) {
 
 /**
  * 增加建筑物图层
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param options 选项json对象，可为空。有下列选项:
  *      maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *      color: 颜色，依次为[r,g,b,a]，颜色值0-1之间。
  */
@@ -167,13 +168,13 @@ FeApp.prototype.addBuildingLayer = function(name, uri, options) {
 
 /**
  * 增加3dtiles数据对象
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @lng 经度
- * @lat 纬度
- * @height 高程（海拔高度）
- * @lighting 是否使用光照 
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param lng 经度
+ * @param lat 纬度
+ * @param height 高程（海拔高度）
+ * @param lighting 是否使用光照 
+ * @param options 选项json对象，可为空。有下列选项:
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
  */
@@ -190,13 +191,13 @@ FeApp.prototype.add3dtiles = function(name, uri, lng, lat, height, lighting, opt
 
 /**
  * 增加gltf模型对象
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @lng 经度
- * @lat 纬度
- * @height 高程（海拔高度）
- * @lighting 是否使用光照 
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param lng 经度
+ * @param lat 纬度
+ * @param height 高程（海拔高度）
+ * @param lighting 是否使用光照 
+ * @param options 选项json对象，可为空。有下列选项:
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
  */
@@ -213,13 +214,13 @@ FeApp.prototype.addGroundGltf = function(name, uri, lng, lat, height, lighting, 
 
 /**
  * 增加灯光
- * @name 灯光对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址
- * @lng 经度
- * @lat 纬度
- * @r 红色分量(0..1，可超过1)
- * @g 绿色分量(0..1，可超过1)
- * @b 蓝色分量(0..1，可超过1)
+ * @param name 灯光对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址
+ * @param lng 经度
+ * @param lat 纬度
+ * @param r 红色分量(0..1，可超过1)
+ * @param g 绿色分量(0..1，可超过1)
+ * @param b 蓝色分量(0..1，可超过1)
  */
 FeApp.prototype.addLight = function(name, lng, lat, r, g, b) {
     this.Module.ccall('fe_addLight', null, ["number","string","number","number","number","number","number"],
@@ -228,9 +229,9 @@ FeApp.prototype.addLight = function(name, lng, lat, r, g, b) {
 
 /**
  * 设置Camera位置
- * @lng 经度
- * @lat 纬度
- * @zoom 缩放层级（0..20）
+ * @param lng 经度
+ * @param lat 纬度
+ * @param zoom 缩放层级（0..20）
  */
 FeApp.prototype.setPosition = function(lng, lat, zoom) {
     this.Module.ccall('fe_setPosition', null, ["number","number","number","number"],
@@ -239,10 +240,10 @@ FeApp.prototype.setPosition = function(lng, lat, zoom) {
 
 /**
  * 动画移动Camera到指定位置
- * @lng 经度
- * @lat 纬度
- * @time 动画时间，单位毫秒
- * @zoom 缩放层级（0..20）
+ * @param lng 经度
+ * @param lat 纬度
+ * @param time 动画时间，单位毫秒
+ * @param zoom 缩放层级（0..20）
  */
 FeApp.prototype.moveTo = function(lng, lat, time, zoom) {
     if (zoom === undefined) {
@@ -254,8 +255,8 @@ FeApp.prototype.moveTo = function(lng, lat, time, zoom) {
 
 /**
  * 缩放到指定层级
- * @zoom 缩放层级（0..20）
- * @time 动画时间，单位毫秒
+ * @param zoom 缩放层级（0..20）
+ * @param time 动画时间，单位毫秒
  */
 FeApp.prototype.zoomTo = function(zoom, time) {
     this.Module.ccall('fe_zoomTo', null, ["number","number","number"],
@@ -264,9 +265,9 @@ FeApp.prototype.zoomTo = function(zoom, time) {
 
 /**
  * 旋转Camera
- * @rx 旋转俯仰角
- * @ry 旋转方位角
- * @time 动画时间，单位毫秒
+ * @param rx 旋转俯仰角
+ * @param ry 旋转方位角
+ * @param time 动画时间，单位毫秒
  */
 FeApp.prototype.rotateTo = function(rx, rz, time) {
     this.Module.ccall('fe_rotateTo', null, ["number","number","number","number"],
@@ -275,10 +276,10 @@ FeApp.prototype.rotateTo = function(rx, rz, time) {
 
 /**
  * 添加多实例渲染模型
- * @name 图层对象名称，为了便于以后进行删除等操作
- * @uri 图层数据源地址（gltf模型文件）
- * @lighting 是否使用光照 
- * @options 选项json对象，可为空。
+ * @param name 图层对象名称，为了便于以后进行删除等操作
+ * @param uri 图层数据源地址（gltf模型文件）
+ * @param lighting 是否使用光照 
+ * @param options 选项json对象，可为空。
  */
 FeApp.prototype.addMultiModel = function(name, uri, lighting, options) {
     if (options) {
@@ -293,15 +294,16 @@ FeApp.prototype.addMultiModel = function(name, uri, lighting, options) {
 
 /**
  * 为多实例渲染模型增加实例
- * @name 多实例模型的名称。
- * @instId 实例ID，用户自定义的整形。如果已存在则修改，如果不存在则新建实例。
- * @lng 经度
- * @lat 纬度
- * @height 高程（海拔高度）
- * @options 选项json对象，可为空。有下列选项:
+ * @param name 多实例模型的名称。
+ * @param instId 实例ID。-1表示新建实例，其他表示修改已有实例。
+ * @param lng 经度
+ * @param lat 纬度
+ * @param height 高程（海拔高度）
+ * @param options 选项json对象，可为空。有下列选项:
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
  *      speed: 移动速度， path: 移动路径(经纬度坐标串)
+ * @return 成功返回实例ID，失败返回-1
  */
 FeApp.prototype.updateModelInstance = function(name, instId, lng, lat, height, options) {
     if (options) {
@@ -316,8 +318,8 @@ FeApp.prototype.updateModelInstance = function(name, instId, lng, lat, height, o
 
 /**
  * 删除多实例渲染模型的一个实例
- * @name 多实例模型的名称
- * @instId 要删除的实例ID
+ * @param name 多实例模型的名称
+ * @param instId 要删除的实例ID
  */
 FeApp.prototype.removeModelInstance = function(name, instId) {
     if (options) {
@@ -332,9 +334,9 @@ FeApp.prototype.removeModelInstance = function(name, instId) {
 
 /**
  * 创建新的几何图层
- * @name 图层名称
- * @geotype 几何类型：（Point：1，LineString：3，Polygon：5）
- * @options 见addGeoLayer的options参数
+ * @param name 图层名称
+ * @param geotype 几何类型：（Point：1，LineString：3，Polygon：5）
+ * @param options 见addGeoLayer的options参数
  */
 FeApp.prototype.addEmptyGeoLayer = function(name, geotype, options) {
     if (options) {
@@ -349,10 +351,10 @@ FeApp.prototype.addEmptyGeoLayer = function(name, geotype, options) {
 
 /**
  * 为几何图层增加对象
- * @name 图层名称
- * @geotype 几何类型：（Point：1，LineString：3，Polygon：5）
- * @coords 坐标数组，Float32Array类型，格式[经度，维度，高度， 经度，维度，高度,...]
- * @options 见addGeoLayer的options参数
+ * @param name 图层名称
+ * @param geotype 几何类型：（Point：1，LineString：3，Polygon：5）
+ * @param coords 坐标数组，Float32Array类型，格式[经度，维度，高度， 经度，维度，高度,...]
+ * @param options 见addGeoLayer的options参数
  */
 FeApp.prototype.addGeoFeature = function(name, geotype, coords, attributes) {
     if (attributes) {
@@ -371,9 +373,9 @@ FeApp.prototype.addGeoFeature = function(name, geotype, coords, attributes) {
 
 /**
  * 删除几何图层的对象
- * @name 图层名称
- * @fieldName 字段名
- * @value 删除等于此值的对象
+ * @param name 图层名称
+ * @param fieldName 字段名
+ * @param value 删除等于此值的对象
  * @return 返回删除对象的个数
  */
 FeApp.prototype.removeGeoFeature = function(name, fieldName, value) {
@@ -383,7 +385,7 @@ FeApp.prototype.removeGeoFeature = function(name, fieldName, value) {
 
 /**
  * 获取数据下载进度
- * @name 图层名称
+ * @param name 图层名称
  * @return 返回0-1，1表示加载完成。
  * 注意：如果是gltf数据可能只是下载进度，不包括解析进度。
  */
@@ -454,6 +456,8 @@ FeApp.prototype.blToXyz = function(lng, lat, height) {
 
 /**
  * 设置高亮
+ * @param name 图层名称
+ * @param indexOrId index或者Id
  */
 FeApp.prototype.setHighlight = function(name, indexOrId) {
     this.Module.ccall('fe_setHighlight', null, ["number","number","number"],
