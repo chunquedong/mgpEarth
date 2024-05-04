@@ -98,7 +98,8 @@ void EMSCRIPTEN_KEEPALIVE fe_addBuildingLayer(EarthApp* self, const char* name, 
     self->addGeoNode(UPtr<GeoNode>(building));
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const char* uri, float lng, float lat, float height, bool lighting, char* options) {
+void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const char* uri, 
+        double lng, double lat, double height, bool lighting, char* options) {
     Node* layer = self->add3dtiles(name, uri, Coord2D(lng, lat), height, lighting);
     // layer->rotateX(MATH_PI / 2);
     // layer->rotateY(MATH_PI / 4);
@@ -136,7 +137,8 @@ void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const 
     }
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, const char* uri, float lng, float lat, float height, bool lighting, char* options) {
+void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, const char* uri, 
+    double lng, double lat, double height, bool lighting, char* options) {
     GroundModel* model = new GroundModel(uri);
     model->setName(name);
     model->app = self;
@@ -191,7 +193,7 @@ void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, con
     self->addGeoNode(UPtr<GeoNode>(model));
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_addLight(EarthApp* self, const char* name, float lng, float lat, float r, float g, float b) {
+void EMSCRIPTEN_KEEPALIVE fe_addLight(EarthApp* self, const char* name, double lng, double lat, float r, float g, float b) {
     Vector3 sun;
     GeoCoordSys::blToXyz(Coord2D(lng, lat), sun, GeoCoordSys::earth()->getRadius() * 2);
     UPtr<Light> directionalLight = Light::createDirectional(Vector3(r, g, b));
@@ -203,18 +205,18 @@ void EMSCRIPTEN_KEEPALIVE fe_addLight(EarthApp* self, const char* name, float ln
     self->getView()->getScene()->addNode(std::move(_directionalLightNode));
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_setPosition(EarthApp* self, float lng, float lat, float zoom) {
+void EMSCRIPTEN_KEEPALIVE fe_setPosition(EarthApp* self, double lng, double lat, double zoom) {
     Coord2D coord(lng, lat);
     self->getEarthCtrl()->moveToPostion(coord);
     self->getEarthCtrl()->setZoom(zoom);
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_moveTop(EarthApp* self, float lng, float lat, int time, float zoom) {
+void EMSCRIPTEN_KEEPALIVE fe_moveTop(EarthApp* self, double lng, double lat, int time, double zoom) {
     Coord2D pos(lng, lat);
     self->getEarthCtrl()->getAnimation()->moveTo(pos.x, pos.y, time, zoom);
 }
 
-void EMSCRIPTEN_KEEPALIVE fe_zoomTo(EarthApp* self, float zoom, uint64_t time) {
+void EMSCRIPTEN_KEEPALIVE fe_zoomTo(EarthApp* self, double zoom, uint64_t time) {
     self->getEarthCtrl()->getAnimation()->zoomTo(zoom, time);
 }
 
@@ -244,7 +246,8 @@ void EMSCRIPTEN_KEEPALIVE fe_addMultiModel(EarthApp* self, const char* name, con
     self->addGeoNode(UPtr<GeoNode>(model));
 }
 
-int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name, int id, float lng, float lat, float height, char* options) {
+int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name, int id, 
+        double lng, double lat, double height, char* options) {
     Node* node = self->getView()->getScene()->findNode(name);
     MultiModel* multiModel = dynamic_cast<MultiModel*>(node);
     //printf("@@:%p,%s\n", node, name);

@@ -26,22 +26,22 @@ void EMSCRIPTEN_KEEPALIVE fe_addGeoLayer(EarthApp* self, const char* name, const
 
 void EMSCRIPTEN_KEEPALIVE fe_addBuildingLayer(EarthApp* self, const char* name, const char* uri, char* options);
 
-void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const char* uri, float lng, float lat, float height, bool lighting, char* options);
+void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const char* uri, double lng, double lat, double height, bool lighting, char* options);
 
-void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, const char* uri, float lng, float lat, float height, bool lighting, char* options);
+void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, const char* uri, double lng, double lat, double height, bool lighting, char* options);
 
-void EMSCRIPTEN_KEEPALIVE fe_addLight(EarthApp* self, const char* name, float lng, float lat, float r, float g, float b);
+void EMSCRIPTEN_KEEPALIVE fe_addLight(EarthApp* self, const char* name, double lng, double lat, float r, float g, float b);
 
-void EMSCRIPTEN_KEEPALIVE fe_setPosition(EarthApp* self, float lng, float lat, float zoom);
+void EMSCRIPTEN_KEEPALIVE fe_setPosition(EarthApp* self, double lng, double lat, double zoom);
 
-void EMSCRIPTEN_KEEPALIVE fe_moveTop(EarthApp* self, float lng, float lat, int time, float zoom);
-void EMSCRIPTEN_KEEPALIVE fe_zoomTo(EarthApp* self, float zoom, uint64_t time);
+void EMSCRIPTEN_KEEPALIVE fe_moveTop(EarthApp* self, double lng, double lat, int time, double zoom);
+void EMSCRIPTEN_KEEPALIVE fe_zoomTo(EarthApp* self, double zoom, uint64_t time);
 
 void EMSCRIPTEN_KEEPALIVE fe_rotateTo(EarthApp* self, float rx, float rz, uint64_t time);
 
 void EMSCRIPTEN_KEEPALIVE fe_addMultiModel(EarthApp* self, const char* name, const char* uri, bool lighting, char* options);
 
-int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name, int id, float lng, float lat, float height, char* options);
+int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name, int id, double lng, double lat, double height, char* options);
 
 void EMSCRIPTEN_KEEPALIVE fe_removeModelInstance(EarthApp* self, const char* name, int id);
 

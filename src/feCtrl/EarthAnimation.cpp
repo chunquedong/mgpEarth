@@ -106,7 +106,7 @@ void EarthAnimation::fling(float dx, float dy)
     start(flingChannel);
 }
 
-void EarthAnimation::zoomTo(float zoom, uint64_t time) {
+void EarthAnimation::zoomTo(double zoom, uint64_t time) {
     zoomChannel->from = ctrl->getZoom();
     zoomChannel->to = zoom;
     zoomChannel->duration = time;
@@ -181,8 +181,8 @@ void FlingAnimChannel::doUpdate(float elapsedTime, float percentComplete)
 }
 
 void ZoomAnimChannel::doUpdate(float elapsedTime, float percentComplete) {
-    float d = to - from;
-    float zoom = d * percentComplete + from;
+    double d = to - from;
+    double zoom = d * percentComplete + from;
     ctrl->setZoom(zoom);
 }
 
@@ -197,15 +197,15 @@ void RotateAnimChannel::doUpdate(float elapsedTime, float percentComplete) {
 }
 
 void MoveToAnimChannel::doUpdate(float elapsedTime, float percentComplete) {
-    float dx = toX - fromX;
-    float rx = dx * percentComplete + fromX;
-    float dz = toY - fromY;
-    float rz = dz * percentComplete + fromY;
+    double dx = toX - fromX;
+    double rx = dx * percentComplete + fromX;
+    double dz = toY - fromY;
+    double rz = dz * percentComplete + fromY;
 
     ctrl->moveToPostion(Coord2D(rx, rz));
 
-    float from = fromZoom;
-    float to = toZoom;
+    double from = fromZoom;
+    double to = toZoom;
     if (percentComplete < 0.5) {
         to = middleZoom;
     }
@@ -213,8 +213,8 @@ void MoveToAnimChannel::doUpdate(float elapsedTime, float percentComplete) {
         from = middleZoom;
     }
     if (to != from) {
-        float d = to - from;
-        float zoom = d * percentComplete + from;
+        double d = to - from;
+        double zoom = d * percentComplete + from;
         ctrl->setZoom(zoom);
     }
 }

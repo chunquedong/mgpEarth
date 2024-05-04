@@ -525,6 +525,16 @@ bool GeoLayer::loadOptions(char* json_str) {
             road->labelStyle.coverStrategy = coverStrategy->as_int();
         }
 
+        Value* textOffsetX = labelStyle->get("textOffsetX");
+        if (textOffsetX) {
+            road->labelStyle.textOffsetX = textOffsetX->as_float();
+        }
+
+        Value* textOffsetY = labelStyle->get("textOffsetY");
+        if (textOffsetY) {
+            road->labelStyle.textOffsetY = textOffsetY->as_float();
+        }
+
         parserColor(labelStyle, "fontColor", road->labelStyle.fontColor);
         parserColor(labelStyle, "iconColor", road->labelStyle.iconColor);
     }

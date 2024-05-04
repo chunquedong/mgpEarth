@@ -45,8 +45,8 @@ public:
 class ZoomAnimChannel : public AnimChannel {
 public:
     EarthCtrl* ctrl = NULL;
-    float from = 0;
-    float to = 0;
+    double from = 0;
+    double to = 0;
 
     virtual void doUpdate(float elapsedTime, float percentComplete);
 };
@@ -96,7 +96,7 @@ public:
     void init(EarthCtrl *ctrl);
 
     void fling(float dx, float dy);
-    void zoomTo(float zoom, uint64_t time);
+    void zoomTo(double zoom, uint64_t time);
     void rotateTo(float rx, float rz, uint64_t time);
     void moveTo(double x, double y, uint64_t time, double zoom = NAN);
 };

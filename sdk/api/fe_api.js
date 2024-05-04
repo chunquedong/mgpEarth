@@ -132,6 +132,7 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *                      labelAlign： 图标和文字对齐方式， 0：文字在右边,1：文字填充图标，2：文字在下方，3：文字在上方,4:气泡方式。
  *                      fontColor： 文字颜色[r,g,b,a]， iconColor： 图标颜色[r,g,b,a]（会乘在图片颜色上）
  *                      sphereCulling: 是否通过法线剔除label, coverStrategy: 0:不允许相互压盖，1：允许压盖。
+ *                      textOffsetX: 文字x轴偏移，textOffsetY：文字y轴偏移
  *                  }
  */
 FeApp.prototype.addGeoLayer = function(name, uri, options) {
@@ -396,7 +397,7 @@ FeApp.prototype.getLoadProgress = function(name) {
  * @param {*} name 需要拾取的对象名称，传null表示在所有对象中拾取
  * @param {*} x 屏幕坐标x，单位物理像素，非dp像素
  * @param {*} y 屏幕坐标y，单位物理像素，非dp像素
- * @returns 如果有拾取结果返回[对象名称,[lng,lat,height]]，拾取失败返回null.
+ * @returns 如果有拾取结果返回[对象名称,idOrIndex,[lng,lat,height]]，拾取失败返回null.
  */
 FeApp.prototype.syncPick = function(name, x, y) {
     let memory = Module._malloc(24+4+256);
@@ -452,7 +453,7 @@ FeApp.prototype.blToXyz = function(lng, lat, height) {
 }
 
 /**
- * 清除高亮
+ * 设置高亮
  */
 FeApp.prototype.setHighlight = function(name, indexOrId) {
     this.Module.ccall('fe_setHighlight', null, ["number","number","number"],
