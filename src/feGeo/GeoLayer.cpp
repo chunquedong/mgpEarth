@@ -62,30 +62,19 @@ void GeoLayer::initEmpty(GeometryType geoType) {
     UPtr<mgp::Line> line = Line::create(lineStyle);
     UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
 
+    _label = label.get();
+    _line = line.get();
+    _polygon = polygon.get();
+
     this->addChild(Node::createForComponent(std::move(label)));
     this->addChild(Node::createForComponent(std::move(line)));
     this->addChild(Node::createForComponent(std::move(polygon)));
 }
 
 void GeoLayer::updateData() {
-    LabelSet* label = nullptr;
-    mgp::Line* line = nullptr;
-    mgp::Polygon* polygon = nullptr;
-
-    std::vector<Drawable*> list;
-    this->getAllDrawable(list);
-    for (int i = 0; i < list.size(); ++i) {
-        Drawable* drawable = list[i];
-        if (LabelSet* label_ = dynamic_cast<LabelSet*>(drawable)) {
-            label = label_;
-        }
-        else if (Line* line_ = dynamic_cast<Line*>(drawable)) {
-            line = line_;
-        }
-        if (Polygon* polygon_ = dynamic_cast<Polygon*>(drawable)) {
-            polygon = polygon_;
-        }
-    }
+    LabelSet* label = _label;
+    mgp::Line* line = _line;
+    mgp::Polygon* polygon = _polygon;
 
     if (label) {
         label->clear();
@@ -113,24 +102,9 @@ void GeoLayer::updateData() {
 
 Drawable* GeoLayer::getDrawable()
 {
-    LabelSet* label = nullptr;
-    mgp::Line* line = nullptr;
-    mgp::Polygon* polygon = nullptr;
-
-    std::vector<Drawable*> list;
-    this->getAllDrawable(list);
-    for (int i = 0; i < list.size(); ++i) {
-        Drawable* drawable = list[i];
-        if (LabelSet* label_ = dynamic_cast<LabelSet*>(drawable)) {
-            label = label_;
-        }
-        else if (Line* line_ = dynamic_cast<Line*>(drawable)) {
-            line = line_;
-        }
-        if (Polygon* polygon_ = dynamic_cast<Polygon*>(drawable)) {
-            polygon = polygon_;
-        }
-    }
+    LabelSet* label = _label;
+    mgp::Line* line = _line;
+    mgp::Polygon* polygon = _polygon;
 
     if (featureCollection->type == GeometryType::Point) {
         return label;
@@ -162,6 +136,10 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
     UPtr<LabelSet> label = LabelSet::create(labelStyle);
     UPtr<mgp::Line> line = Line::create(lineStyle);
     UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
+
+    _label = label.get();
+    _line = line.get();
+    _polygon = polygon.get();
 
     line->start();
     polygon->start();
@@ -231,6 +209,12 @@ bool GeoLayer::addGeometry(Feature* feature, Geometry* geometry,
 }
 
 void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double height) {
+
+    if (!isLnglat) {
+        point.set(x, y, z);
+        return;
+    }
+
     double radius = GeoCoordSys::earth()->getRadius() + height;
     if (z == 0 && queryElevation) {
         z = OfflineElevation::cur()->getHeight(x, y, 20);

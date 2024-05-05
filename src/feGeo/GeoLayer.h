@@ -20,6 +20,9 @@ FE_BEGIN_NAMESPACE
 PF_USING_NAMESPACE
 
 class GeoLayer : public GeoNode {
+    LabelSet* _label = nullptr;
+    mgp::Line* _line = nullptr;
+    mgp::Polygon* _polygon = nullptr;
 public:
     UPtr<FeatureCollection> featureCollection;
     mgp::LineStyle lineStyle;
@@ -31,6 +34,7 @@ public:
     bool fillPolygon;
     bool strokePolygon;
     bool queryElevation;
+    bool isLnglat = true;
 public:
     GeoLayer(const char* uri);
     ~GeoLayer();
