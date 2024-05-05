@@ -36,10 +36,13 @@ class Geometry {
 public:
     Geometry(): type(GeometryType::Unknow) {}
     GeometryType type;
-    std::vector<float> coordinates;
+    std::vector<double> coordinates;
     std::vector<GeoLine> lines;
     std::vector<Geometry*> geometries;
     bool parse(jc::Value* geometry);
+
+    void getPoint(mgp::Vector3& point, int i);
+    int getPointCount();
 
 private:
     void parsePoint(jc::Value* jcoord);

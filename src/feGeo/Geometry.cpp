@@ -197,3 +197,14 @@ bool Geometry::parse(Value* geometry) {
     }
     return true;
 }
+
+void Geometry::getPoint(mgp::Vector3& point, int i)
+{
+    double* coord = coordinates.data() + i * 3;
+    point.set(coord[0], coord[1], coord[2]);
+}
+
+int Geometry::getPointCount()
+{
+    return coordinates.size()/3;
+}

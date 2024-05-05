@@ -34,8 +34,14 @@ public:
   /**
   ** From spherical coordinates to rectangular space coordinates
   **/
-  void toXyz(const Coord2D p, Vector &out) {
-    blToXyz(p, out, radius);
+  void lnglatToXyz(const Coord2D& lnglat, double height, Vector &out) {
+	  blToXyz(lnglat, out, radius + height);
+  }
+
+  void xyzToLnglat(const Vector& point, Coord2D& lnglat, double* height) {
+	  xyzToBl(point, lnglat);
+	  if (height)
+		  *height = point.length() - radius;
   }
 
   static void blToXyz(const Coord2D p, Vector &out, double radius);

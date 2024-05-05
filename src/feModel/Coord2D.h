@@ -13,24 +13,26 @@
 
 FE_BEGIN_NAMESPACE
 
-/**
- * 2D Coordinate
- */
-struct Coord2D {
-    double x;
-    double y;
+///**
+// * 2D Coordinate
+// */
+//struct Coord2D {
+//    double x;
+//    double y;
+//
+//    Coord2D() : x(0), y(0) {}
+//    Coord2D(double x, double y) : x(x), y(y) {
+//    }
+//
+//    void set(double x, double y) {
+//        this->x = x;
+//        this->y = y;
+//    }
+//
+//    double distance(Coord2D &other);
+//};
 
-    Coord2D() : x(0), y(0) {}
-    Coord2D(double x, double y) : x(x), y(y) {
-    }
-
-    void set(double x, double y) {
-        this->x = x;
-        this->y = y;
-    }
-
-    double distance(Coord2D &other);
-};
+typedef mgp::Vector2 Coord2D;
 
 FE_END_NAMESPACE
 #endif // COORD2D_H

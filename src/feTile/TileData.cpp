@@ -79,7 +79,7 @@ double TileData::computeViewScale(Camera &camera, Rectangle &viewport)
 {
     Vector center;
     Coord2D c = envelope().getCenter();
-    GeoCoordSys::earth()->toXyz(c, center);
+    GeoCoordSys::earth()->lnglatToXyz(c, 0, center);
     camera.getViewMatrix().transformPoint(&center);
 
     Vector position;

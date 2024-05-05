@@ -98,6 +98,11 @@ void GeoLayer::updateData() {
     if (polygon) {
         polygon->finish();
     }
+
+    if (!baseTranslate.isZero()) {
+        if (_line) _line->getNode()->setTranslation(baseTranslate);
+        if (_polygon) _polygon->getNode()->setTranslation(baseTranslate);
+    }
 }
 
 Drawable* GeoLayer::getDrawable()
@@ -156,6 +161,10 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
     node->addChild(Node::createForComponent(std::move(label)));
     node->addChild(Node::createForComponent(std::move(line)));
     node->addChild(Node::createForComponent(std::move(polygon)));
+
+    _line->getNode()->setTranslation(baseTranslate);
+    _polygon->getNode()->setTranslation(baseTranslate);
+
     return node.take();
 }
 
@@ -208,14 +217,23 @@ bool GeoLayer::addGeometry(Feature* feature, Geometry* geometry,
     return true;
 }
 
-void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double height) {
+void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double additionalHeight, bool doTranslate) {
 
     if (!isLnglat) {
         point.set(x, y, z);
+        if (doTranslate) {
+            if (baseTranslate.isZero()) {
+                baseTranslate = point;
+                point.set(0, 0, 0);
+            }
+            else {
+                point = point - baseTranslate;
+            }
+        }
         return;
     }
 
-    double radius = GeoCoordSys::earth()->getRadius() + height;
+    double radius = GeoCoordSys::earth()->getRadius() + additionalHeight;
     if (z == 0 && queryElevation) {
         z = OfflineElevation::cur()->getHeight(x, y, 20);
     }
@@ -223,6 +241,16 @@ void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double he
 
     Coord2D coord(x, y);
     GeoCoordSys::blToXyz(coord, point, radius);
+
+    if (doTranslate) {
+        if (baseTranslate.isZero()) {
+            baseTranslate = point;
+            point.set(0, 0, 0);
+        }
+        else {
+            point = point - baseTranslate;
+        }
+    }
 }
 
 
@@ -248,10 +276,12 @@ void GeoLayer::addLine(Geometry* geometry, GeoLine& gline, Line* line, double he
 
 void GeoLayer::addPolygon(Geometry* geometry, Polygon* polygon) {
     std::vector<uint32_t> indices;
-    std::vector<float> coords = geometry->coordinates;
+    std::vector<double> coords = geometry->coordinates;
 
     mgp::Polygon::triangulate(coords.data(), 3, (int*)geometry->lines.data(),
         geometry->lines.size(), indices);
+
+    std::vector<float> fcoords(coords.size());
     Vector point;
     for (int i = 0; i < coords.size(); i += 3) {
         double x = coords[i];
@@ -260,12 +290,12 @@ void GeoLayer::addPolygon(Geometry* geometry, Polygon* polygon) {
         
         coordToXyz(x, y, z, point, height);
 
-        coords[i] = point.x;
-        coords[i + 1] = point.y;
-        coords[i + 2] = point.z;
+        fcoords[i] = point.x;
+        fcoords[i + 1] = point.y;
+        fcoords[i + 2] = point.z;
     }
 
-    polygon->add(coords.data(), coords.size() / 3, indices.data(), indices.size());
+    polygon->add(fcoords.data(), fcoords.size() / 3, indices.data(), indices.size());
 }
 
 void GeoLayer::addPoint(Feature* feature, Geometry* geometry, LabelSet* label, BillboardSet* billboard, int index) {
@@ -273,7 +303,7 @@ void GeoLayer::addPoint(Feature* feature, Geometry* geometry, LabelSet* label, B
     double y = geometry->coordinates[1 + 3 * index];
     double z = geometry->coordinates[2 + 3 * index];
     Vector point;
-    coordToXyz(x, y, z, point, height);
+    coordToXyz(x, y, z, point, height, false);
     //Vector point(x, y, z);
     if (feature) {
         if (labelField.size() > 0) {
@@ -287,6 +317,9 @@ void GeoLayer::addPoint(Feature* feature, Geometry* geometry, LabelSet* label, B
         }
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 static void writeDrawable(Drawable* drawable, Stream* file) {
     LabelSet* label = dynamic_cast<LabelSet*>(drawable);
@@ -354,6 +387,9 @@ bool GeoLayer::readToNode(Stream* file, Node* node) {
     }
     return true;
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 static void parserColor(Value* json, const char* name, Vector4& color) {
     Value* lineColor = json->get(name);

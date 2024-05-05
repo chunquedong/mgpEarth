@@ -312,9 +312,9 @@ int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name
             if (path) {
                 cpath.clear();
                 for (auto it = path->begin(); it != path->end(); ++it) {
-                    float x = it->as_float();
+                    double x = it->as_float();
                     ++it;
-                    float y = it->as_float();
+                    double y = it->as_float();
                     cpath.push_back(Coord2D(x, y));
                 }
             }
@@ -352,7 +352,7 @@ void EMSCRIPTEN_KEEPALIVE fe_addEmptyGeoLayer(EarthApp* self, const char* name, 
     self->addGeoNode(UPtr<GeoNode>(layer));
 }
 
-bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int geotype, float* coords, int pointNum, char* attributes) {
+bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int geotype, double* coords, int pointNum, char* attributes) {
     GeoLayer* layer = dynamic_cast<GeoLayer*>(self->getView()->getScene()->findNode(name));
     if (!layer) return false;
 

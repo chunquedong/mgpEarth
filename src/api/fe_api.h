@@ -47,7 +47,7 @@ void EMSCRIPTEN_KEEPALIVE fe_removeModelInstance(EarthApp* self, const char* nam
 
 void EMSCRIPTEN_KEEPALIVE fe_addEmptyGeoLayer(EarthApp* self, const char* name, int geotype, char* options);
 
-bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int geotype, float* coords, int pointNum, char* attributes);
+bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int geotype, double* coords, int pointNum, char* attributes);
 
 int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeature(EarthApp* self, const char* name, const char* fieldName, const char* value);
 

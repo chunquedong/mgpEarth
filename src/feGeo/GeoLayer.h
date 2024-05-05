@@ -35,6 +35,7 @@ public:
     bool strokePolygon;
     bool queryElevation;
     bool isLnglat = true;
+    Vector3 baseTranslate;
 public:
     GeoLayer(const char* uri);
     ~GeoLayer();
@@ -47,11 +48,11 @@ public:
     void updateData();
 
     Drawable* getDrawable();
-
+public:
     void write(Stream* file);
     bool read(Stream* file);
     bool readToNode(Stream* file, Node* node);
-
+public:
     bool loadOptions(char* json_str);
 private:
     void addPoint(Feature* feature, Geometry* geometry, LabelSet* label, BillboardSet* billboard, int index);
@@ -59,7 +60,7 @@ private:
     void addPolygon(Geometry* geometry, Polygon* polygon);
     bool addGeometry(Feature* feature, Geometry* geometry,
         LabelSet* label, BillboardSet* billboard, Line* line, Polygon* polygon);
-    void coordToXyz(double x, double y, double z, Vector& xyz, double height);
+    void coordToXyz(double x, double y, double z, Vector& xyz, double additionalHeight, bool doTranslate = true);
 
     UPtr<Drawable> readDrawable(Stream* file);
 };
