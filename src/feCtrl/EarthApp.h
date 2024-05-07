@@ -24,6 +24,9 @@ class EarthApp : public Application, public PickerListener, public Refable {
     Gesture gesture;
     SPtr<ElevationManager> elevation;
     UPtr<Font> font;
+
+    Form* _progressView = nullptr;
+    std::function<void()> _checkProgress;
  public:
     EarthApp();
     ~EarthApp();
@@ -38,6 +41,7 @@ public:
     void addGeoNode(UPtr<GeoNode> node);
     void addSkybox(int dark, double minDis, double maxDis);
     bool removeNode(const char* name);
+    bool showLoadProgress(Node* node);
 private:
     void updateSkybox();
     void addAtmosphere();

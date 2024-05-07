@@ -395,6 +395,16 @@ FeApp.prototype.getLoadProgress = function(name) {
 }
 
 /**
+ * 显示下载进度
+ * @param name 图层名称
+ * 注意：如果是gltf数据可能只是下载进度，不包括解析进度。
+ */
+FeApp.prototype.showLoadProgress = function(name) {
+    return this.Module.ccall('fe_showLoadProgress', "number", ["number","string"],
+        [this.app, name]);
+}
+
+/**
  * 同步调用拾取接口
  * @param {*} name 需要拾取的对象名称，传null表示在所有对象中拾取
  * @param {*} x 屏幕坐标x，单位物理像素，非dp像素

@@ -459,6 +459,15 @@ float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name) 
     return -1;
 }
 
+bool EMSCRIPTEN_KEEPALIVE fe_showLoadProgress(EarthApp* self, const char* name) {
+    Node* node = self->getView()->getScene()->findNode(name);
+    if (!node) {
+        return false;
+    }
+    self->showLoadProgress(node);
+    return true;
+}
+
 bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* layerName, double* target, long* idOrIndex) {
     RayQuery query;
     Picker& picker = self->getEarthCtrl()->picker;

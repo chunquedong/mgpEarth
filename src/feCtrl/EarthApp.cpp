@@ -38,6 +38,7 @@ void EarthApp::finalize() {
     font.clear();
     earthCtrl->finalize();
     Application::finalize();
+    _progressView = nullptr;
 }
 
 void EarthApp::drawLocationText() {
@@ -294,6 +295,61 @@ bool EarthApp::mouseEvent(MotionEvent &event)
 
 bool EarthApp::onPickNode(PickResult& pickResult) {
     return true;
+}
+
+bool EarthApp::showLoadProgress(Node* node) {
+    if (!_progressView) {
+        UPtr<Form> form = Form::create();
+        form->getContent()->setAutoSizeW(Control::AUTO_WRAP_CONTENT);
+        form->getContent()->setAutoSizeH(Control::AUTO_WRAP_CONTENT);
+        form->getContent()->setPadding(20, 20, 20, 20);
+        form->getContent()->setLayout(Layout::LAYOUT_ABSOLUTE);
+        form->getContent()->setAlignment(Control::ALIGN_VCENTER_HCENTER);
+
+        UPtr<ProgressBar> progressBar = Control::create<ProgressBar>("ProgressBar");
+        progressBar->setWidth(300);
+        progressBar->setValue(0);
+        form->getContent()->addControl(std::move(progressBar));
+
+        _progressView = form.get();
+        getFormManager()->add(std::move(form));
+    }
+    //_progressView->setVisiable(true);
+    ProgressBar* progressBar = dynamic_cast<ProgressBar*>(_progressView->getContent()->findControl("ProgressBar"));
+    
+    float progress = 0;
+    if (GeoNode* geoNode = dynamic_cast<GeoNode*>(node)) {
+        progress = geoNode->getProgress();
+    }
+    else if (TileLayer* layerNode = dynamic_cast<TileLayer*>(node)) {
+        progress = layerNode->getProgress();
+    }
+    else {
+        return false;
+    }
+    progressBar->setValue(progress);
+
+    _checkProgress = [=]() {
+        float progress = 0;
+        if (GeoNode* geoNode = dynamic_cast<GeoNode*>(node)) {
+            progress = geoNode->getProgress();
+        }
+        else if (TileLayer* layerNode = dynamic_cast<TileLayer*>(node)) {
+            progress = layerNode->getProgress();
+        }
+        if (progress >= 1.0) {
+            setTimeout(200, [=]() {
+                getFormManager()->remove(_progressView);
+                this->_progressView = nullptr;
+                //_progressView->setVisiable(false);
+            });
+        }
+        else {
+            setTimeout(200, this->_checkProgress);
+        }
+        progressBar->setValue(progress);
+    };
+    setTimeout(200, _checkProgress);
 }
 
 bool EarthApp::getPickResult(RayQuery& result, PickResult& pickResult) {

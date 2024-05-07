@@ -53,6 +53,8 @@ int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeature(EarthApp* self, const char* name, c
 
 float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name);
 
+bool EMSCRIPTEN_KEEPALIVE fe_showLoadProgress(EarthApp* self, const char* name);
+
 bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* layerName, double* target, long* idOrIndex);
 
 double* EMSCRIPTEN_KEEPALIVE fe_xyzToBl(EarthApp* self, double x, double y, double z, double* target);
