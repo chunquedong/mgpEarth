@@ -350,6 +350,7 @@ bool EarthApp::showLoadProgress(Node* node) {
         progressBar->setValue(progress);
     };
     setTimeout(200, _checkProgress);
+    return true;
 }
 
 bool EarthApp::getPickResult(RayQuery& result, PickResult& pickResult) {

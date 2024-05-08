@@ -3,7 +3,7 @@ summary = mgpEarth
 outType = lib
 version = 1.0
 depends = mgpCore 1.0, mgpModules 1.0, mgpPro 1.0, jsonc 2.0, draco 1.4.1
-srcDirs = fe3dtiles/,feCtrl/,feElevation/,feGeo/,feModel/,feObjects/,feTile/,feUtil/
+srcDirs = fe3dtiles/,feCtrl/,feElevation/,feGeo/,feModel/,feObjects/,feTile/,feUtil/,api/c_api.cpp
 incDir = ./
 defines=GP_NO_LUA_BINDINGS,GP_GLFW
 extConfigs.cppflags = -std=c++17
