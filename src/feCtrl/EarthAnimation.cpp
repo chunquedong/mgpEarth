@@ -206,15 +206,18 @@ void MoveToAnimChannel::doUpdate(float elapsedTime, float percentComplete) {
 
     double from = fromZoom;
     double to = toZoom;
+    float percent = 1;
     if (percentComplete < 0.5) {
         to = middleZoom;
+        percent = percentComplete * 2;
     }
     else {
         from = middleZoom;
+        percent = (percentComplete - 0.5) * 2;
     }
     if (to != from) {
         double d = to - from;
-        double zoom = d * percentComplete + from;
+        double zoom = d * percent + from;
         ctrl->setZoom(zoom);
     }
 }
