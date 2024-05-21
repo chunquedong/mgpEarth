@@ -39,7 +39,9 @@ public:
     std::vector<double> coordinates;
     std::vector<GeoLine> lines;
     std::vector<Geometry*> geometries;
+
     bool parse(jc::Value* geometry);
+    jc::JsonNode* save(jc::JsonAllocator* allocator);
 
     void getPoint(mgp::Vector3& point, int i);
     int getPointCount();
@@ -48,6 +50,11 @@ private:
     void parsePoint(jc::Value* jcoord);
     void parseLine(jc::Value* jcoord);
     void parsePolygon(jc::Value* jcoord);
+
+    jc::JsonNode* savePoint(int i, jc::JsonAllocator* allocator);
+    jc::JsonNode* saveLine(int i, jc::JsonAllocator* allocator);
+    jc::JsonNode* savePolygon(jc::JsonAllocator* allocator);
+    jc::JsonNode* saveGeomertyCollection(jc::JsonAllocator* allocater);
 };
 
 class Feature {
@@ -55,6 +62,7 @@ public:
     Geometry geometry;
     std::map<std::string, std::string> properties;
     bool parse(jc::Value* feature);
+    jc::JsonNode* save(jc::JsonAllocator* allocator);
 };
 
 class FeatureCollection : public mgp::Refable {
@@ -70,6 +78,7 @@ public:
     ~FeatureCollection();
 
     bool parse(std::string& json);
+    void save(std::string& json);
 };
 
 

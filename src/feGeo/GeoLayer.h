@@ -36,6 +36,7 @@ public:
     bool queryElevation;
     bool isLnglat = true;
     Vector3 baseTranslate;
+
 public:
     GeoLayer(const char* uri);
     ~GeoLayer();

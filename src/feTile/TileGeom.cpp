@@ -216,7 +216,7 @@ UPtr<Mesh> TileGeom::makeMesh(double radius, Vector &center, int lod, Tile &tile
     }
 
     mesh->getVertexBuffer()->setData(vertices, vertexSize * (8 * sizeof(float)));
-    mesh->addPart(Mesh::TRIANGLES, vertexIndicesSize);
+    mesh->setIndex(Mesh::TRIANGLES, vertexIndicesSize);
     mesh->getIndexBuffer()->setData((char*)indexs, vertexIndicesSize * sizeof(unsigned short));
     return mesh;
 }
@@ -255,7 +255,7 @@ void TileGeom::init(Image *image, Tile &tile, Tile* elevationTile, ElevationQuer
 unsigned int TileGeom::draw(RenderInfo* view)
 {
     if (!_mesh.get()) return 0;
-    _mesh->draw(view, this, _material.get(), NULL, 0);
+    _mesh->draw(view, this, _material.get());
 
     return 1;
 }

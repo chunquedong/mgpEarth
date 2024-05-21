@@ -91,6 +91,22 @@ bool FeatureCollection::parse(std::string& json) {
     return true;
 }
 
+void FeatureCollection::save(std::string& json)
+{
+    JsonAllocator allocator;
+    jc::JsonNode* root = allocator.allocNode(jc::Type::Object);
+
+    JsonNode* fs = allocator.allocNode(jc::Type::Array);
+    for (auto it = features.begin(); it != features.end(); ++it) {
+        auto jn = (*it)->save(&allocator);
+        fs->append(jn);
+    }
+    fs->reverse();
+    root->insert_pair("features", fs);
+    root->insert_pair("type", allocator.alloc_str("FeatureCollection"));
+    root->to_json(json);
+}
+
 bool Feature::parse(Value* feature) {
     Value *geometry = feature->get("geometry");
     if (!geometry) return false;
@@ -109,6 +125,23 @@ bool Feature::parse(Value* feature) {
         this->properties[key] = val;
     }
     return true;
+}
+
+jc::JsonNode* Feature::save(jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* jproperties = allocator->allocNode(jc::Type::Object);
+    for (auto it = properties.begin(); it != properties.end(); ++it) {
+        jproperties->insert_pair(allocator->strdup(it->first.c_str()), allocator->alloc_str(it->second.c_str()));
+    }
+    jproperties->reverse();
+
+    jc::JsonNode* geo = this->geometry.save(allocator);
+
+    jc::JsonNode* jf = allocator->allocNode(jc::Type::Object);
+    jf->insert_pair("properties", jproperties);
+    jf->insert_pair("geometry", geo);
+    jf->insert_pair("type", allocator->alloc_str("Feature"));
+    return jf;
 }
 
 void Geometry::parsePoint(Value* jcoord) {
@@ -139,6 +172,48 @@ void Geometry::parsePolygon(Value* jcoord) {
     for (auto i = jcoord->begin(); i != jcoord->end(); ++i) {
         parseLine(*i);
     }
+}
+
+jc::JsonNode* Geometry::savePoint(int i, jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* coord = allocator->allocNode(jc::Type::Array);
+    int pos = i * 3;
+    coord->insert(allocator->alloc_float(coordinates[pos + 2]));
+    coord->insert(allocator->alloc_float(coordinates[pos + 1]));
+    coord->insert(allocator->alloc_float(coordinates[pos]));
+    return coord;
+}
+
+jc::JsonNode* Geometry::saveLine(int lineIdx, jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* coord = allocator->allocNode(jc::Type::Array);
+    for (int i = lines[lineIdx].startPoint; i < lines[lineIdx].size; ++i) {
+        coord->insert(savePoint(i, allocator));
+    }
+    coord->reverse();
+    return coord;
+}
+
+jc::JsonNode* Geometry::savePolygon(jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* coord = allocator->allocNode(jc::Type::Array);
+    for (int i = 0; i < lines.size(); ++i) {
+        coord->insert(saveLine(i, allocator));
+    }
+    coord->reverse();
+    return coord;
+}
+
+jc::JsonNode* Geometry::saveGeomertyCollection(jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* jcoordinates = allocator->allocNode(jc::Type::Array);
+    if (this->geometries.size() > 0) {
+        for (int i = 0; i < geometries.size(); ++i) {
+            jcoordinates->insert(geometries[i]->savePolygon(allocator));
+        }
+        jcoordinates->reverse();
+    }
+    return jcoordinates;
 }
 
 bool Geometry::parse(Value* geometry) {
@@ -196,6 +271,52 @@ bool Geometry::parse(Value* geometry) {
         return false;
     }
     return true;
+}
+
+jc::JsonNode* Geometry::save(jc::JsonAllocator* allocator)
+{
+    jc::JsonNode* jgeo = allocator->allocNode(jc::Type::Object);
+
+    jc::JsonNode* jcoordinates = NULL;
+    const char* typeStr = "Unknow";
+    switch (type)
+    {
+    case mgpEarth::GeometryType::Point:
+        typeStr = "Point";
+        jcoordinates = savePoint(0, allocator);
+        break;
+    case mgpEarth::GeometryType::MultiPoint:
+        typeStr = "MultiPoint";
+        jcoordinates = saveLine(0, allocator);
+        break;
+    case mgpEarth::GeometryType::LineString:
+        typeStr = "LineString";
+        jcoordinates = saveLine(0, allocator);
+        break;
+    case mgpEarth::GeometryType::MultiLineString:
+        typeStr = "MultiLineString";
+        jcoordinates = savePolygon(allocator);
+        break;
+    case mgpEarth::GeometryType::Polygon:
+        typeStr = "Polygon";
+        jcoordinates = savePolygon(allocator);
+        break;
+    case mgpEarth::GeometryType::MultiPolygon:
+        typeStr = "MultiPolygon";
+        jcoordinates = saveGeomertyCollection(allocator);
+        break;
+    case mgpEarth::GeometryType::GeometryCollection:
+        typeStr = "GeometryCollection";
+        jcoordinates = saveGeomertyCollection(allocator);
+        break;
+    default:
+        jcoordinates = allocator->allocNode(jc::Type::Array);
+        break;
+    }
+
+    jgeo->insert_pair("coordinates", jcoordinates);
+    jgeo->insert_pair("type", allocator->alloc_str(typeStr));
+    return jgeo;
 }
 
 void Geometry::getPoint(mgp::Vector3& point, int i)

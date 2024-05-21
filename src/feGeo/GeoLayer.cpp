@@ -138,6 +138,8 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
         return NULL;
     }
 
+    this->removeAllChildren();
+
     UPtr<LabelSet> label = LabelSet::create(labelStyle);
     UPtr<mgp::Line> line = Line::create(lineStyle);
     UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
