@@ -384,16 +384,16 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
     }
 
     if ((GeometryType)geotype == GeometryType::Point) {
-        Feature* f = new Feature();
+        UPtr<Feature> f(new Feature());
         f->geometry.type = GeometryType::Point;
         f->geometry.coordinates.push_back(coords[0]);
         f->geometry.coordinates.push_back(coords[1]);
         f->geometry.coordinates.push_back(coords[2]);
         f->properties.swap(properties_map);
-        layer->featureCollection->add(f);
+        layer->featureCollection->add(std::move(f));
     }
     else if ((GeometryType)geotype == GeometryType::LineString) {
-        Feature* f = new Feature();
+        UPtr<Feature> f(new Feature());
         f->geometry.type = GeometryType::LineString;
         for (int i=0; i<pointNum; ++i) {
             f->geometry.coordinates.push_back(coords[0]);
@@ -407,10 +407,10 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.size = pointNum;
         f->geometry.lines.push_back(line);
         f->properties.swap(properties_map);
-        layer->featureCollection->add(f);
+        layer->featureCollection->add(std::move(f));
     }
     else if ((GeometryType)geotype == GeometryType::Polygon) {
-        Feature* f = new Feature();
+        UPtr<Feature> f(new Feature());
         f->geometry.type = GeometryType::Polygon;
         for (int i=0; i<pointNum; ++i) {
             f->geometry.coordinates.push_back(coords[0]);
@@ -424,7 +424,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.size = pointNum;
         f->geometry.lines.push_back(line);
         f->properties.swap(properties_map);
-        layer->featureCollection->add(f);
+        layer->featureCollection->add(std::move(f));
     }
 
     layer->updateData();

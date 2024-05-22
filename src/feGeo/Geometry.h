@@ -57,7 +57,7 @@ private:
     jc::JsonNode* saveGeomertyCollection(jc::JsonAllocator* allocater);
 };
 
-class Feature {
+class Feature : public mgp::Refable {
 public:
     Geometry geometry;
     std::map<std::string, std::string> properties;
@@ -68,9 +68,12 @@ public:
 class FeatureCollection : public mgp::Refable {
 public:
     GeometryType type;
-    std::vector<Feature*> features;
+    std::vector<mgp::UPtr<Feature> > features;
 
-    void add(Feature* f);
+    void add(mgp::UPtr<Feature> f);
+    Feature* get(int i) { return features[i].get(); }
+    int size() { return features.size(); }
+
     int remove(const std::string& fieldName, const std::string& value, bool one = true);
     void removeAt(int index);
 

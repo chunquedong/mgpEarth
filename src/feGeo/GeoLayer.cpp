@@ -71,7 +71,22 @@ void GeoLayer::initEmpty(GeometryType geoType) {
     this->addChild(Node::createForComponent(std::move(polygon)));
 }
 
-void GeoLayer::updateData() {
+void GeoLayer::updateData()
+{
+    _featuresDirty = true;
+}
+
+void GeoLayer::update(float elapsedTime)
+{
+    GeoNode::update(elapsedTime);
+    if (_featuresDirty) {
+        doUpdateRenderData();
+    }
+}
+
+void GeoLayer::doUpdateRenderData() {
+    _featuresDirty = false;
+
     LabelSet* label = _label;
     mgp::Line* line = _line;
     mgp::Polygon* polygon = _polygon;
@@ -88,7 +103,7 @@ void GeoLayer::updateData() {
 
     FeatureCollection* fc = featureCollection.get();
     for (auto it = fc->features.begin(); it != fc->features.end(); ++it) {
-        Feature* feature = *it;
+        Feature* feature = it->get();
         addGeometry(feature, &feature->geometry, label, NULL, line, polygon);
     }
 
@@ -103,6 +118,7 @@ void GeoLayer::updateData() {
         if (_line) _line->getNode()->setTranslation(baseTranslate);
         if (_polygon) _polygon->getNode()->setTranslation(baseTranslate);
     }
+
 }
 
 Drawable* GeoLayer::getDrawable()
@@ -148,24 +164,12 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
     _line = line.get();
     _polygon = polygon.get();
 
-    line->start();
-    polygon->start();
-
-    for (auto it = fc->features.begin(); it != fc->features.end(); ++it) {
-        Feature* feature = *it;
-        addGeometry(feature, &feature->geometry, label.get(), NULL, line.get(), polygon.get());
-    }
-
-    line->finish();
-    polygon->finish();
-
     UPtr<Node> node = Node::create();
     node->addChild(Node::createForComponent(std::move(label)));
     node->addChild(Node::createForComponent(std::move(line)));
     node->addChild(Node::createForComponent(std::move(polygon)));
 
-    _line->getNode()->setTranslation(baseTranslate);
-    _polygon->getNode()->setTranslation(baseTranslate);
+    doUpdateRenderData();
 
     return node.take();
 }

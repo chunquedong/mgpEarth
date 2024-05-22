@@ -23,6 +23,8 @@ class GeoLayer : public GeoNode {
     LabelSet* _label = nullptr;
     mgp::Line* _line = nullptr;
     mgp::Polygon* _polygon = nullptr;
+
+    bool _featuresDirty = false;
 public:
     UPtr<FeatureCollection> featureCollection;
     mgp::LineStyle lineStyle;
@@ -47,7 +49,10 @@ protected:
 public:
     void initEmpty(GeometryType geoType);
     void updateData();
-
+    void doUpdateRenderData();
+protected:
+    void update(float elapsedTime) override;
+public:
     Drawable* getDrawable();
 public:
     void write(Stream* file);

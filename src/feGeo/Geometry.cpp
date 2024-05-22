@@ -11,14 +11,14 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
-void FeatureCollection::add(Feature* f) {
-    features.push_back(f);
+void FeatureCollection::add(mgp::UPtr<Feature> f) {
+    features.push_back(std::move(f));
 }
 
 int FeatureCollection::remove(const std::string& fieldName, const std::string& value, bool one) {
     int n = 0;
     for (auto it = features.begin(); it != features.end();) {
-        Feature* f = *it;
+        Feature* f = it->get();
         auto found = f->properties.find(fieldName);
         if (found == f->properties.end()) {
             ++it;
@@ -45,9 +45,6 @@ void FeatureCollection::removeAt(int index) {
 }
 
 FeatureCollection::~FeatureCollection() {
-    for (auto it = features.begin(); it != features.end(); ++it) {
-        delete *it;
-    }
     features.clear();
 }
 
