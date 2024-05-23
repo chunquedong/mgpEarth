@@ -154,8 +154,6 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
         return NULL;
     }
 
-    this->removeAllChildren();
-
     UPtr<LabelSet> label = LabelSet::create(labelStyle);
     UPtr<mgp::Line> line = Line::create(lineStyle);
     UPtr<mgp::Polygon> polygon = Polygon::create(polygonStyle);
@@ -168,17 +166,19 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
     node->addChild(Node::createForComponent(std::move(label)));
     node->addChild(Node::createForComponent(std::move(line)));
     node->addChild(Node::createForComponent(std::move(polygon)));
-
+    
     doUpdateRenderData();
 
     return node.take();
 }
 
-//void GeoLayer::onReceive(Task* task, NetResponse &res) {
-//    if (res.decodeResult) {
-//        this->addChild(UPtr<Node>((Node*)res.decodeResult));
-//    }
-//}
+void GeoLayer::onReceive(Task* task, NetResponse& res, MultiRequest* req)
+{
+    if (res.decodeResult) {
+        this->removeAllChildren();
+    }
+    GeoNode::onReceive(task, res, req);
+}
 
 bool GeoLayer::addGeometry(Feature* feature, Geometry* geometry, 
     LabelSet* label, BillboardSet* billboard, Line* line, Polygon* polygon) {

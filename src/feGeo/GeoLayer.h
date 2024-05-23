@@ -52,6 +52,7 @@ public:
     void doUpdateRenderData();
 protected:
     void update(float elapsedTime) override;
+    void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
 public:
     Drawable* getDrawable();
 public:
