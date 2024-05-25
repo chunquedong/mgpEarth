@@ -73,7 +73,7 @@ void GroundModel::update(float elapsedTime) {
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-TrackModel::TrackModel() {
+TrackModel::TrackModel(): direction(Vector3::unitZ()) {
 }
 
 void TrackModel::setNode(Node* node) {
@@ -103,7 +103,7 @@ void TrackModel::update(float elapsedTime) {
 
         //Vector3 dir; target.normalize(&dir);
         Matrix lookAtMatrix;
-        Matrix::createLookAt(target, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
+        Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
         _node->setMatrix(lookAtMatrix * pose);
 
         isRuning = false;

@@ -47,6 +47,7 @@ public:
     double speed = 15;
     Matrix pose;
     std::vector<Vector3> path;
+    Vector3 direction;
 
     TrackModel();
     

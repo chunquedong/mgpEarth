@@ -303,6 +303,7 @@ FeApp.prototype.addMultiModel = function(name, uri, lighting, options) {
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
  *      speed: 移动速度， path: 移动路径(经纬度坐标串)
+ *      direction: 初始方向(即path只有一个点时的方向), 格式:[x,y,z]
  * @return 成功返回实例ID，失败返回-1
  */
 FeApp.prototype.updateModelInstance = function(name, instId, lng, lat, height, options) {

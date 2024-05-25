@@ -318,6 +318,20 @@ int EMSCRIPTEN_KEEPALIVE fe_updateModelInstance(EarthApp* self, const char* name
                     cpath.push_back(Coord2D(x, y));
                 }
             }
+
+            Value* direction = value0->get("direction");
+            if (direction) {
+                for (auto it = path->begin(); it != path->end(); ++it) {
+                    double x = it->as_float();
+                    ++it;
+                    double y = it->as_float();
+                    ++it;
+                    double z = it->as_float();
+                    model->direction.x = x;
+                    model->direction.y = y;
+                    model->direction.z = z;
+                }
+            }
         }
     }
 
