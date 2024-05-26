@@ -227,6 +227,11 @@ void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double ad
 
     if (!isLnglat) {
         point.set(x, y, z);
+        if (additionalHeight) {
+            Vector3 offset;
+            point.normalize(&offset);
+            point += offset * additionalHeight;
+        }
         if (doTranslate) {
             if (baseTranslate.isZero()) {
                 baseTranslate = point;
@@ -482,6 +487,21 @@ bool GeoLayer::loadOptions(char* json_str) {
             road->lineStyle.dashLen = dashLen->as_float();
         }
 
+        Value* hasDashColor = lineStyle->get("hasDashColor");
+        if (hasDashColor) {
+            road->lineStyle.hasDashColor = hasDashColor->as_bool();
+        }
+
+        Value* dashFlowSpeed = lineStyle->get("dashFlowSpeed");
+        if (dashFlowSpeed) {
+            road->lineStyle.dashFlowSpeed = dashFlowSpeed->as_float();
+        }
+
+        Value* flowSpeed = lineStyle->get("flowSpeed");
+        if (flowSpeed) {
+            road->lineStyle.flowSpeed = flowSpeed->as_float();
+        }
+
         Value* isFlowing = lineStyle->get("isFlowing");
         if (isFlowing) {
             road->lineStyle.isFlowing = isFlowing->as_bool();
@@ -494,6 +514,7 @@ bool GeoLayer::loadOptions(char* json_str) {
 
         parserColor(lineStyle, "lineColor", road->lineStyle.lineColor);
         parserColor(lineStyle, "flowColor", road->lineStyle.flowColor);
+        parserColor(lineStyle, "dashColor", road->lineStyle.dashColor);
     }
     
     Value* polygonStyle = value0->get("polygonStyle");

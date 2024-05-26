@@ -127,7 +127,11 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *      fillPolygon： 是否填充多边形
  *      strokePolygon： 多边形是否描边
  *      queryElevation： 是否自动查询高程
- *      lineStyle： 线样式 {depthTest： 是否深度测试，lineWidth： 线宽带度， dashLen：虚线长度，isFlowing： 流动效果，hasGlow：发光效果，lineColor：线颜色，flowColor：流动颜色}
+ *      lineStyle： 线样式 {
+ *          depthTest： 是否深度测试，lineWidth： 线宽带度，lineColor：线颜色，hasGlow：发光效果
+ *          isFlowing： 流动效果，flowColor：流动颜色, flowSpeed： 流动速度
+ *          dashLen：虚线长度，hasDashColor: 虚线断开部分是否着色，dashColor：虚线断开颜色，dashFlowSpeed：虚线流动速度
+ *      }
  *      polygonStyle： 多边形样式 {depthTest： 是否深度测试， fillColor：填充颜色}
  *      labelStyle： 标注文字样式 {iconSize： 图标大小，fontSize：字体大小，iconImage： 图标图片路径，fontName： 字体名称，iconRect：图标在图片中的区域，
  *                      labelAlign： 图标和文字对齐方式， 0：文字在右边,1：文字填充图标，2：文字在下方，3：文字在上方,4:气泡方式。
