@@ -445,18 +445,30 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
     return true;
 }
 
-int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeature(EarthApp* self, const char* name, const char* fieldName, const char* value) {
+int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeatureLike(EarthApp* self, const char* name, const char* fieldName, const char* value) {
     GeoLayer* layer = dynamic_cast<GeoLayer*>(self->getView()->getScene()->findNode(name));
     if (!layer) return 0;
 
     //printf("fe_removeGeoFeature: %s, %s\n", fieldName, value);
 
     if (layer->featureCollection.isNull()) return 0;
-    int res = layer->featureCollection->remove(fieldName, value, false);
+    int res = layer->featureCollection->removeLike(fieldName, value, false);
     if (res) {
         layer->updateData();
     }
     return res;
+}
+
+bool EMSCRIPTEN_KEEPALIVE fe_removeGeoFeatureAt(EarthApp* self, const char* name, int index) {
+    GeoLayer* layer = dynamic_cast<GeoLayer*>(self->getView()->getScene()->findNode(name));
+    if (!layer) return false;
+
+    //printf("fe_removeGeoFeature: %s, %s\n", fieldName, value);
+
+    if (layer->featureCollection.isNull()) return 0;
+    layer->featureCollection->removeAt(index);
+    layer->updateData();
+    return true;
 }
 
 float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name) {
@@ -518,7 +530,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, i
     return false;
 }
 
-double* EMSCRIPTEN_KEEPALIVE fe_xyzToBl(EarthApp* self, double x, double y, double z, double* outCoord) {
+double* EMSCRIPTEN_KEEPALIVE fe_xyzToLnglat(EarthApp* self, double x, double y, double z, double* outCoord) {
     static double staticResult[3];
     if (!outCoord) {
         outCoord = staticResult;
@@ -526,15 +538,16 @@ double* EMSCRIPTEN_KEEPALIVE fe_xyzToBl(EarthApp* self, double x, double y, doub
 
     Coord2D coord;
     Vector3 point(x, y, z);
-    GeoCoordSys::xyzToBl(point, coord);
+    double height = 0;
+    GeoCoordSys::earth()->xyzToLnglat(point, coord, &height);
     outCoord[0] = coord.x;
     outCoord[1] = coord.y;
-    outCoord[2] = point.length() - GeoCoordSys::earth()->getRadius();
+    outCoord[2] = height;
 
     return outCoord;
 }
 
-double* EMSCRIPTEN_KEEPALIVE fe_blToXyz(EarthApp* self, double lng, double lat, double height, double* outCoord) {
+double* EMSCRIPTEN_KEEPALIVE fe_lnglatToXyz(EarthApp* self, double lng, double lat, double height, double* outCoord) {
     static double staticResult[3];
     if (!outCoord) {
         outCoord = staticResult;
@@ -542,7 +555,7 @@ double* EMSCRIPTEN_KEEPALIVE fe_blToXyz(EarthApp* self, double lng, double lat, 
 
     Coord2D coord(lng, lat);
     Vector3 out;
-    GeoCoordSys::blToXyz(coord, out, GeoCoordSys::earth()->getRadius()+height);
+    GeoCoordSys::earth()->lnglatToXyz(coord, height, out);
     outCoord[0] = out.x;
     outCoord[1] = out.y;
     outCoord[2] = out.z;

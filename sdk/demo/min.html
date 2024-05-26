@@ -7,11 +7,16 @@
     <style>
       /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
       canvas.emscripten {
+        display: block;
         border: 0px none;
-        padding: 0;
-        margin: 0;
+        padding: 0px;
+        margin: 0px;
         width: 100%;
         height: 100%;
+        background-color: blueviolet;
+      }
+      body {
+        margin: 0;
       }
     </style>
   </head>
@@ -33,6 +38,8 @@
           
           mgpEarth.setPosition(108.964164, 34.218175, 0);
           mgpEarth.showFps(true);
+
+          mgpEarth.showLoadProgress("gd");
       });
    </script>
 </body>

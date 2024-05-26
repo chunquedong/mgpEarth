@@ -17,12 +17,12 @@ function fe_onPickNode(app, path, name, index, properties) {
          * 鼠标拾取回调
          * @param path 拾取对象的结点路径
          * @param name 拾取到的对象名称
-         * @param indexOrId 拾取到的子对象索引信息。例如表示第几个子对象或者对象的ID。
+         * @param index 拾取到的子对象索引信息。例如表示第几个子对象或者对象的ID。
          * @param properties 属性信息，例如geojson的要素属性。
          * @return 返回false表示不选择
          */
         return mgpEarth.onPickNode(mgpEarth.Module.UTF8ToString(path), mgpEarth.Module.UTF8ToString(name),
-            indexOrId, mgpEarth.Module.UTF8ToString(properties));
+            index, mgpEarth.Module.UTF8ToString(properties));
     }
     return true;
 }
@@ -377,15 +377,26 @@ FeApp.prototype.addGeoFeature = function(name, geotype, coords, attributes) {
 }
 
 /**
- * 删除几何图层的对象
+ * 通过属性删除几何图层的对象
  * @param name 图层名称
  * @param fieldName 字段名
  * @param value 删除等于此值的对象
  * @return 返回删除对象的个数
  */
-FeApp.prototype.removeGeoFeature = function(name, fieldName, value) {
-    return this.Module.ccall('fe_removeGeoFeature', "number", ["number","string","string","string"],
+FeApp.prototype.removeGeoFeatureLike = function(name, fieldName, value) {
+    return this.Module.ccall('fe_removeGeoFeatureLike', "number", ["number","string","string","string"],
         [this.app, name, fieldName, value]);
+}
+
+/**
+ * 删除几何图层的对象
+ * @param name 图层名称
+ * @param index 第几个
+ * @return 返回删除对象的个数
+ */
+FeApp.prototype.removeGeoFeatureAt = function(name, index) {
+    return this.Module.ccall('fe_removeGeoFeatureAt', "number", ["number","string","number"],
+        [this.app, name, index]);
 }
 
 /**
@@ -442,8 +453,8 @@ FeApp.prototype.syncPick = function(name, x, y) {
 /**
  * 空间直角坐标系转经纬度
  */
-FeApp.prototype.xyzToBl = function(x, y, z) {
-    let outCoord = this.Module.ccall('fe_xyzToBl', "number", ["number","number","number", "number", "number"],
+FeApp.prototype.xyzToLnglat = function(x, y, z) {
+    let outCoord = this.Module.ccall('fe_xyzToLnglat', "number", ["number","number","number", "number", "number"],
         [this.app, x, y, z, null]);
 
     let res = [ 
@@ -457,8 +468,8 @@ FeApp.prototype.xyzToBl = function(x, y, z) {
 /**
  * 纬度转空间直角坐标系经
  */
-FeApp.prototype.blToXyz = function(lng, lat, height) {
-    let outCoord = this.Module.ccall('fe_blToXyz', "number", ["number","number","number", "number", "number"],
+FeApp.prototype.lnglatToXyz = function(lng, lat, height) {
+    let outCoord = this.Module.ccall('fe_lnglatToXyz', "number", ["number","number","number", "number", "number"],
         [this.app, lng, lat, height, null]);
 
     let res = [ 

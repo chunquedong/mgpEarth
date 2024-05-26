@@ -74,7 +74,7 @@ public:
     Feature* get(int i) { return features[i].get(); }
     int size() { return features.size(); }
 
-    int remove(const std::string& fieldName, const std::string& value, bool one = true);
+    int removeLike(const std::string& fieldName, const std::string& value, bool one = true);
     void removeAt(int index);
 
     FeatureCollection(): type(GeometryType::Unknow) {}

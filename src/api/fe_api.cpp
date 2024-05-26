@@ -34,8 +34,8 @@ class MyEarthApp : public EarthApp {
         //printf("click %s\n", node->getName());
         int indexOrId = pickResult.userId;
         GeoLayer* geolayer = dynamic_cast<GeoLayer*>(pickResult.layer);
-        if (geolayer && geolayer->featureCollection.get() && drawableIndex < geolayer->featureCollection->features.size()) {
-            auto properties = geolayer->featureCollection->features[drawableIndex]->properties;
+        if (geolayer && geolayer->featureCollection.get() && pickResult.drawableIndex < geolayer->featureCollection->features.size()) {
+            auto properties = geolayer->featureCollection->features[pickResult.drawableIndex]->properties;
 
             jc::JsonAllocator allocator;
             jc::JsonNode* root = allocator.allocNode(jc::Type::Object);
@@ -46,7 +46,7 @@ class MyEarthApp : public EarthApp {
             root->to_json(jsonstr);
             indexOrId = pickResult.drawableIndex;
         }
-        else if (userId == -1) {
+        else if (pickResult.userId == -1) {
             indexOrId = pickResult.drawableIndex;
         }
 

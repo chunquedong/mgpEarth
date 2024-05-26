@@ -49,7 +49,8 @@ void EMSCRIPTEN_KEEPALIVE fe_addEmptyGeoLayer(EarthApp* self, const char* name, 
 
 bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int geotype, double* coords, int pointNum, char* attributes);
 
-int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeature(EarthApp* self, const char* name, const char* fieldName, const char* value);
+int EMSCRIPTEN_KEEPALIVE fe_removeGeoFeatureLike(EarthApp* self, const char* name, const char* fieldName, const char* value);
+bool EMSCRIPTEN_KEEPALIVE fe_removeGeoFeatureAt(EarthApp* self, const char* name, int index);
 
 float EMSCRIPTEN_KEEPALIVE fe_getLoadProgress(EarthApp* self, const char* name);
 
@@ -57,9 +58,9 @@ bool EMSCRIPTEN_KEEPALIVE fe_showLoadProgress(EarthApp* self, const char* name);
 
 bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* layerName, double* target, long* idOrIndex);
 
-double* EMSCRIPTEN_KEEPALIVE fe_xyzToBl(EarthApp* self, double x, double y, double z, double* target);
+double* EMSCRIPTEN_KEEPALIVE fe_xyzToLnglat(EarthApp* self, double x, double y, double z, double* target);
 
-double* EMSCRIPTEN_KEEPALIVE fe_blToXyz(EarthApp* self, double lng, double lat, double height, double* target);
+double* EMSCRIPTEN_KEEPALIVE fe_lnglatToXyz(EarthApp* self, double lng, double lat, double height, double* target);
 
 void EMSCRIPTEN_KEEPALIVE fe_clearHighlight(EarthApp* self);
 

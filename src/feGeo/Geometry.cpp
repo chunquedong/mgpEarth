@@ -15,7 +15,7 @@ void FeatureCollection::add(mgp::UPtr<Feature> f) {
     features.push_back(std::move(f));
 }
 
-int FeatureCollection::remove(const std::string& fieldName, const std::string& value, bool one) {
+int FeatureCollection::removeLike(const std::string& fieldName, const std::string& value, bool one) {
     int n = 0;
     for (auto it = features.begin(); it != features.end();) {
         Feature* f = it->get();
@@ -26,7 +26,6 @@ int FeatureCollection::remove(const std::string& fieldName, const std::string& v
         }
         if (found->second == value) {
             it = features.erase(it);
-            delete f;
             ++n;
             if (one) {
                 break;
