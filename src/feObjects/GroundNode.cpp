@@ -106,7 +106,7 @@ void TrackModel::update(float elapsedTime) {
         Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
         _node->setMatrix(lookAtMatrix * pose);
 
-        isRuning = false;
+        setStop();
         return;
     }
 
@@ -136,7 +136,7 @@ void TrackModel::update(float elapsedTime) {
     }
 
     if (!ok) {
-        isRuning = false;
+        setStop();
         return;
     }
 
@@ -149,11 +149,46 @@ void TrackModel::start() {
     isRuning = true;
 }
 void TrackModel::stop() {
-    isRuning = false;
+    setStop();
+    reset();
 }
 void TrackModel::reset() {
     lastPointIndex = 0;
     segmentOffset = 0;
+}
+
+void TrackModel::pause()
+{
+    setStop();
+}
+
+void TrackModel::playAnimation(int repeatCount)
+{
+    std::set<Animation*> animations;
+    this->getNode()->getAllAnimations(animations);
+    for (auto it = animations.begin(); it != animations.end(); ++it) {
+        Animation* anim = *it;
+        AnimationClip* clip = anim->getClip();
+        clip->setRepeatCount(repeatCount);
+        clip->play();
+    }
+}
+
+void TrackModel::setStop()
+{
+    if (isRuning) {
+        isRuning = false;
+        if (onStop)
+            onStop();
+
+        std::set<Animation*> animations;
+        this->getNode()->getAllAnimations(animations);
+        for (auto it = animations.begin(); it != animations.end(); ++it) {
+            Animation* anim = *it;
+            AnimationClip* clip = anim->getClip();
+            clip->stop();
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +202,17 @@ void MultiModel::update(float elapsedTime) {
         TrackModel* model = it->second.get();
         if (_templateModel.get() && model->getNode() == nullptr) {
             UPtr<Node> node = _templateModel->clone();// GltfModel::makeTemplateInstance(_templateModel.get());
+
+            //rebind skin
+            std::vector<Drawable*> list;
+            node->getAllDrawable(list);
+            for (Drawable* drawable : list) {
+                Model* model = dynamic_cast<Model*>(drawable);
+                if (model && model->getSkin()) {
+                    model->getSkin()->bindNode(node.get());
+                }
+            }
+
             std::string id = std::to_string(model->_id);
             node->setTag("user_id", id.c_str());
             model->setNode(node.get());

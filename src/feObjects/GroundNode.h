@@ -49,6 +49,8 @@ public:
     std::vector<Vector3> path;
     Vector3 direction;
 
+    std::function<void()> onStop;
+
     TrackModel();
     
     void setNode(Node* node);
@@ -60,6 +62,10 @@ public:
     void start();
     void stop();
     void reset();
+    void pause();
+    void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
+private:
+    void setStop();
 };
 
 class MultiModel : public GltfNode {
