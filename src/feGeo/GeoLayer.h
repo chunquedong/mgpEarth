@@ -25,20 +25,22 @@ class GeoLayer : public GeoNode {
     mgp::Polygon* _polygon = nullptr;
 
     bool _featuresDirty = false;
+    //int labelFieldIndex = -1;
 public:
     UPtr<FeatureCollection> featureCollection;
     mgp::LineStyle lineStyle;
     mgp::PolyonStyle polygonStyle;
     mgp::LabelStyle labelStyle;
     std::string labelField;
-    double height;
-    double outlineHeightOffset;
-    bool fillPolygon;
-    bool strokePolygon;
-    bool queryElevation;
+    double height = 0;
+    double outlineHeightOffset = 100;
+    bool fillPolygon = true;
+    bool strokePolygon = true;
+    bool queryElevation = false;
     bool isLnglat = true;
     Vector3 baseTranslate;
 
+    void setLabelField(const std::string& labelFieldStr);
 public:
     GeoLayer(const char* uri);
     ~GeoLayer();

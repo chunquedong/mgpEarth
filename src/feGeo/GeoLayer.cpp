@@ -14,8 +14,7 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
-GeoLayer::GeoLayer(const char* uri): GeoNode(uri), height(0), outlineHeightOffset(100),
-        fillPolygon(true), strokePolygon(true), queryElevation(false) {
+GeoLayer::GeoLayer(const char* uri): GeoNode(uri) {
     labelStyle.sphereCulling = true;
     lineStyle.lineWidth = 1;
     lineStyle.lineColor = Vector4(0.0, 0.0, 1.0, 1.0);
@@ -27,6 +26,7 @@ GeoLayer::GeoLayer(const char* uri): GeoNode(uri), height(0), outlineHeightOffse
     labelField = "name";
     request->setSaveToFile(false);
 }
+
 GeoLayer::~GeoLayer() {
 }
 
@@ -318,10 +318,9 @@ void GeoLayer::addPoint(Feature* feature, Geometry* geometry, LabelSet* label, B
     //Vector point(x, y, z);
     if (feature) {
         if (labelField.size() > 0) {
-            auto it = feature->properties.find(labelField);
-            if (it != feature->properties.end()) {
-                label->add(point, it->second);
-            }
+            std::string value;
+            feature->getAsStr(labelField, value);
+            label->add(point, value);
         }
         else {
             label->add(point, "");

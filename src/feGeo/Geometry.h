@@ -13,6 +13,9 @@
 #include "jvalue.hpp"
 #include "mgp_pro.h"
 
+//#include <variant>
+#include <type_traits>
+
 FE_BEGIN_NAMESPACE
 
 enum class GeometryType {
@@ -57,18 +60,83 @@ private:
     jc::JsonNode* saveGeomertyCollection(jc::JsonAllocator* allocater);
 };
 
-class Feature : public mgp::Refable {
+class FeatureField {
 public:
+    enum Type {
+        Int, Float, String, Bool
+    };
+    Type type;
+    int index;
+    std::string name;
+    std::string desc;
+    int flags = 0;
+};
+
+struct FeatureValue {
+    std::string strValue;
+    union {
+        int64_t intValue;
+        double floatValue;
+    };
+
+    FeatureValue() : intValue(0) {}
+};
+
+class FeatureCollection;
+
+class Feature : public mgp::Refable {
+    std::vector<FeatureValue> properties;
+public:
+    FeatureCollection* parent = nullptr;
     Geometry geometry;
-    std::map<std::string, std::string> properties;
+
+    void setFromStr(const std::string& name, const std::string& value);
+    void getAsStr(const std::string& name, std::string& value);
+    void getAsStr(int i, std::string& value);
+
+    int64_t getInt(int i) {
+        return properties[i].intValue;
+    }
+    double getFloat(int i) {
+        return properties[i].floatValue;
+    }
+    std::string& getStr(int i) {
+        return properties[i].strValue;
+    }
+
+    void setInt(int i, int64_t value) {
+        properties[i].intValue = value;
+    }
+
+    void setFloat(int i, double value) {
+        properties[i].floatValue = value;
+    }
+
+    void setStr(int i, const std::string& value) {
+        properties[i].strValue = value;
+    }
+
+    void setValue(int i, FeatureValue& value);
+    FeatureValue* getValue(int i);
+    FeatureField* makeFieldValue(const std::string& name, FeatureField::Type type);
+public:
     bool parse(jc::Value* feature);
+    bool parseProperties(jc::Value* jproperties);
     jc::JsonNode* save(jc::JsonAllocator* allocator);
 };
 
 class FeatureCollection : public mgp::Refable {
+    friend class Feature;
+    std::map<std::string, int> fieldIndex;
 public:
     GeometryType type;
     std::vector<mgp::UPtr<Feature> > features;
+    std::vector<FeatureField> fields;
+
+    FeatureField* getField(const std::string& name);
+    FeatureField* getField(int i) { return &fields[i]; }
+    int getFieldCount() { return fields.size(); }
+    void addField(FeatureField& field);
 
     void add(mgp::UPtr<Feature> f);
     Feature* get(int i) { return features[i].get(); }

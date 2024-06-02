@@ -372,29 +372,18 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
 
     //printf("fe_addGeoFeature:%f, %d, %s\n", coords[0], pointNum, attributes);
 
-    std::map<std::string, std::string> properties_map;
+    JsonAllocator allocator;
+    JsonParser parser(&allocator);
+    Value* jproperties = nullptr;
     if (attributes && *attributes) {
         JsonAllocator allocator;
         JsonParser parser(&allocator);
         Value* value0 = parser.parse((char*)attributes);
-
         if (!value0 || parser.get_error()[0] != 0) {
             printf("parser geojson error: %s\n", parser.get_error());
             return false;
         }
-
-        Value* properties = value0;
-        for (auto i = properties->begin(); i != properties->end(); ++i) {
-            std::string key = i.get_name();
-            std::string val;
-            if (i->type() == Type::String) {
-                val = i->as_str();
-            }
-            else {
-                i->to_json(val);
-            }
-            properties_map[key] = val;
-        }
+        jproperties = value0;
     }
 
     if ((GeometryType)geotype == GeometryType::Point) {
@@ -403,7 +392,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         f->geometry.coordinates.push_back(coords[0]);
         f->geometry.coordinates.push_back(coords[1]);
         f->geometry.coordinates.push_back(coords[2]);
-        f->properties.swap(properties_map);
+        f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }
     else if ((GeometryType)geotype == GeometryType::LineString) {
@@ -420,7 +409,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.startPoint = 0;
         line.size = pointNum;
         f->geometry.lines.push_back(line);
-        f->properties.swap(properties_map);
+        f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }
     else if ((GeometryType)geotype == GeometryType::Polygon) {
@@ -437,7 +426,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.startPoint = 0;
         line.size = pointNum;
         f->geometry.lines.push_back(line);
-        f->properties.swap(properties_map);
+        f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }
 

@@ -11,7 +11,17 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
+FeatureField* FeatureCollection::getField(const std::string& name)
+{
+    auto it = fieldIndex.find(name);
+    if (it == fieldIndex.end()) {
+        return nullptr;
+    }
+    return &fields[it->second];
+}
+
 void FeatureCollection::add(mgp::UPtr<Feature> f) {
+    f->parent = this;
     features.push_back(std::move(f));
 }
 
@@ -19,12 +29,9 @@ int FeatureCollection::removeLike(const std::string& fieldName, const std::strin
     int n = 0;
     for (auto it = features.begin(); it != features.end();) {
         Feature* f = it->get();
-        auto found = f->properties.find(fieldName);
-        if (found == f->properties.end()) {
-            ++it;
-            continue;
-        }
-        if (found->second == value) {
+        std::string fvalue;
+        f->getAsStr(fieldName, fvalue);
+        if (fvalue == value) {
             it = features.erase(it);
             ++n;
             if (one) {
@@ -69,19 +76,17 @@ bool FeatureCollection::parse(std::string& json) {
 
     for (auto i = features->begin(); i != features->end(); ++i) {
         Value* feature = *i;
-        Feature* f = new Feature();
+        mgp::UPtr<Feature> f(new Feature());
+        f->parent = this;
         bool ok = f->parse(feature);
         if (ok) {
-            this->features.emplace_back(f);
             if (this->type == GeometryType::Unknow) {
                 this->type = f->geometry.type;
             }
             else if (this->type != f->geometry.type) {
                 this->type = GeometryType::Mix;
             }
-        }
-        else {
-            delete f;
+            this->add(std::move(f));
         }
     }
     return true;
@@ -103,31 +108,186 @@ void FeatureCollection::save(std::string& json)
     root->to_json(json);
 }
 
+void FeatureCollection::addField(FeatureField& field)
+{
+    int index = this->fields.size();
+    field.index = index;
+    fieldIndex[field.name] = index;
+    this->fields.push_back(field);
+}
+
+void Feature::setFromStr(const std::string& name, const std::string& value)
+{
+    auto it = parent->fieldIndex.find(name);
+    if (it == parent->fieldIndex.end()) {
+        return;
+    }
+    int i = it->second;
+    FeatureField::Type type = parent->fields.at(i).type;
+
+    switch (type)
+    {
+    case mgpEarth::FeatureField::Int:
+        this->properties[i].intValue = atoll(value.c_str());
+        break;
+    case mgpEarth::FeatureField::Bool:
+        this->properties[i].intValue = (value == "true");
+        break;
+    case mgpEarth::FeatureField::Float:
+        this->properties[i].floatValue = atof(value.c_str());
+        break;
+    case mgpEarth::FeatureField::String:
+        this->properties[i].strValue = value;
+        break;
+    default:
+        break;
+    }
+}
+
+void Feature::getAsStr(const std::string& name, std::string& value)
+{
+    auto it = parent->fieldIndex.find(name);
+    if (it == parent->fieldIndex.end()) {
+        return;
+    }
+    int i = it->second;
+    getAsStr(i, value);
+}
+
+void Feature::getAsStr(int i, std::string& value) {
+    FeatureField::Type type = parent->fields.at(i).type;
+
+    switch (type)
+    {
+    case mgpEarth::FeatureField::Int:
+        value = std::to_string(this->properties[i].intValue);
+        break;
+    case mgpEarth::FeatureField::Bool:
+        value = this->properties[i].intValue ? "true" : "false";
+        break;
+    case mgpEarth::FeatureField::Float:
+        value = std::to_string(this->properties[i].floatValue);
+        break;
+    case mgpEarth::FeatureField::String:
+        value = this->properties[i].strValue;
+        break;
+    default:
+        break;
+    }
+}
+
+bool Feature::parseProperties(jc::Value* jproperties) {
+    if (!jproperties || jproperties->type() != jc::Type::Object) {
+        return false;
+    }
+
+    for (auto i = jproperties->begin(); i != jproperties->end(); ++i) {
+        std::string key = i.get_name();
+
+        FeatureField* field = parent->getField(key);
+        if (!field) {
+            FeatureField nfield;
+            nfield.name = key;
+            switch (i->type())
+            {
+            case jc::Type::Integer:
+                nfield.type = FeatureField::Int;
+                break;
+            case jc::Type::Boolean:
+                nfield.type = FeatureField::Bool;
+                break;
+            case jc::Type::Float:
+                nfield.type = FeatureField::Float;
+                break;
+            default:
+                nfield.type = FeatureField::String;
+                break;
+            }
+            parent->addField(nfield);
+            field = parent->getField(key);
+        }
+
+        if (this->properties.size() != parent->fields.size()) {
+            this->properties.resize(parent->fields.size());
+        }
+
+        switch (field->type)
+        {
+        case mgpEarth::FeatureField::Int:
+            this->properties[field->index].intValue = i->as_int();
+            break;
+        case mgpEarth::FeatureField::Float:
+            this->properties[field->index].floatValue = i->as_float();
+            break;
+        case mgpEarth::FeatureField::String:
+            if (i->type() == Type::String) {
+                this->properties[field->index].strValue = i->as_str();
+            }
+            else {
+                i->to_json(this->properties[field->index].strValue);
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return true;
+}
+
 bool Feature::parse(Value* feature) {
     Value *geometry = feature->get("geometry");
     if (!geometry) return false;
     this->geometry.parse(geometry);
 
-    Value *properties = feature->get("properties");
-    for (auto i = properties->begin(); i != properties->end(); ++i) {
-        std::string key = i.get_name();
-        std::string val;
-        if (i->type() == Type::String) {
-            val = i->as_str();
-        }
-        else {
-            i->to_json(val);
-        }
-        this->properties[key] = val;
+    Value *jproperties = feature->get("properties");
+    return parseProperties(jproperties);
+}
+
+void Feature::setValue(int i, FeatureValue& value) {
+    properties.at(i) = value;
+}
+FeatureValue* Feature::getValue(int i) {
+    return &properties.at(i);
+}
+
+FeatureField* Feature::makeFieldValue(const std::string& name, FeatureField::Type type)
+{
+    FeatureField* field = parent->getField(name);
+    if (!field) {
+        FeatureField nfield;
+        nfield.name = name;
+        nfield.type = type;
+        parent->addField(nfield);
+        field = parent->getField(name);
     }
-    return true;
+    if (this->properties.size() != parent->fields.size()) {
+        this->properties.resize(parent->fields.size());
+    }
+    return field;
 }
 
 jc::JsonNode* Feature::save(jc::JsonAllocator* allocator)
 {
     jc::JsonNode* jproperties = allocator->allocNode(jc::Type::Object);
-    for (auto it = properties.begin(); it != properties.end(); ++it) {
-        jproperties->insert_pair(allocator->strdup(it->first.c_str()), allocator->alloc_str(it->second.c_str()));
+    for (int i = 0; i < parent->getFieldCount(); ++i) {
+        FeatureField* field = parent->getField(i);
+        jc::JsonNode* jvalue = nullptr;
+        switch (field->type)
+        {
+        case mgpEarth::FeatureField::Int:
+            jvalue = allocator->alloc_int(this->properties[field->index].intValue);
+            break;
+        case mgpEarth::FeatureField::Float:
+            jvalue = allocator->alloc_float(this->properties[field->index].floatValue);
+            break;
+        case mgpEarth::FeatureField::String:
+            jvalue = allocator->alloc_str(this->properties[field->index].strValue.c_str());
+            break;
+        default:
+            jvalue = allocator->allocNode(jc::Type::Null);
+            break;
+        }
+        jproperties->insert_pair(allocator->strdup(field->name.c_str()), jvalue);
     }
     jproperties->reverse();
 
