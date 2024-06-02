@@ -48,6 +48,7 @@ public:
     Matrix pose;
     std::vector<Vector3> path;
     Vector3 direction;
+    int userData = 0;
 
     std::function<void()> onStop;
 
@@ -69,6 +70,7 @@ private:
 };
 
 class MultiModel : public GltfNode {
+protected:
     UPtr<Node> _templateModel;
     int _idCount = 0;
     std::map<int, UPtr<TrackModel> > _instances;
