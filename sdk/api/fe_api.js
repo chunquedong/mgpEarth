@@ -359,7 +359,7 @@ FeApp.prototype.addEmptyGeoLayer = function(name, geotype, options) {
  * @param name 图层名称
  * @param geotype 几何类型：（Point：1，LineString：3，Polygon：5）
  * @param coords 坐标数组，Float32Array类型，格式[经度，维度，高度， 经度，维度，高度,...]
- * @param options 见addGeoLayer的options参数
+ * @param attributes 非几何属性，例如 { name:"xx", value:123 }
  */
 FeApp.prototype.addGeoFeature = function(name, geotype, coords, attributes) {
     if (attributes) {
