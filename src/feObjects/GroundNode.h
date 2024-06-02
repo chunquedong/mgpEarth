@@ -48,11 +48,12 @@ public:
     Matrix pose;
     std::vector<Vector3> path;
     Vector3 direction;
-    int userData = 0;
+    UPtr<Refable> userData;
 
-    std::function<void()> onStop;
+    std::function<void(TrackModel*)> onStop;
 
     TrackModel();
+    ~TrackModel();
     
     void setNode(Node* node);
     Node* getNode() { return _node; }

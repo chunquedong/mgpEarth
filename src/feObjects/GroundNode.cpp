@@ -76,6 +76,10 @@ void GroundModel::update(float elapsedTime) {
 TrackModel::TrackModel(): direction(Vector3::unitZ()) {
 }
 
+TrackModel::~TrackModel()
+{
+}
+
 void TrackModel::setNode(Node* node) {
     _node = node;
 }
@@ -178,8 +182,6 @@ void TrackModel::setStop()
 {
     if (isRuning) {
         isRuning = false;
-        if (onStop)
-            onStop();
 
         std::set<Animation*> animations;
         this->getNode()->getAllAnimations(animations);
@@ -188,6 +190,9 @@ void TrackModel::setStop()
             AnimationClip* clip = anim->getClip();
             clip->stop();
         }
+
+        if (onStop)
+            onStop(this);
     }
 }
 
@@ -240,7 +245,11 @@ void MultiModel::remove(int id) {
     }
 }
 TrackModel* MultiModel::get(int id) {
-    return _instances[id].get();
+    auto it = _instances.find(id);
+    if (it == _instances.end()) {
+        return nullptr;
+    }
+    return it->second.get();
 }
 
 void MultiModel::onReceive(Task* task, NetResponse& res, MultiRequest* req) {
