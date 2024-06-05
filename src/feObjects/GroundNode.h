@@ -81,6 +81,7 @@ public:
     int add(UPtr<TrackModel> inst);
     void remove(int id);
     TrackModel* get(int id);
+    void clear();
 
     virtual void update(float elapsedTime) override;
 protected:

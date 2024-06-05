@@ -252,6 +252,17 @@ TrackModel* MultiModel::get(int id) {
     return it->second.get();
 }
 
+void MultiModel::clear()
+{
+    for (auto it = _instances.begin(); it != _instances.end(); ++it) {
+        Node* node = it->second->getNode();
+        if (node) {
+            node->remove();
+        }
+    }
+    _instances.clear();
+}
+
 void MultiModel::onReceive(Task* task, NetResponse& res, MultiRequest* req) {
     if (res.decodeResult) {
         Node* node = (Node*)res.decodeResult;

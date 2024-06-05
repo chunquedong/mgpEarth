@@ -39,6 +39,7 @@ public:
     Node* add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, bool lighting);
     XyzTileManager* addTileLayer(const char *name, const char* uri, const char* elevationUri);
     void addGeoNode(UPtr<GeoNode> node);
+    void insertGeoNode(UPtr<GeoNode> node);
     void addSkybox(int dark, double minDis, double maxDis);
     bool removeNode(const char* name);
     bool showLoadProgress(Node* node);

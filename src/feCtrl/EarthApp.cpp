@@ -92,6 +92,11 @@ void EarthApp::addGeoNode(UPtr<GeoNode> node) {
     getView()->getScene()->addNode(std::move(node));
 }
 
+void EarthApp::insertGeoNode(UPtr<GeoNode> node) {
+    node->ctrl = getEarthCtrl();
+    getView()->getScene()->insertNode(std::move(node));
+}
+
 static void addTestMesh(Scene* _scene, float r)
 {
 #if 1
