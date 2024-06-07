@@ -184,32 +184,23 @@ bool Feature::parseProperties(jc::Value* jproperties) {
     for (auto i = jproperties->begin(); i != jproperties->end(); ++i) {
         std::string key = i.get_name();
 
-        FeatureField* field = parent->getField(key);
-        if (!field) {
-            FeatureField nfield;
-            nfield.name = key;
-            switch (i->type())
-            {
-            case jc::Type::Integer:
-                nfield.type = FeatureField::Int;
-                break;
-            case jc::Type::Boolean:
-                nfield.type = FeatureField::Bool;
-                break;
-            case jc::Type::Float:
-                nfield.type = FeatureField::Float;
-                break;
-            default:
-                nfield.type = FeatureField::String;
-                break;
-            }
-            parent->addField(nfield);
-            field = parent->getField(key);
+        FeatureField::Type type;
+        switch (i->type())
+        {
+        case jc::Type::Integer:
+            type = FeatureField::Int;
+            break;
+        case jc::Type::Boolean:
+            type = FeatureField::Bool;
+            break;
+        case jc::Type::Float:
+            type = FeatureField::Float;
+            break;
+        default:
+            type = FeatureField::String;
+            break;
         }
-
-        if (this->properties.size() != parent->fields.size()) {
-            this->properties.resize(parent->fields.size());
-        }
+        FeatureField* field = makeFieldValue(key, type);
 
         switch (field->type)
         {
@@ -260,6 +251,23 @@ FeatureField* Feature::makeFieldValue(const std::string& name, FeatureField::Typ
         parent->addField(nfield);
         field = parent->getField(name);
     }
+    else if (field->type != type) {
+        if (field->type == FeatureField::Type::Float && type == FeatureField::Type::Int) {
+            //pass
+        }
+        else if (type == FeatureField::Type::Float && field->type == FeatureField::Type::Int) {
+            //convert from int to float
+            for (auto& feature : parent->features) {
+                int64_t val = feature->properties[field->index].intValue;
+                feature->properties[field->index].floatValue = val;
+            }
+            field->type = type;
+        }
+        else {
+            printf("ERROR: type error %d -> %d\n", field->type, type);
+        }
+    }
+
     if (this->properties.size() != parent->fields.size()) {
         this->properties.resize(parent->fields.size());
     }
