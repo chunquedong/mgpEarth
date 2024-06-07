@@ -140,7 +140,15 @@ void TrackModel::update(float elapsedTime) {
     }
 
     if (!ok) {
-        setStop();
+        uint64_t now = System::currentTimeMillis();
+        if (pathEndTime == 0) {
+            pathEndTime = now;
+            return;
+        }
+
+        if (now - pathEndTime > afterDelayTime) {
+            setStop();
+        }
         return;
     }
 
@@ -159,6 +167,7 @@ void TrackModel::stop() {
 void TrackModel::reset() {
     lastPointIndex = 0;
     segmentOffset = 0;
+    pathEndTime = 0;
 }
 
 void TrackModel::pause()

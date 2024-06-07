@@ -38,13 +38,14 @@ public:
 
 class TrackModel : public Refable {
     int lastPointIndex = 0;
-    //uint64_t lastTime = 0;
+    uint64_t pathEndTime = 0;
     double segmentOffset = 0;
     bool isRuning = false;
     Node* _node = nullptr;
 public:
     int _id;
     double speed = 15;
+    uint64_t afterDelayTime = 0;
     Matrix pose;
     std::vector<Vector3> path;
     Vector3 direction;
