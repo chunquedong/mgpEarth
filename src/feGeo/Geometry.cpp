@@ -258,8 +258,10 @@ FeatureField* Feature::makeFieldValue(const std::string& name, FeatureField::Typ
         else if (type == FeatureField::Type::Float && field->type == FeatureField::Type::Int) {
             //convert from int to float
             for (auto& feature : parent->features) {
-                int64_t val = feature->properties[field->index].intValue;
-                feature->properties[field->index].floatValue = val;
+                if (feature.get()) {
+                    int64_t val = feature->properties[field->index].intValue;
+                    feature->properties[field->index].floatValue = val;
+                }
             }
             field->type = type;
         }
