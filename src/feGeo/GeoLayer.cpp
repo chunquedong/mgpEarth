@@ -20,7 +20,7 @@ GeoLayer::GeoLayer(const char* uri): GeoNode(uri) {
     lineStyle.lineColor = Vector4(0.0, 0.0, 1.0, 1.0);
     lineStyle.dashLen = 0;
     lineStyle.flowColor = Vector4(0.0, 1.0, 0.0, 1.0);
-    lineStyle.isFlowing = false;
+    lineStyle.flowSpeed = 0;
     //lineStyle.glowColor = Vector4(0.5, 1.0, 0.5, 1.0);
     polygonStyle.fillColor = Vector4(0.5, 0.7, 1.0, 1.0);
     labelField = "name";
@@ -485,10 +485,13 @@ bool GeoLayer::loadOptions(char* json_str) {
         if (dashLen) {
             road->lineStyle.dashLen = dashLen->as_float();
         }
-
-        Value* hasDashColor = lineStyle->get("hasDashColor");
-        if (hasDashColor) {
-            road->lineStyle.hasDashColor = hasDashColor->as_bool();
+        Value* dashGap = lineStyle->get("dashGap");
+        if (dashGap) {
+            road->lineStyle.dashGap = dashGap->as_bool();
+        }
+        Value* hasDashGapColor = lineStyle->get("hasDashGapColor");
+        if (hasDashGapColor) {
+            road->lineStyle.hasDashGapColor = hasDashGapColor->as_bool();
         }
 
         Value* dashFlowSpeed = lineStyle->get("dashFlowSpeed");
@@ -501,19 +504,19 @@ bool GeoLayer::loadOptions(char* json_str) {
             road->lineStyle.flowSpeed = flowSpeed->as_float();
         }
 
-        Value* isFlowing = lineStyle->get("isFlowing");
-        if (isFlowing) {
-            road->lineStyle.isFlowing = isFlowing->as_bool();
+        Value* arrowSize = lineStyle->get("arrowSize");
+        if (arrowSize) {
+            road->lineStyle.arrowSize = arrowSize->as_float();
         }
 
-        Value* hasGlow = lineStyle->get("hasGlow");
-        if (hasGlow) {
-            road->lineStyle.hasGlow = hasGlow->as_bool();
+        Value* glowPower = lineStyle->get("glowPower");
+        if (glowPower) {
+            road->lineStyle.glowPower = glowPower->as_float();
         }
 
         parserColor(lineStyle, "lineColor", road->lineStyle.lineColor);
         parserColor(lineStyle, "flowColor", road->lineStyle.flowColor);
-        parserColor(lineStyle, "dashColor", road->lineStyle.dashColor);
+        parserColor(lineStyle, "dashGapColor", road->lineStyle.dashGapColor);
     }
     
     Value* polygonStyle = value0->get("polygonStyle");
