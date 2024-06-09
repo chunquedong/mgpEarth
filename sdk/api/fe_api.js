@@ -137,7 +137,7 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *         lineStyle： 线样式 {
  *             depthTest： 是否深度测试，lineWidth： 线宽带度，lineColor：线颜色，glowPower：发光效果(可设置为1)
  *             flowColor：流动颜色, flowSpeed： 流动速度
- *             dashLen：虚线长度，dashGap: 虚线断开长度，arrowSize: 箭头大小（箭头须在虚线长度设置后才有效）
+ *             dashLen：虚线长度，dashGap: 虚线断开长度，arrowSize: 箭头大小（箭头须在虚线长度设置后才有效）, arrowWithScale：箭头宽带缩放， worldSize: 使用世界坐标大小
  *             hasDashGapColor: 虚线断开部分是否着色，dashGapColor：虚线断开颜色，dashFlowSpeed：虚线流动速度, 
  *         }
  *         polygonStyle： 多边形样式 {depthTest： 是否深度测试， fillColor：填充颜色}

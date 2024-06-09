@@ -379,6 +379,16 @@ bool Symbolizer::loadOptions(jc::Value* value0)
             road->lineStyle.arrowSize = arrowSize->as_float();
         }
 
+        Value* arrowWithScale = lineStyle->get("arrowWithScale");
+        if (arrowWithScale) {
+            road->lineStyle.arrowWithScale = arrowWithScale->as_float();
+        }
+
+        Value* worldSize = lineStyle->get("worldSize");
+        if (worldSize) {
+            road->lineStyle.worldSize = worldSize->as_bool();
+        }
+
         Value* glowPower = lineStyle->get("glowPower");
         if (glowPower) {
             road->lineStyle.glowPower = glowPower->as_float();
