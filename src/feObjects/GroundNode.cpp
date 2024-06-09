@@ -98,7 +98,7 @@ void TrackModel::setFromLonLat(std::vector<Coord2D>& path2d, double height) {
 
 void TrackModel::update(float elapsedTime) {
     //GltfNode::update(elapsedTime);
-    if (!isRuning) return;
+    if (!_isRuning) return;
     if (!_node) return;
 
     if (path.size() == 0) return;
@@ -158,7 +158,7 @@ void TrackModel::update(float elapsedTime) {
     _node->setMatrix(lookAtMatrix * pose);
 }
 void TrackModel::start() {
-    isRuning = true;
+    _isRuning = true;
 }
 void TrackModel::stop() {
     setStop();
@@ -189,8 +189,8 @@ void TrackModel::playAnimation(int repeatCount)
 
 void TrackModel::setStop()
 {
-    if (isRuning) {
-        isRuning = false;
+    if (_isRuning) {
+        _isRuning = false;
 
         std::set<Animation*> animations;
         this->getNode()->getAllAnimations(animations);

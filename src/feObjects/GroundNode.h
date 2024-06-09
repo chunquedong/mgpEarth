@@ -40,7 +40,7 @@ class TrackModel : public Refable {
     int lastPointIndex = 0;
     uint64_t pathEndTime = 0;
     double segmentOffset = 0;
-    bool isRuning = false;
+    bool _isRuning = false;
     Node* _node = nullptr;
 public:
     int _id;
@@ -66,6 +66,7 @@ public:
     void stop();
     void reset();
     void pause();
+    bool isRuning() { return _isRuning; }
     void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
 private:
     void setStop();
