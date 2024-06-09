@@ -227,8 +227,8 @@ void MultiModel::update(float elapsedTime) {
                 }
             }
 
-            std::string id = std::to_string(model->_id);
-            node->setTag("user_id", id.c_str());
+            //std::string id = std::to_string(model->_id);
+            node->setUserId(model->_id);
             model->setNode(node.get());
             this->addChild(std::move(node));
         }

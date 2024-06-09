@@ -121,25 +121,33 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  * @param uri 图层数据源地址
  * @param options 选项json对象，可为空。有下列选项:
  *      maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
- *      height: 高程
- *      labelField：显示标注文字的字段
- *      outlineHeightOffset： 轮廓线高度偏移
- *      fillPolygon： 是否填充多边形
- *      strokePolygon： 多边形是否描边
+ *      additionalHeight: 高程
  *      queryElevation： 是否自动查询高程
- *      lineStyle： 线样式 {
- *          depthTest： 是否深度测试，lineWidth： 线宽带度，lineColor：线颜色，glowPower：发光效果(可设置为1)
- *          flowColor：流动颜色, flowSpeed： 流动速度
- *          dashLen：虚线长度，dashGap: 虚线断开长度，arrowSize: 箭头大小（箭头须在虚线长度设置后才有效）
- *          hasDashGapColor: 虚线断开部分是否着色，dashGapColor：虚线断开颜色，dashFlowSpeed：虚线流动速度, 
- *      }
- *      polygonStyle： 多边形样式 {depthTest： 是否深度测试， fillColor：填充颜色}
- *      labelStyle： 标注文字样式 {iconSize： 图标大小，fontSize：字体大小，iconImage： 图标图片路径，fontName： 字体名称，iconRect：图标在图片中的区域，
+ *      symbolizers :[
+ *         maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
+ *         filters: [{
+ *               fieldName: 字段名称
+ *               op: 操作符： ==  != ,  > ,  < ,  >= ,  <=
+ *               value: 取值
+ *         }]
+ *         labelField：显示标注文字的字段
+ *         outlineHeightOffset： 轮廓线高度偏移
+ *         fillPolygon： 是否填充多边形
+ *         strokePolygon： 多边形是否描边
+ *         lineStyle： 线样式 {
+ *             depthTest： 是否深度测试，lineWidth： 线宽带度，lineColor：线颜色，glowPower：发光效果(可设置为1)
+ *             flowColor：流动颜色, flowSpeed： 流动速度
+ *             dashLen：虚线长度，dashGap: 虚线断开长度，arrowSize: 箭头大小（箭头须在虚线长度设置后才有效）
+ *             hasDashGapColor: 虚线断开部分是否着色，dashGapColor：虚线断开颜色，dashFlowSpeed：虚线流动速度, 
+ *         }
+ *         polygonStyle： 多边形样式 {depthTest： 是否深度测试， fillColor：填充颜色}
+ *         labelStyle： 标注文字样式 {iconSize： 图标大小，fontSize：字体大小，iconImage： 图标图片路径，fontName： 字体名称，iconRect：图标在图片中的区域，
  *                      labelAlign： 图标和文字对齐方式， 0：文字在右边,1：文字填充图标，2：文字在下方，3：文字在上方,4:气泡方式。
  *                      fontColor： 文字颜色[r,g,b,a]， iconColor： 图标颜色[r,g,b,a]（会乘在图片颜色上）
  *                      sphereCulling: 是否通过法线剔除label, coverStrategy: 0:不允许相互压盖，1：允许压盖。
  *                      textOffsetX: 文字x轴偏移，textOffsetY：文字y轴偏移
- *                  }
+ *         }
+ *      ]
  */
 FeApp.prototype.addGeoLayer = function(name, uri, options) {
     if (options) {

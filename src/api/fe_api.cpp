@@ -32,10 +32,11 @@ class MyEarthApp : public EarthApp {
     bool onPickNode(PickResult& pickResult) {
         std::string jsonstr;
         //printf("click %s\n", node->getName());
-        int indexOrId = pickResult.userId;
+        int indexOrId = pickResult.userId != -1 ? pickResult.userId : pickResult.drawableIndex;
+
         GeoLayer* geolayer = dynamic_cast<GeoLayer*>(pickResult.layer);
-        if (geolayer && geolayer->featureCollection.get() && pickResult.drawableIndex < geolayer->featureCollection->features.size()) {
-            auto properties = geolayer->featureCollection->features[pickResult.drawableIndex]->properties;
+        if (geolayer && geolayer->featureCollection.get() && indexOrId < geolayer->featureCollection->features.size()) {
+            auto properties = geolayer->featureCollection->features[indexOrId]->properties;
 
             jc::JsonAllocator allocator;
             jc::JsonNode* root = allocator.allocNode(jc::Type::Object);
@@ -44,10 +45,6 @@ class MyEarthApp : public EarthApp {
             }
             root->reverse();
             root->to_json(jsonstr);
-            indexOrId = pickResult.drawableIndex;
-        }
-        else if (pickResult.userId == -1) {
-            indexOrId = pickResult.drawableIndex;
         }
 
         return fe_appOnPickNode(this, pickResult.path.c_str(), pickResult.layer->getName(), indexOrId, jsonstr.c_str());

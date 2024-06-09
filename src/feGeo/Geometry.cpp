@@ -155,6 +155,8 @@ void Feature::getAsStr(const std::string& name, std::string& value)
 }
 
 void Feature::getAsStr(int i, std::string& value) {
+    if (i >= this->properties.size())
+        return;
     FeatureField::Type type = parent->fields.at(i).type;
 
     switch (type)
@@ -235,9 +237,13 @@ bool Feature::parse(Value* feature) {
 }
 
 void Feature::setValue(int i, FeatureValue& value) {
+    if (i >= this->properties.size())
+        properties.resize(i);
     properties.at(i) = value;
 }
 FeatureValue* Feature::getValue(int i) {
+    if (i >= this->properties.size())
+        return nullptr;
     return &properties.at(i);
 }
 

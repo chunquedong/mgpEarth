@@ -19,28 +19,68 @@
 FE_BEGIN_NAMESPACE
 PF_USING_NAMESPACE
 
-class GeoLayer : public GeoNode {
+class GeoLayer;
+
+class Symbolizer {
+    friend class GeoLayer;
+
     LabelSet* _label = nullptr;
     mgp::Line* _line = nullptr;
     mgp::Polygon* _polygon = nullptr;
+    GeoLayer* _layer = nullptr;
 
-    bool _featuresDirty = false;
-    //int labelFieldIndex = -1;
 public:
-    UPtr<FeatureCollection> featureCollection;
+    double minDis = 0;
+    double maxDis = FLT_MAX;
+
+    struct Filter {
+        std::string fieldName;
+        std::string op = "==";
+        FeatureValue value;
+        FeatureField::Type valueType;
+
+        int64_t getIntValue();
+        double getFloatValue();
+    };
+    std::vector<Filter> filters;
+
     mgp::LineStyle lineStyle;
     mgp::PolyonStyle polygonStyle;
     mgp::LabelStyle labelStyle;
     std::string labelField;
-    double height = 0;
-    double outlineHeightOffset = 100;
     bool fillPolygon = true;
     bool strokePolygon = true;
+    double outlineHeightOffset = 100;
+
+    Symbolizer();
+
+    void initAddTo(Node* node);
+
+    void beginUpdate();
+    void endUpdate();
+    bool updateRender(Feature* feature, int id);
+private:
+    void addPoint(Feature* feature, Geometry* geometry, int index, int id);
+    void addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int id);
+    void addPolygon(Geometry* geometry, int id);
+    bool addGeometry(Feature* feature, Geometry* geometry, int id);
+public:
+    bool loadOptions(jc::Value* json);
+};
+
+class GeoLayer : public GeoNode {
+    bool _featuresDirty = false;
+public:
+    UPtr<FeatureCollection> featureCollection;
+
+    double additionalHeight = 0;
     bool queryElevation = false;
     bool isLnglat = true;
     Vector3 baseTranslate;
 
-    void setLabelField(const std::string& labelFieldStr);
+    std::vector<Symbolizer> symbolizers;
+
+    Symbolizer* getSymb() { return &symbolizers[0]; }
 public:
     GeoLayer(const char* uri);
     ~GeoLayer();
@@ -55,23 +95,11 @@ public:
 protected:
     void update(float elapsedTime) override;
     void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
-public:
-    Drawable* getDrawable();
-public:
-    void write(Stream* file);
-    bool read(Stream* file);
-    bool readToNode(Stream* file, Node* node);
+
 public:
     bool loadOptions(char* json_str);
-private:
-    void addPoint(Feature* feature, Geometry* geometry, LabelSet* label, BillboardSet* billboard, int index);
-    void addLine(Geometry* geometry, GeoLine& gline, Line* line, double height);
-    void addPolygon(Geometry* geometry, Polygon* polygon);
-    bool addGeometry(Feature* feature, Geometry* geometry,
-        LabelSet* label, BillboardSet* billboard, Line* line, Polygon* polygon);
+public:
     void coordToXyz(double x, double y, double z, Vector& xyz, double additionalHeight, bool doTranslate = true);
-
-    UPtr<Drawable> readDrawable(Stream* file);
 };
 
 FE_END_NAMESPACE

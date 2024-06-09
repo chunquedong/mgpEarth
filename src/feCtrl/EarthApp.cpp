@@ -378,11 +378,15 @@ bool EarthApp::getPickResult(RayQuery& result, PickResult& pickResult) {
             if (geoNode) {
                 layer = geoNode;
             }
-            if (const char* userIds = node->getTag("user_id")) {
-                userId = atol(userIds);
+            if (node->getUserId() != -1) {
+                userId = node->getUserId();
             }
 
             path = std::string(node->getName()) + "/" + path;
+        }
+
+        if (result.id != -1) {
+            userId = result.id;
         }
 
         if (!layer) {

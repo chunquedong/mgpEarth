@@ -95,24 +95,36 @@ public:
     void getAsStr(int i, std::string& value);
 
     int64_t getInt(int i) {
+        if (i >= this->properties.size())
+            return 0;
         return properties[i].intValue;
     }
     double getFloat(int i) {
+        if (i >= this->properties.size())
+            return 0;
         return properties[i].floatValue;
     }
-    std::string& getStr(int i) {
+    const std::string& getStr(int i) {
+        if (i >= this->properties.size())
+            return "";
         return properties[i].strValue;
     }
 
     void setInt(int i, int64_t value) {
+        if (i >= this->properties.size())
+            properties.resize(i);
         properties[i].intValue = value;
     }
 
     void setFloat(int i, double value) {
+        if (i >= this->properties.size())
+            properties.resize(i);
         properties[i].floatValue = value;
     }
 
     void setStr(int i, const std::string& value) {
+        if (i >= this->properties.size())
+            properties.resize(i);
         properties[i].strValue = value;
     }
 
