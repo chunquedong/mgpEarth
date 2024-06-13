@@ -50,6 +50,7 @@ public:
     std::string labelField;
     bool fillPolygon = true;
     bool strokePolygon = true;
+    bool pickable = true;
     double outlineHeightOffset = 100;
 
     Symbolizer();

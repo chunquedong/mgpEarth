@@ -51,6 +51,12 @@ void Symbolizer::initAddTo(Node* node) {
     _line = line.get();
     _polygon = polygon.get();
 
+    if (!pickable) {
+        _label->setPickMask(0);
+        _line->setPickMask(0);
+        _polygon->setPickMask(0);
+    }
+
     //UPtr<Node> node = Node::create();
     node->addChild(Node::createForComponent(std::move(label)));
     node->addChild(Node::createForComponent(std::move(line)));
