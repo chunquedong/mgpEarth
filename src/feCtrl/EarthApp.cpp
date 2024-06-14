@@ -343,18 +343,18 @@ bool EarthApp::showLoadProgress(Node* node) {
             progress = layerNode->getProgress();
         }
         if (progress >= 1.0) {
-            setTimeout(200, [=]() {
+            Toolkit::cur()->setTimeout(200, [=]() {
                 getFormManager()->remove(_progressView);
                 this->_progressView = nullptr;
                 //_progressView->setVisiable(false);
             });
         }
         else {
-            setTimeout(200, this->_checkProgress);
+            Toolkit::cur()->setTimeout(200, this->_checkProgress);
         }
         progressBar->setValue(progress);
     };
-    setTimeout(200, _checkProgress);
+    Toolkit::cur()->setTimeout(200, _checkProgress);
     return true;
 }
 
