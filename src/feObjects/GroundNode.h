@@ -37,12 +37,14 @@ public:
 };
 
 class TrackModel : public Refable {
+protected:
     int lastPointIndex = 0;
     uint64_t pathEndTime = 0;
     double segmentOffset = 0;
     bool _isRuning = false;
     Node* _node = nullptr;
 public:
+    Vector3 _curPosition;
     int _id;
     double speed = 15;
     uint64_t afterDelayTime = 0;
@@ -60,7 +62,7 @@ public:
     Node* getNode() { return _node; }
 
     void setFromLonLat(std::vector<Coord2D>& path2d, double height);
-    
+
     virtual void update(float elapsedTime);
     void start();
     void stop();

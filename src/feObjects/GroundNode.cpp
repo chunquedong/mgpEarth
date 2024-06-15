@@ -103,11 +103,11 @@ void TrackModel::update(float elapsedTime) {
 
     if (path.size() == 0) return;
     if (path.size() == 1) {
-        Vector3& target = path[0];
+        _curPosition = path[0];
 
         //Vector3 dir; target.normalize(&dir);
         Matrix lookAtMatrix;
-        Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
+        Matrix::createLookAt(_curPosition, Vector3::zero(), direction, &lookAtMatrix, false);
         _node->setMatrix(lookAtMatrix * pose);
 
         setStop();
@@ -115,7 +115,6 @@ void TrackModel::update(float elapsedTime) {
     }
 
     double advance = elapsedTime / 1000.0 * speed;
-    Vector3 target;
     Vector3 direction;
     bool ok = false;
     while (lastPointIndex + 1 < path.size()) {
@@ -127,7 +126,7 @@ void TrackModel::update(float elapsedTime) {
             segmentOffset += advance;
             Vector3 dir = p1 - p0;
             Vector3 p = p0 + dir * (segmentOffset / segmentLength);
-            target = p;
+            _curPosition = p;
             direction = dir.normalize();
             ok = true;
             break;
@@ -153,7 +152,7 @@ void TrackModel::update(float elapsedTime) {
     }
 
     Matrix lookAtMatrix;
-    Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
+    Matrix::createLookAt(_curPosition, Vector3::zero(), direction, &lookAtMatrix, false);
 
     _node->setMatrix(lookAtMatrix * pose);
 }
