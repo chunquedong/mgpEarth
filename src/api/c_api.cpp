@@ -99,7 +99,7 @@ void EMSCRIPTEN_KEEPALIVE fe_addBuildingLayer(EarthApp* self, const char* name, 
 }
 
 void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const char* uri, 
-        double lng, double lat, double height, bool lighting, char* options) {
+        double lng, double lat, double height, int lighting, char* options) {
     Node* layer = self->add3dtiles(name, uri, Coord2D(lng, lat), height, lighting);
     // layer->rotateX(MATH_PI / 2);
     // layer->rotateY(MATH_PI / 4);
@@ -138,7 +138,7 @@ void EMSCRIPTEN_KEEPALIVE fe_add3dtiles(EarthApp* self, const char* name, const 
 }
 
 void EMSCRIPTEN_KEEPALIVE fe_addGroundGltf(EarthApp* self, const char* name, const char* uri, 
-    double lng, double lat, double height, bool lighting, char* options) {
+    double lng, double lat, double height, int lighting, char* options) {
     GroundModel* model = new GroundModel(uri);
     model->setName(name);
     model->app = self;
@@ -225,7 +225,7 @@ void EMSCRIPTEN_KEEPALIVE fe_rotateTo(EarthApp* self, float rx, float rz, uint64
 }
 
 
-void EMSCRIPTEN_KEEPALIVE fe_addMultiModel(EarthApp* self, const char* name, const char* uri, bool lighting, char* options) {
+void EMSCRIPTEN_KEEPALIVE fe_addMultiModel(EarthApp* self, const char* name, const char* uri, int lighting, char* options) {
     MultiModel* model = new MultiModel(uri);
     model->setName(name);
     //model->app = self;

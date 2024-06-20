@@ -186,7 +186,7 @@ FeApp.prototype.addBuildingLayer = function(name, uri, options) {
  * @param lng 经度
  * @param lat 纬度
  * @param height 高程（海拔高度）
- * @param lighting 是否使用光照 
+ * @param lighting 光照类型，默认取1 
  * @param options 选项json对象，可为空。有下列选项:
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
@@ -209,7 +209,7 @@ FeApp.prototype.add3dtiles = function(name, uri, lng, lat, height, lighting, opt
  * @param lng 经度
  * @param lat 纬度
  * @param height 高程（海拔高度）
- * @param lighting 是否使用光照 
+ * @param lighting 光照类型，默认取1 
  * @param options 选项json对象，可为空。有下列选项:
  *      rotateX: 绕X轴旋转，rotateY：绕Y轴旋转，rotateZ：绕Z轴旋转
  *      scale： 缩放
@@ -291,7 +291,7 @@ FeApp.prototype.rotateTo = function(rx, rz, time) {
  * 添加多实例渲染模型
  * @param name 图层对象名称，为了便于以后进行删除等操作
  * @param uri 图层数据源地址（gltf模型文件）
- * @param lighting 是否使用光照 
+ * @param lighting 光照类型，默认取1  
  * @param options 选项json对象，可为空。
  */
 FeApp.prototype.addMultiModel = function(name, uri, lighting, options) {

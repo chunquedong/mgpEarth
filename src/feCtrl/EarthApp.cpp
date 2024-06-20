@@ -270,7 +270,7 @@ XyzTileManager* EarthApp::addTileLayer(const char *name, const char* uri, const 
     return tileManager;
 }
 
-Node* EarthApp::add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, bool lighting)
+Node* EarthApp::add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, int lighting)
 {
     TdTilesManager* tdtiles = new TdTilesManager(uri);
     tdtiles->lighting = lighting;

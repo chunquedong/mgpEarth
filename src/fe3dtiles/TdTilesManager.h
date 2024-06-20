@@ -30,7 +30,7 @@ class TdTilesManager : public TileManager {
     std::map<std::string, std::string> tokens;
 
 public:
-    bool lighting = false;
+    int lighting = 0;
 
     TdTilesManager(const std::string& uri);
     ~TdTilesManager();

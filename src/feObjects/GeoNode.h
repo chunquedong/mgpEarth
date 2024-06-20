@@ -33,7 +33,7 @@ public:
 
 class GltfNode : public GeoNode {
 public:
-    bool lighting = false;
+    int lighting = 0;
     GltfNode(const char* uri);
     
     virtual void* decodeFile(const char* path, NetResponse& lastRes, MultiRequest* req) override;

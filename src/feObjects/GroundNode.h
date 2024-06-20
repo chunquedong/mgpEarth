@@ -68,7 +68,7 @@ public:
     void stop();
     void reset();
     void pause();
-    bool isRuning() { return _isRuning; }
+    bool isRuning();
     void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
 private:
     void setStop();

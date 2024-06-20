@@ -36,7 +36,7 @@ class EarthApp : public Application, public PickerListener, public Refable {
     void render(float elapsedTime) override;
     void finalize() override;
 public:
-    Node* add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, bool lighting);
+    Node* add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, int lighting);
     XyzTileManager* addTileLayer(const char *name, const char* uri, const char* elevationUri);
     void addGeoNode(UPtr<GeoNode> node);
     void insertGeoNode(UPtr<GeoNode> node);
