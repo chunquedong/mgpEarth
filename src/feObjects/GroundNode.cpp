@@ -104,6 +104,7 @@ void TrackModel::update(float elapsedTime) {
     }
 
     if (path.size() == 0) return;
+
     if (path.size() == 1) {
         _curPosition = path[0];
 
@@ -112,12 +113,18 @@ void TrackModel::update(float elapsedTime) {
         Matrix::createLookAt(_curPosition, Vector3::zero(), direction, &lookAtMatrix, false);
         _node->setMatrix(lookAtMatrix * pose);
 
+        if (onPositionUpdate) {
+            onPositionUpdate(this);
+        }
         setStop();
         return;
     }
 
+    int beginSegemntIndex = lastPointIndex;
+    double beginSegmentOffset = segmentOffset;
+
     double advance = elapsedTime / 1000.0 * speed;
-    Vector3 direction;
+    Vector3 lineDirection;
     bool ok = false;
     while (lastPointIndex + 1 < path.size()) {
         Vector3& p0 = path[lastPointIndex];
@@ -129,14 +136,17 @@ void TrackModel::update(float elapsedTime) {
             Vector3 dir = p1 - p0;
             Vector3 p = p0 + dir * (segmentOffset / segmentLength);
             _curPosition = p;
-            direction = dir.normalize();
+            lineDirection = dir.normalize();
             ok = true;
+            _offsetLength += advance;
+
             break;
         }
         else {
             advance -= (segmentLength - segmentOffset);
             segmentOffset = 0;
             lastPointIndex++;
+            _offsetLength += segmentLength;
         }
     }
 
@@ -153,10 +163,23 @@ void TrackModel::update(float elapsedTime) {
         return;
     }
 
+    //skip line segment or first init
+    if (lastPointIndex - beginSegemntIndex > 1 || (beginSegemntIndex == 0 && beginSegmentOffset == 0) ) {
+        direction = lineDirection;
+    }
+    else {
+        double blendAlpha = 0.3;
+        direction = this->direction * (1.0- blendAlpha) + lineDirection * blendAlpha;
+    }
+
     Matrix lookAtMatrix;
     Matrix::createLookAt(_curPosition, Vector3::zero(), direction, &lookAtMatrix, false);
 
     _node->setMatrix(lookAtMatrix * pose);
+
+    if (onPositionUpdate) {
+        onPositionUpdate(this);
+    }
 }
 void TrackModel::start() {
     _isRuning = true;
@@ -169,6 +192,7 @@ void TrackModel::reset() {
     lastPointIndex = 0;
     segmentOffset = 0;
     pathEndTime = 0;
+    _offsetLength = 0;
 }
 
 void TrackModel::pause()

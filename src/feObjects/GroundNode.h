@@ -38,22 +38,49 @@ public:
 
 class TrackModel : public Refable {
 protected:
+    //line segment index
     int lastPointIndex = 0;
+
+    //animation stop time
     uint64_t pathEndTime = 0;
+
+    //offset in curernt line segment
     double segmentOffset = 0;
+
+    //distance from begin to current position in path
+    double _offsetLength = 0;
     bool _isRuning = false;
     Node* _node = nullptr;
 public:
+    //current position
     Vector3 _curPosition;
+
+    //current instance id
     int _id;
+
+    //animation speed
     double speed = 15;
+
+    //delay time to call 'onStop' after end animation
     uint64_t afterDelayTime = 0;
+
+    //init pose matrix
     Matrix pose;
+
+    //animation along path
     std::vector<Vector3> path;
+
+    //init model drection
     Vector3 direction;
+
+    //user define data
     UPtr<Refable> userData;
 
+    //callback when animation end
     std::function<void(TrackModel*)> onStop;
+
+    //callback when position changed
+    std::function<void(TrackModel*)> onPositionUpdate;
 
     TrackModel();
     ~TrackModel();
@@ -69,7 +96,18 @@ public:
     void reset();
     void pause();
     bool isRuning();
+
+    /**
+    * play first gltf animation
+    */
     void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
+
+    /**
+    * distance from begin to current position in path
+    */
+    double getOffsetLength() { return _offsetLength; }
+    double getCurSegmentOffset() { return segmentOffset; }
+    int getCurSegmentIndex() { return lastPointIndex; }
 private:
     void setStop();
 };
