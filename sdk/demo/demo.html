@@ -13,7 +13,7 @@
         margin: 0px;
         width: 100%;
         height: 100%;
-        background-color: blueviolet;
+        background-color: rgb(221, 214, 227);
       }
       body {
         margin: 0;
@@ -37,14 +37,16 @@
           
           mgpEarth.setPosition(108.964164, 34.218175, 13);
           mgpEarth.addGeoLayer("road", "/data/road/xian_road.json", {
-            "height" : 420,
+            "additionalHeight" : 420,
             "maxDis" : 50000,
-            "lineStyle": {
-              "lineWidth": 5,
-              "isFlowing": true,
-              "hasGlow": true,
-              "depthTest": false
-            }
+            "symbolizers" :[{
+              "lineStyle": {
+                "lineWidth": 5,
+                "flowSpeed": 0.5,
+                "glowPower": 1.0,
+                "depthTest": false
+              }
+            }]
           });
           mgpEarth.addBuildingLayer("building", "/data/building/xian_h.building", {
             "maxDis" : 5000,
@@ -56,6 +58,16 @@
           }, 1000);
 
           mgpEarth.showLoadProgress("building");
+
+          function resizeCanvas() {
+            var canvas = document.getElementById('canvas');
+            // canvas.width = window.innerWidth;
+            // canvas.height = window.innerHeight;
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            mgpEarth.Module.setCanvasSize(w*window.devicePixelRatio, h*window.devicePixelRatio);
+          }
+          window.addEventListener('resize', resizeCanvas, false);
       });
    </script>
 </body>

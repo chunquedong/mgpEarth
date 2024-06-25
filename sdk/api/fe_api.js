@@ -123,7 +123,7 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *      maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *      additionalHeight: 高程
  *      queryElevation： 是否自动查询高程
- *      symbolizers :[
+ *      symbolizers :[{
  *         maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *         filters: [{
  *               fieldName: 字段名称
@@ -147,7 +147,7 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *                      sphereCulling: 是否通过法线剔除label, coverStrategy: 0:不允许相互压盖，1：允许压盖。
  *                      textOffsetX: 文字x轴偏移，textOffsetY：文字y轴偏移
  *         }
- *      ]
+ *      }]
  */
 FeApp.prototype.addGeoLayer = function(name, uri, options) {
     if (options) {

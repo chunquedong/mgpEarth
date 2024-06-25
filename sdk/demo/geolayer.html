@@ -13,7 +13,7 @@
         margin: 0px;
         width: 100%;
         height: 100%;
-        background-color: blueviolet;
+        background-color: rgb(221, 214, 227);
       }
       body {
         margin: 0;
@@ -35,13 +35,15 @@
 
           
           mgpEarth.addEmptyGeoLayer("poi", 1, {
-            "labelStyle": {
-              "iconSize": 20,
-              "iconImage": "res/image/text_bubble.png",
-              "labelAlign": 4,
-              "iconColor": [0.9, 0.5, 0.0, 1.0],
-              "sphereCulling": false
-            }
+            "symbolizers" :[{
+              "labelStyle": {
+                "iconSize": 20,
+                "iconImage": "res/image/text_bubble.png",
+                "labelAlign": 4,
+                "iconColor": [0.9, 0.5, 0.0, 1.0],
+                "sphereCulling": false
+              }
+            }]
           });
           mgpEarth.addGeoFeature("poi", 1, new Float64Array([108.964164, 34.218175, 100]), {id:"123",name:"test1"} );
           mgpEarth.addGeoFeature("poi", 1, new Float64Array([108.964164+0.1, 34.218175, 100]), {id:"124",name:"test2"} );
@@ -49,22 +51,24 @@
 
           mgpEarth.addEmptyGeoLayer("line", 5, {
             //"queryElevation" : true,
-            "lineStyle": {
-              "lineWidth": 6,
-              "lineColor": [1.0, 0.9, 0.8, 1.0],
-              "depthTest": true,
-              "dashLen": 200,
-              "hasDashColor": true,
-              "dashColor": [1.0, 0.3, 0.4, 1.0],
-              "dashFlowSpeed": 100.0
-            },
-            "polygonStyle": {
-              "fillColor": [0.5,0.7,0.6,0.6]
-            },
-            "outlineHeightOffset": 0,
-            "labelStyle": {
-              "sphereCulling": false
-            }
+            "symbolizers" :[{
+              "lineStyle": {
+                "lineWidth": 6,
+                "lineColor": [1.0, 0.9, 0.8, 1.0],
+                "depthTest": true,
+                "dashLen": 200,
+                "hasDashColor": true,
+                "dashColor": [1.0, 0.3, 0.4, 1.0],
+                "dashFlowSpeed": 100.0
+              },
+              "polygonStyle": {
+                "fillColor": [0.5,0.7,0.6,0.6]
+              },
+              "outlineHeightOffset": 0,
+              "labelStyle": {
+                "sphereCulling": false
+              }
+            }]
           });
           mgpEarth.addGeoFeature("line", 5, new Float64Array([
             108.964164, 34.218175, 500, 
@@ -81,6 +85,16 @@
           mgpEarth.setPosition(108.964164, 34.218175, 8);
 
           mgpEarth.showLoadProgress("gd");
+
+          function resizeCanvas() {
+            var canvas = document.getElementById('canvas');
+            // canvas.width = window.innerWidth;
+            // canvas.height = window.innerHeight;
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            mgpEarth.Module.setCanvasSize(w*window.devicePixelRatio, h*window.devicePixelRatio);
+          }
+          window.addEventListener('resize', resizeCanvas, false);
       });
    </script>
 </body>

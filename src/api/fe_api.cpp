@@ -36,12 +36,14 @@ class MyEarthApp : public EarthApp {
 
         GeoLayer* geolayer = dynamic_cast<GeoLayer*>(pickResult.layer);
         if (geolayer && geolayer->featureCollection.get() && indexOrId < geolayer->featureCollection->features.size()) {
-            auto properties = geolayer->featureCollection->features[indexOrId]->properties;
-
             jc::JsonAllocator allocator;
             jc::JsonNode* root = allocator.allocNode(jc::Type::Object);
-            for (auto it = properties.begin(); it != properties.end(); ++it) {
-                root->insert_pair(it->first.c_str(), allocator.alloc_str(it->second.c_str()));
+
+            int fieldCount = geolayer->featureCollection->getFieldCount();
+            for (int i = 0; i < fieldCount; ++i) {
+                std::string value;
+                geolayer->featureCollection->features[pickResult.drawableIndex]->getAsStr(i, value);
+                root->insert_pair(geolayer->featureCollection->getField(i)->name.c_str(), allocator.alloc_str(value.c_str()));
             }
             root->reverse();
             root->to_json(jsonstr);
@@ -55,7 +57,7 @@ extern "C" {
 
 EarthApp* EMSCRIPTEN_KEEPALIVE fe_createApp(int w, int h) {
     MyEarthApp* instance = new MyEarthApp();
-    Platform::run("mgpEarth", w, h);
+    Platform::run(instance, "mgpEarth", w, h);
     return instance;
 }
 

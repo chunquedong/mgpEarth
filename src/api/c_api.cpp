@@ -376,7 +376,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
     JsonParser parser(&allocator);
     Value* jproperties = nullptr;
     if (attributes && *attributes) {
-        JsonAllocator allocator;
+        //JsonAllocator allocator;
         JsonParser parser(&allocator);
         Value* value0 = parser.parse((char*)attributes);
         if (!value0 || parser.get_error()[0] != 0) {
@@ -392,6 +392,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         f->geometry.coordinates.push_back(coords[0]);
         f->geometry.coordinates.push_back(coords[1]);
         f->geometry.coordinates.push_back(coords[2]);
+        f->parent = layer->featureCollection.get();
         f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }
@@ -409,6 +410,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.startPoint = 0;
         line.size = pointNum;
         f->geometry.lines.push_back(line);
+        f->parent = layer->featureCollection.get();
         f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }
@@ -426,6 +428,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_addGeoFeature(EarthApp* self, const char* name, int
         line.startPoint = 0;
         line.size = pointNum;
         f->geometry.lines.push_back(line);
+        f->parent = layer->featureCollection.get();
         f->parseProperties(jproperties);
         layer->featureCollection->add(std::move(f));
     }

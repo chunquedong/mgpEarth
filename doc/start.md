@@ -29,6 +29,17 @@ mgpEarth提供C、C++、Javascript API接口。这里以JS接口为例来说明�
 
           //设置初始位置
           mgpEarth.setPosition(108.964164, 34.218175, 0);
+
+          //窗口大小改变的时候保持全屏显示
+          function resizeCanvas() {
+            var canvas = document.getElementById('canvas');
+            // canvas.width = window.innerWidth;
+            // canvas.height = window.innerHeight;
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            mgpEarth.Module.setCanvasSize(w*window.devicePixelRatio, h*window.devicePixelRatio);
+          }
+          window.addEventListener('resize', resizeCanvas, false);
       });
 ```
 
