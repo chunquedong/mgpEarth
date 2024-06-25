@@ -64,7 +64,7 @@ void EarthApp::render(float elapsedTime) {
     Application::render(elapsedTime);
 
     earthCtrl->picker.render(getView()->getCamera(), getView()->getViewport());
-
+#ifndef NO_BRAND
     font->start();
     Rectangle* viewport = getView()->getViewport();
     int padding = 10;
@@ -72,7 +72,7 @@ void EarthApp::render(float elapsedTime) {
     float y = viewport->height / Toolkit::cur()->getScreenScale() - fontSize - padding;
     font->drawText(L"mgpEarth", padding, y, Vector4::one(), fontSize, wcslen(L"mgpEarth"));
     font->finish(NULL);
-
+#endif
     drawLocationText();
 }
 
