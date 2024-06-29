@@ -11,17 +11,53 @@
 ```
   //最后的options参数用来配置图层显示样式。
   mgpEarth.addGeoLayer("polygon", "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson", {
-    "queryElevation" : true,
-    "lineStyle": {
-      "lineWidth": 1,
-      "depthTest": true
-    },
-    "polygonStyle": {
-      "fillColor": [0.5,0.7,0.6,0.6],
-    }
-  });
+            "symbolizers" :[
+              {
+                "lineStyle": {
+                  "lineWidth": 1,
+                  "depthTest": true
+                },
+                "polygonStyle": {
+                  "fillColor": [0.5,0.7,0.6,0.6]
+                }
+              }
+            ]
+          });
 
 ```
+
+### 样式过滤
+symbolizers可以有多个，每个有filters。当遇到第一个filters匹配的时候，使用当前symbolizer样式，后面的symbolizer会被忽略。
+```
+{
+  "symbolizers" :[
+      {
+          "filters": [{
+            "fieldName" : "name_len",
+            "op": ">",
+            "value": 10
+          }],
+          "lineStyle": {
+            "lineWidth": 1,
+            "depthTest": true
+          },
+          "polygonStyle": {
+            "fillColor": [0.9,0.9,0.6,0.6]
+          }
+    },
+    {
+      "lineStyle": {
+        "lineWidth": 1,
+        "depthTest": true
+      },
+      "polygonStyle": {
+        "fillColor": [0.5,0.7,0.6,0.6]
+      }
+    }
+  ]
+}
+```
+
 
 ### 代码创建图层
 
@@ -31,14 +67,16 @@
 ```
     //创建名称为poi的图层。1表示点状数据。
     mgpEarth.addEmptyGeoLayer("poi", 1, {
-        "labelStyle": {
-            "iconSize": 60,
-            "iconImage": "res/image/m2.png",
-            "labelAlign": 1,
-            "iconColor": [1.0, 0.0, 0.0, 1.0],
-            "sphereCulling": false
-        }
-    });
+            "symbolizers" :[{
+              "labelStyle": {
+                "iconSize": 20,
+                "iconImage": "res/image/text_bubble.png",
+                "labelAlign": 4,
+                "iconColor": [0.9, 0.5, 0.0, 1.0],
+                "sphereCulling": false
+              }
+            }]
+          });
 
     //为poi图层增加点对象， 1表示几何类型为点。
     //坐标为Float32Array类型的经纬度和高程的列表。
@@ -54,19 +92,18 @@
 ```
     //创建名称为line的图层。5表示面状数据。
     mgpEarth.addEmptyGeoLayer("line", 5, {
-            //"queryElevation" : true,
-            "lineStyle": {
-              "lineWidth": 3,
-              "depthTest": true
-            },
-            "polygonStyle": {
-              "fillColor": [0.5,0.7,0.6,0.6]
-            },
-            "outlineHeightOffset": 0,
-            "labelStyle": {
-              "sphereCulling": false
-            }
-    });
+            "additionalHeight" : 420,
+            "maxDis" : 50000,
+            "symbolizers" : [{
+              "lineStyle": {
+                "lineWidth": 5,
+                "flowSpeed" : 0.5,
+                "glowPower" : 1.0,
+                "depthTest" : false
+              }
+            }]
+        }
+    );
 
     //为poi图层增加点对象， 5表示几何类型为面。 面坐标的起始点必须相同。
     mgpEarth.addGeoFeature("line", 5, new Float32Array([
