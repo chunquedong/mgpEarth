@@ -474,7 +474,7 @@ bool Symbolizer::loadOptions(jc::Value* value0)
         parserColor(labelStyle, "iconColor", road->labelStyle.iconColor);
     }
 
-    Value* jfilters = labelStyle->get("filters");
+    Value* jfilters = value0->get("filters");
     if (jfilters) {
         for (auto it = jfilters->begin(); it != jfilters->end(); ++it) {
             Filter filter;
@@ -662,6 +662,8 @@ void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double ad
 /////////////////////////////////////////////////////////////////////////////
 
 bool GeoLayer::loadOptions(char* json_str) {
+    //printf("json: %s\n", json_str);
+    
     JsonAllocator allocator;
     JsonParser parser(&allocator);
     Value* value0 = parser.parse(json_str);

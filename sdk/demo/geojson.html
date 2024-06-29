@@ -41,15 +41,31 @@
           mgpEarth.addGeoLayer("points", "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_populated_places_simple.geojson");
           mgpEarth.addGeoLayer("polygon", "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson", {
             "queryElevation" : true,
-            "symbolizers" :[{
-              "lineStyle": {
-                "lineWidth": 1,
-                "depthTest": true
+            "symbolizers" :[
+                {
+                    "filters": [{
+                      "fieldName" : "name_len",
+                      "op": ">",
+                      "value": 10
+                    }],
+                    "lineStyle": {
+                      "lineWidth": 1,
+                      "depthTest": true
+                    },
+                    "polygonStyle": {
+                      "fillColor": [0.9,0.9,0.6,0.6]
+                    }
               },
-              "polygonStyle": {
-                "fillColor": [0.5,0.7,0.6,0.6],
+              {
+                "lineStyle": {
+                  "lineWidth": 1,
+                  "depthTest": true
+                },
+                "polygonStyle": {
+                  "fillColor": [0.5,0.7,0.6,0.6]
+                }
               }
-            }]
+            ]
           });
 
           mgpEarth.onPickNode = function(path, name, index, properties) {

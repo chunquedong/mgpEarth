@@ -13,6 +13,7 @@ extConfigs.linkflags= -O3 -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION
 --js-library ../mgpPro/wasm/library.js --extern-pre-js ../mgpPro/wasm/util.js --extern-pre-js ./sdk/api/fe_api.js \
 --preload-file ../mgp/res/shaders@res/shaders \
 --preload-file ../mgp/res/ui@res/ui --exclude-file ../mgp/res/ui/*.ttf \
+--preload-file ../mgp/res/image/text_bubble.png@res/image/text_bubble.png \
 --preload-file ../mgp/res/image/m2.png@res/image/m2.png \
 --preload-file ../mgp/res/skybox@res/skybox --exclude-file ../mgp/res/skybox/newport_loft.hdr \
 --preload-file ../mgp/res/fastEarth@res/fastEarth 
