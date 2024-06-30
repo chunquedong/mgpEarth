@@ -127,12 +127,24 @@ double ElevationQuery::getHeightUV(TileData* tileData, double u, double v, doubl
 
 double ElevationQuery::getTileHeight(TileData* tileData, double x, double y, double defVal, int level) {
     Envelope env = tileData->envelopeMercator();
-    if (env.containsPoint(x, y)) {
+    //if (env.containsPoint(x, y)) {
         double u = (x - env.minX()) / env.width();
         double v = (y - env.minY()) / env.height();
+        if (u < 0) {
+            u = 0;
+        }
+        else if (u > 1) {
+            u = 1;
+        }
+        if (v < 0) {
+            v = 0;
+        }
+        else if (v > 1) {
+            v = 1;
+        }
 
         return getHeightUV(tileData, u, 1-v, defVal, level);
-    }
+    //}
     return defVal;
 }
 

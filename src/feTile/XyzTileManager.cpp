@@ -9,7 +9,7 @@
 #include "feTile/DataActor.h"
 
 XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nullptr), viewScale(1.6) {
-    maxLevel = 19;
+    maxLevel = 18;
     minLevel = 2;
     if (mgp::StringUtil::contains(uri, "bdimg")) {
         pyramid = PyramidGrid::getBD();
@@ -52,7 +52,7 @@ void XyzTileManager::update(Camera* camera, Rectangle* viewport, Matrix* modelMa
                 Tile tile = tileView->tileKey().tile;
                 pyramid->tileEnvelope(tile, env);
                 Coord2D point = env.getCenter();
-                Tile elevationTile = elevation->getTileAt(point.x, point.y, tile.z-4);
+                Tile elevationTile = elevation->getTileAt(point.x, point.y, tile.z-2);
                 tileView->elevationTile(elevationTile);
                 tiles.insert(elevationTile);
             }
@@ -67,7 +67,7 @@ void XyzTileManager::update(Camera* camera, Rectangle* viewport, Matrix* modelMa
                 Tile tile = tileView->tileKey().tile;
                 pyramid->tileEnvelope(tile, env);
                 Coord2D point = env.getCenter();
-                Tile elevationTile = elevation->getTileAt(point.x, point.y, tile.z-4);
+                Tile elevationTile = elevation->getTileAt(point.x, point.y, tile.z-2);
                 tileView->elevationTile(elevationTile);
                 tiles.insert(elevationTile);
             }

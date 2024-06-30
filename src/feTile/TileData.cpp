@@ -79,7 +79,7 @@ double TileData::computeViewScale(Camera &camera, Rectangle &viewport)
 {
     Vector center;
     Coord2D c = envelope().getCenter();
-    GeoCoordSys::earth()->lnglatToXyz(c, 0, center);
+    GeoCoordSys::earth()->lnglatToXyz(c, _approximateHeight, center);
     camera.getViewMatrix().transformPoint(&center);
 
     Vector position;
@@ -87,7 +87,7 @@ double TileData::computeViewScale(Camera &camera, Rectangle &viewport)
     
     double distance = center.distance(position);
     double surfaceHeight = tan(Math::toRadians(camera.getFieldOfView()/2.0)) * distance;
-    double geoHeight = Math::toRadians(envelope().height()) * GeoCoordSys::earth()->getRadius();
+    double geoHeight = Math::toRadians(envelope().height()) * (GeoCoordSys::earth()->getRadius()+ _approximateHeight);
 
     double height = viewport.height * geoHeight / (surfaceHeight+surfaceHeight);
 

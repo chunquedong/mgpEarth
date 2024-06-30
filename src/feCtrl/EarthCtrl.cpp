@@ -270,7 +270,7 @@ void EarthCtrl::onZoom(float v, int x, int y) {
     //setZoom(getZoom()+v*0.5);
     double zoom = getZoom();
     animation->zoomTo(zoom + v * 0.5, 400);
-    if (zoom < 8) {
+    if (zoom < 6) {
         rotationZ *= 0.8;
         rotationX *= 0.8;
     }
