@@ -94,9 +94,12 @@ static double imageSample(Image* image, double u, double v, int level) {
             double dx = (sx - x);
             double dy = (sy - y);
             double disSq = dx * dx + dy * dy;
-            if (disSq > 1) continue;
+            if (disSq >= 1) continue;
 
             double value = imageSampleOne(data, w, h, sx, sy, ppb);
+            if (disSq < 0.00001) {
+                return value;
+            }
             double weight = (1 - disSq) / disSq;
             sumValue += value * weight;
             sumWeight += weight;

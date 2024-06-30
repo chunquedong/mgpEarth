@@ -202,7 +202,7 @@ void EarthCtrl::moveByPixel(float dx, float dy)
     }
     double x = 0;
     double y = 0;
-    if (getZoom() > 7) {
+    if (getZoom() >= 4) {
         double scale = 1 / xyScale();
 
         Vector3 right;
@@ -270,7 +270,7 @@ void EarthCtrl::onZoom(float v, int x, int y) {
     //setZoom(getZoom()+v*0.5);
     double zoom = getZoom();
     animation->zoomTo(zoom + v * 0.5, 400);
-    if (zoom < 6) {
+    if (zoom < 4) {
         rotationZ *= 0.8;
         rotationX *= 0.8;
     }

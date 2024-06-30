@@ -114,7 +114,7 @@ UPtr<Mesh> TileGeom::makeMesh(double radius, Vector &center, int lod, Tile &tile
         startY = -90;
     }
 
-    double skirtPadding = width*0.05;
+    double skirtPadding = width*0.02;
 
     //center point offset
     Coord2D centerBL(startX+width/2, startY+height/2);
@@ -178,7 +178,7 @@ UPtr<Mesh> TileGeom::makeMesh(double radius, Vector &center, int lod, Tile &tile
                 height = elevation->getTileHeight(*elevationTile, coordMercator.x, coordMercator.y, 1, tile.z);
             }
             if (xSkirt || ySkirt) {
-                height -= mactorW * 0.2;
+                height -= mactorW * 0.02;
             }
 
             Vector vector;
@@ -234,11 +234,11 @@ void TileGeom::init(Image *image, Tile &tile, Tile* elevationTile, ElevationQuer
     //adjust the radius
     double radius = GeoCoordSys::earth()->getRadius();
 
-    if (tile.z < 10) {
+    /*if (tile.z < 8) {
         int num = 1 << tile.z;
         double scale = (1.0 - (0.01 / num));
         radius *= scale;
-    }
+    }*/
 
     Vector center;
     center.set(0,0,0);
