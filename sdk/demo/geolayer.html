@@ -30,7 +30,7 @@
           mgpEarth.addSkybox(1, 20000, Number.MAX_VALUE);
           mgpEarth.addSkybox(0, 0, 20000);
 
-          let elevationUri = null;
+          let elevationUri = "/terrain/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
           mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
 
           

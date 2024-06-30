@@ -277,12 +277,12 @@ void Symbolizer::addPolygon(Geometry* geometry, int id) {
         mgp::Polygon::clipAndTriangulate(coords.data(), 3, (int*)geometry->lines.data(),
             geometry->lines.size(), 0.5, out);
 
-        double avgZ = 0;
-        for (int i = 0; i < coords.size(); i += 3) {
-            double z = coords[i + 2];
-            avgZ += z;
-        }
-        avgZ /= (coords.size()/3);
+        //double avgZ = 0;
+        //for (int i = 0; i < coords.size(); i += 3) {
+        //    double z = coords[i + 2];
+        //    avgZ += z;
+        //}
+        //avgZ /= (coords.size()/3);
 
         std::vector<float> fcoords(out.coords.size()/2*3);
         Vector point;
@@ -290,7 +290,7 @@ void Symbolizer::addPolygon(Geometry* geometry, int id) {
             int pos0 = i * 2;
             double x = out.coords[pos0];
             double y = out.coords[pos0 + 1];
-            double z = avgZ;
+            double z = 0;
 
             _layer->coordToXyz(x, y, z, point, _layer->additionalHeight);
 
