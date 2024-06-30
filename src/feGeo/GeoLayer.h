@@ -23,7 +23,7 @@ class GeoLayer;
 
 class Symbolizer {
     friend class GeoLayer;
-
+public:
     LabelSet* _label = nullptr;
     mgp::Line* _line = nullptr;
     mgp::Polygon* _polygon = nullptr;
@@ -77,6 +77,7 @@ public:
     double additionalHeight = 0;
     bool queryElevation = false;
     bool isLnglat = true;
+    bool polygonInterpolation = false;
     Vector3 baseTranslate;
 
     std::vector<Symbolizer> symbolizers;

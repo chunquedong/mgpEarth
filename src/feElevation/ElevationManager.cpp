@@ -154,7 +154,7 @@ bool ElevationQuery::isLoaded() {
 
 ElevationManager::ElevationManager(const std::string& uri): uri(uri), cache(300), sendedTask(200), elevationScale(1.0)
 {
-    maxLevel = 7;
+    maxLevel = 15;
     minLevel = 0;
     pyramid = PyramidGrid::getDefault();
 

@@ -123,6 +123,7 @@ FeApp.prototype.addSkybox = function(dark, min, max) {
  *      maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *      additionalHeight: 高程
  *      queryElevation： 是否自动查询高程
+ *      polygonInterpolation: 是否自动多边形插值
  *      symbolizers :[{
  *         maxDis: 最大显示距离(camera离地面距离), minDis：最小显示距离(camera离地面距离)
  *         filters: [{

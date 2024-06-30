@@ -269,27 +269,60 @@ void Symbolizer::addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int
 }
 
 void Symbolizer::addPolygon(Geometry* geometry, int id) {
-    std::vector<uint32_t> indices;
+    
     std::vector<double> coords = geometry->coordinates;
 
-    mgp::Polygon::triangulate(coords.data(), 3, (int*)geometry->lines.data(),
-        geometry->lines.size(), indices);
+    if (_layer->polygonInterpolation) {
+        mgp::Polygon::TriangeData out;
+        mgp::Polygon::clipAndTriangulate(coords.data(), 3, (int*)geometry->lines.data(),
+            geometry->lines.size(), 0.5, out);
 
-    std::vector<float> fcoords(coords.size());
-    Vector point;
-    for (int i = 0; i < coords.size(); i += 3) {
-        double x = coords[i];
-        double y = coords[i + 1];
-        double z = coords[i + 2];
+        double avgZ = 0;
+        for (int i = 0; i < coords.size(); i += 3) {
+            double z = coords[i + 2];
+            avgZ += z;
+        }
+        avgZ /= (coords.size()/3);
 
-        _layer->coordToXyz(x, y, z, point, _layer->additionalHeight);
+        std::vector<float> fcoords(out.coords.size()/2*3);
+        Vector point;
+        for (int i = 0; i < out.coords.size()/2; ++i) {
+            int pos0 = i * 2;
+            double x = out.coords[pos0];
+            double y = out.coords[pos0 + 1];
+            double z = avgZ;
 
-        fcoords[i] = point.x;
-        fcoords[i + 1] = point.y;
-        fcoords[i + 2] = point.z;
+            _layer->coordToXyz(x, y, z, point, _layer->additionalHeight);
+
+            int pos = i * 3;
+            fcoords[pos] = point.x;
+            fcoords[pos + 1] = point.y;
+            fcoords[pos + 2] = point.z;
+        }
+
+        _polygon->add(fcoords.data(), fcoords.size() / 3, out.indexBuf.data(), out.indexBuf.size(), id);
     }
+    else {
+        std::vector<uint32_t> indices;
+        mgp::Polygon::triangulate(coords.data(), 3, (int*)geometry->lines.data(),
+            geometry->lines.size(), indices);
 
-    _polygon->add(fcoords.data(), fcoords.size() / 3, indices.data(), indices.size(), id);
+        std::vector<float> fcoords(coords.size());
+        Vector point;
+        for (int i = 0; i < coords.size(); i += 3) {
+            double x = coords[i];
+            double y = coords[i + 1];
+            double z = coords[i + 2];
+
+            _layer->coordToXyz(x, y, z, point, _layer->additionalHeight);
+
+            fcoords[i] = point.x;
+            fcoords[i + 1] = point.y;
+            fcoords[i + 2] = point.z;
+        }
+
+        _polygon->add(fcoords.data(), fcoords.size() / 3, indices.data(), indices.size(), id);
+    }
 }
 
 void Symbolizer::addPoint(Feature* feature, Geometry* geometry, int index, int id) {
@@ -689,6 +722,11 @@ bool GeoLayer::loadOptions(char* json_str) {
     Value* additionalHeight = value0->get("additionalHeight");
     if (additionalHeight) {
         road->additionalHeight = additionalHeight->as_float();
+    }
+
+    Value* polygonInterpolation = value0->get("polygonInterpolation");
+    if (polygonInterpolation) {
+        road->polygonInterpolation = polygonInterpolation->as_bool();
     }
 
     Value* queryElevation = value0->get("queryElevation");
