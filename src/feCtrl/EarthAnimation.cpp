@@ -79,20 +79,26 @@ bool AnimChannel::update(float elapsedTime) {
     return true;
 }
 
-void EarthAnimation::fling(float dx, float dy)
+void EarthAnimation::fling(float vx, float vy)
 {
-    if (fabs(dx) <= 1 && fabs(dy) <=1) {
+    if (vx == 0.0 && vy == 0.0) {
         return;
     }
 
-    flingChannel->dx = dx;
-    flingChannel->dy = dy;
+    flingChannel->vx = vx;
+    flingChannel->vy = vy;
     //printf("animation start: %f, %f\n", dx, dy);
-
-    float acc = 0.015f;
-    flingChannel->acceleratedX = -acc * dx;
-    flingChannel->acceleratedY = -acc * dy;
-
+#if 1
+    float acc = 0.004f;
+    flingChannel->acceleratedX = -acc * vx;
+    flingChannel->acceleratedY = -acc * vy;
+#else
+    float acc = 0.008f;
+    Vector2 v(vx, vy);
+    v.normalize();
+    flingChannel->acceleratedX = -acc * v.x;
+    flingChannel->acceleratedY = -acc * v.y;
+#endif
     start(flingChannel);
 }
 
@@ -145,27 +151,31 @@ void FlingAnimChannel::doUpdate(float elapsedTime, float percentComplete)
 {
     if (acceleratedX == 0 && acceleratedY == 0) return;
 
-    float t = elapsedTime * 0.1;
+    float t = elapsedTime;
     float t2 = t * t;
 
-    float nx = dx + acceleratedX * t2;
-    float ny = dy + acceleratedY * t2;
+    float sx = vx * t + acceleratedX * t2 * 0.5;
+    float sy = vy * t + acceleratedY * t2 * 0.5;
 
-    //printf("animation: %f, %f => %f, %f\n", dx, dy, nx, ny);
+    float nvx = vx + acceleratedX * t;
+    float nvy = vy + acceleratedY * t;
+    //printf("animation: %f, %f => %f, %f\n", vx, vy, nvx, nvy);
 
-    if (nx * dx <= 0 || ny * dy <= 0) {
-        dx = 0;
+    if (nvx * vx < 0 || nvy * vy < 0) {
+        vx = 0;
         acceleratedX = 0;
-        dy = 0;
+        vy = 0;
         acceleratedY = 0;
+        sx = 0;
+        sy = 0;
     }
     else {
-        dx = nx;
-        dy = ny;
+        vx = nvx;
+        vy = nvy;
     }
 
-    if (dx != 0 || dy != 0) {
-        ctrl->moveByPixel(dx, dy);
+    if (sx != 0 || sy != 0) {
+        ctrl->moveByPixel(sx, sy);
     }
 }
 

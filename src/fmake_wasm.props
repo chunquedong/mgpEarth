@@ -18,3 +18,4 @@ extConfigs.linkflags= -O3 -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION
 --preload-file ../mgp/res/skybox/MilkyWay@res/skybox/MilkyWay \
 --preload-file ../mgp/res/skybox/skyboxsun25deg@res/skybox/skyboxsun25deg \
 --preload-file ../mgp/res/fastEarth@res/fastEarth 
+compiler = gcc

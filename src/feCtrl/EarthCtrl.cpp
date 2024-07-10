@@ -312,7 +312,7 @@ void EarthCtrl::onTouch() {
 void EarthCtrl::onDrag(int dx, int dy) {
     moveByPixel(dx, dy);
 }
-void EarthCtrl::onFling(int dx, int dy) {
+void EarthCtrl::onFling(float dx, float dy) {
     animation->fling(dx, dy);
 }
 void EarthCtrl::onRightDrag(int dx, int dy) {

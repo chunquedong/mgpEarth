@@ -34,8 +34,8 @@ class FlingAnimChannel : public AnimChannel
 {
 public:
   EarthCtrl *ctrl = NULL;
-  float dx;
-  float dy;
+  float vx;
+  float vy;
   float acceleratedX;
   float acceleratedY;
 

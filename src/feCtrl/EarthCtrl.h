@@ -110,7 +110,7 @@ private:
 
     void onTouch() override;
     void onDrag(int dx, int dy) override;
-    void onFling(int dx, int dy) override;
+    void onFling(float dx, float dy) override;
     void onRightDrag(int dx, int dy) override;
     void onDoubleClick(int dx, int dy) override;
     void onClick(int x, int y) override;
