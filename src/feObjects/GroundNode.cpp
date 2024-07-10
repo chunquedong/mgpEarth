@@ -73,7 +73,7 @@ void GroundModel::update(float elapsedTime) {
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-TrackModel::TrackModel(): direction(Vector3::unitZ()) {
+TrackModel::TrackModel(): direction(Vector3::unitZ()), updateDelay(1000), lastUpdateTime(0) {
 }
 
 TrackModel::~TrackModel()
@@ -96,10 +96,60 @@ void TrackModel::setFromLonLat(std::vector<Coord2D>& path2d, double height) {
     }
 }
 
+bool TrackModel::updateHeight(int stickMethod) {
+    if (stickMethod == 1) {
+        Vector3 target;
+        if (parent->app && EarthCtrl::getGroundPointByNormal(_curPosition, parent->app->getEarth(), target)) {
+            _curPosition = target;
+            _height = _curPosition.length() - GeoCoordSys::earth()->getRadius();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else if (stickMethod == 2) {
+        if (!OfflineElevation::cur()) return false;
+        Coord2D lnglat;
+        GeoCoordSys::xyzToBl(_curPosition, lnglat);
+        double height = OfflineElevation::cur()->getHeight(lnglat.x, lnglat.y, 18);
+        Vector3 normal;
+        _curPosition.normalize(&normal);
+        _curPosition = normal * (GeoCoordSys::earth()->getRadius() + height);
+        _height = height;
+        return true;
+    }
+    return true;
+}
+
+bool TrackModel::tryUpdateHeight() {
+    if (autoStickGround) {
+        uint64_t now = System::millisTicks();
+        if (now - lastUpdateTime > updateDelay) {
+            if (updateHeight(autoStickGround)) {
+                lastUpdateTime = now;
+                return true;
+            }
+        }
+        else {
+            Vector3 normal;
+            _curPosition.normalize(&normal);
+            _curPosition = normal * (GeoCoordSys::earth()->getRadius() + _height);
+        }
+    }
+    return false;
+}
+
 void TrackModel::update(float elapsedTime) {
     //GltfNode::update(elapsedTime);
-    if (!_isRuning) return;
     if (!_node) {
+        return;
+    }
+
+    if (!_isRuning) {
+        if (lastUpdateTime == 0) {
+            tryUpdateHeight();
+        }
         return;
     }
 
@@ -107,6 +157,7 @@ void TrackModel::update(float elapsedTime) {
 
     if (path.size() == 1) {
         _curPosition = path[0];
+        tryUpdateHeight();
 
         //Vector3 dir; target.normalize(&dir);
         Matrix lookAtMatrix;
@@ -163,6 +214,8 @@ void TrackModel::update(float elapsedTime) {
         return;
     }
 
+    tryUpdateHeight();
+
     //skip line segment or first init
     if (lastPointIndex - beginSegemntIndex > 1 || (beginSegemntIndex == 0 && beginSegmentOffset == 0) ) {
         direction = lineDirection;
@@ -211,6 +264,9 @@ void TrackModel::playAnimation(int repeatCount)
     for (auto it = animations.begin(); it != animations.end(); ++it) {
         Animation* anim = *it;
         AnimationClip* clip = anim->getClip();
+        if (clip->isPlaying()) {
+            continue;
+        }
         clip->setRepeatCount(repeatCount);
         clip->play();
     }
@@ -221,16 +277,18 @@ void TrackModel::setStop()
     if (_isRuning) {
         _isRuning = false;
 
-        std::set<Animation*> animations;
-        this->getNode()->getAllAnimations(animations);
-        for (auto it = animations.begin(); it != animations.end(); ++it) {
-            Animation* anim = *it;
-            AnimationClip* clip = anim->getClip();
-            clip->stop();
-        }
-
         if (onStop)
             onStop(this);
+    }
+}
+
+void TrackModel::stopAnimation() {
+    std::set<Animation*> animations;
+    this->getNode()->getAllAnimations(animations);
+    for (auto it = animations.begin(); it != animations.end(); ++it) {
+        Animation* anim = *it;
+        AnimationClip* clip = anim->getClip();
+        clip->stop();
     }
 }
 
@@ -269,6 +327,7 @@ void MultiModel::update(float elapsedTime) {
 int MultiModel::add(UPtr<TrackModel> inst) {
     int id = ++_idCount;
     inst->_id = id;
+    inst->parent = this;
     _instances[id] = std::move(inst);
     return id;
 }

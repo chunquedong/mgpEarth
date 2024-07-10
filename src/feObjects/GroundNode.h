@@ -36,6 +36,7 @@ public:
     bool updateHeight(int stickMethod = 1);
 };
 
+class MultiModel;
 class TrackModel : public Refable {
 protected:
     //line segment index
@@ -51,7 +52,13 @@ protected:
     double _offsetLength = 0;
     bool _isRuning = false;
     Node* _node = nullptr;
+    uint64_t lastUpdateTime;
+    double _height = 0;
 public:
+    MultiModel* parent;
+    int autoStickGround = 0;
+    uint64_t updateDelay;
+
     //current position
     Vector3 _curPosition;
 
@@ -101,6 +108,7 @@ public:
     * play first gltf animation
     */
     void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
+    void stopAnimation();
 
     /**
     * distance from begin to current position in path
@@ -110,6 +118,9 @@ public:
     int getCurSegmentIndex() { return lastPointIndex; }
 private:
     void setStop();
+    bool updateHeight(int stickMethod = 1);
+protected:
+    bool tryUpdateHeight();
 };
 
 class MultiModel : public GltfNode {
@@ -118,6 +129,7 @@ protected:
     int _idCount = 0;
     std::map<int, UPtr<TrackModel> > _instances;
 public:
+    EarthApp* app = NULL;
     MultiModel(const char* uri);
 
     int add(UPtr<TrackModel> inst);

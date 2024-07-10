@@ -119,6 +119,30 @@ bool EarthCtrl::getGroundPoint(Coord2D geo_position, Node* node, Vector3& point)
     return false;
 }
 
+bool EarthCtrl::getGroundPointByNormal(Vector3& position, Node* node, Vector3& point) {
+    if (!node) return false;
+    Vector direction;
+    position.normalize(&direction);
+    direction.negate();
+    Vector farPoint = position * 1.5;
+    Ray ray(farPoint, direction);
+    std::vector<Drawable*> drawables;
+    node->getAllDrawable(drawables);
+
+    RayQuery query;
+    query.ray = ray;
+    query.pickMask = 2;
+    for (Drawable* drawable : drawables) {
+        //Vector3 target;
+        drawable->raycast(query);
+    }
+    if (query.minDistance != Ray::INTERSECTS_NONE) {
+        point = query.target;
+        return true;
+    }
+    return false;
+}
+
 bool EarthCtrl::getScreenGroundPoint(Coord2D screen_position, Vector3& point) {
     if (!_sceneView) return false;
     Camera* _camera = _sceneView->getCamera();

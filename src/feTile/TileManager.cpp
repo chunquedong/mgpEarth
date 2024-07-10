@@ -23,7 +23,7 @@ LRUCache::~LRUCache() {
     clear();
 }
 
-TileManager::TileManager(): resultDirty(false), cache(300), curSearchSet(200), sendedTask(200), overrviewSearchSet(200)
+TileManager::TileManager(): resultDirty(false), cache(300), curSearchSet(200), sendedTask(200), overrviewSearchSet(200), errorTask(200)
 {
 }
 
@@ -131,6 +131,8 @@ void TileManager::getResult(std::vector<TileDataPtr>& resultList) {
         resultList.push_back(tileView);
     }
     
+    releaseCache();
+
     resultDirty = false;
 }
 
@@ -230,7 +232,7 @@ void TileManager::sendTask(bool isOverview)
         TileDataPtr &tileView = itr->second;
     
         if (tileView->getState() == 0) {
-            if (!sendedTask.contains(tileKey)) {
+            if (!sendedTask.contains(tileKey) && !errorTask.contains(tileKey)) {
                 SPtr<Task> task = load(tileKey);
                 if (task.get()) {
                     sendedTask.set(tileKey, task);
@@ -256,6 +258,12 @@ void TileManager::onTaskDone(TileKey key) {
     //if (dataListener) {
     //    dataListener->sendMakeData();
     //}
+    TileDataPtr val;
+    TileDataPtr value = cache._get(key, val);
+    if (value.get() && value->getState() == 0) {
+        int v = 1;
+        errorTask.set(key, v);
+    }
 }
 
 class TileRequest : public HttpClient {

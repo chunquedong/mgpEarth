@@ -89,19 +89,9 @@ void EarthAnimation::fling(float dx, float dy)
     flingChannel->dy = dy;
     //printf("animation start: %f, %f\n", dx, dy);
 
-    float acc = 0.3f;
-    if (dx > 0) {
-        flingChannel->acceleratedX = -acc;
-    }
-    else {
-        flingChannel->acceleratedX = acc;
-    }
-    if (dy > 0) {
-        flingChannel->acceleratedY = -acc;
-    }
-    else {
-        flingChannel->acceleratedY = acc;
-    }
+    float acc = 0.015f;
+    flingChannel->acceleratedX = -acc * dx;
+    flingChannel->acceleratedY = -acc * dy;
 
     start(flingChannel);
 }
@@ -155,23 +145,22 @@ void FlingAnimChannel::doUpdate(float elapsedTime, float percentComplete)
 {
     if (acceleratedX == 0 && acceleratedY == 0) return;
 
-    float nx = dx + acceleratedX * elapsedTime;
-    float ny = dy + acceleratedY * elapsedTime;
+    float t = elapsedTime * 0.1;
+    float t2 = t * t;
+
+    float nx = dx + acceleratedX * t2;
+    float ny = dy + acceleratedY * t2;
 
     //printf("animation: %f, %f => %f, %f\n", dx, dy, nx, ny);
 
-    if (nx * dx <= 0) {
+    if (nx * dx <= 0 || ny * dy <= 0) {
         dx = 0;
         acceleratedX = 0;
-    }
-    else {
-        dx = nx;
-    }
-    if (ny * dy <= 0) {
         dy = 0;
         acceleratedY = 0;
     }
     else {
+        dx = nx;
         dy = ny;
     }
 

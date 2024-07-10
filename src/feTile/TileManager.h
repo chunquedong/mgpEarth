@@ -76,6 +76,7 @@ protected:
 private:
     //send task container for cancle
     HashMap<TileKey, SPtr<Task> > sendedTask;
+    Cache<TileKey, int> errorTask;
     float _progress = 0;
 protected:
     bool resultDirty;

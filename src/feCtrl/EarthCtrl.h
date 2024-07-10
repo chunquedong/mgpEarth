@@ -90,6 +90,7 @@ public:
     virtual void moveByPixel(float dx, float dy);
 
     static bool getGroundPoint(Coord2D position, Node* node, Vector3& point);
+    static bool getGroundPointByNormal(Vector3& position, Node* node, Vector3& point);
     bool getScreenGroundPoint(Coord2D screen_position, Vector3& point);
 protected:
     virtual void updateCameraTransform(Camera &camera, Rectangle &viewport);

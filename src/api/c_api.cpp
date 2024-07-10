@@ -228,7 +228,7 @@ void EMSCRIPTEN_KEEPALIVE fe_rotateTo(EarthApp* self, float rx, float rz, uint64
 void EMSCRIPTEN_KEEPALIVE fe_addMultiModel(EarthApp* self, const char* name, const char* uri, int lighting, char* options) {
     MultiModel* model = new MultiModel(uri);
     model->setName(name);
-    //model->app = self;
+    model->app = self;
     model->lighting = lighting;
     
     if (options && *options) {

@@ -36,7 +36,7 @@ static Material *makeMaterial(Material *material, Tile &tile, Image *image) {
     //ShaderProgram *effect = loadShaderProgram("fe.TileView");
     UPtr<Texture> texture;
     if (image) {
-        texture = Texture::create(uniqueFromInstant(image));
+        texture = Texture::create(uniqueFromInstant(image), true);
     } else {
         texture = Texture::create("../../fastEarth/res/earth.jpg", false);
         if (!texture.get()) {
@@ -45,6 +45,8 @@ static Material *makeMaterial(Material *material, Tile &tile, Image *image) {
     }
     //material->init(effect, texture);
     texture->setWrapMode(Texture::CLAMP, Texture::CLAMP, Texture::CLAMP);
+    texture->setFilterMode(Texture::LINEAR_MIPMAP_LINEAR, Texture::LINEAR);
+    texture->setAnisotropy(4.0);
     material->getParameter("u_diffuseTexture")->setValue(texture.get());
     //material->getStateBlock()->setCullFace(false);
 
