@@ -31,9 +31,9 @@
           mgpEarth.addSkybox(0, 0, 20000);
 
           let elevationUri = "/terrain/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicnpvbGxlciIsImEiOiIzQ1V3clI4In0.2TF5_QTXSR3T7F_dyPd1rg";
-          mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
+          // mgpEarth.addTileLayer("gd", "/gd?style=6&x={x}&y={y}&z={z}", elevationUri);
           //mgpEarth.addTileLayer("osm", "/osm/{z}/{x}/{y}.png", elevationUri);
-          //mgpEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
+          mgpEarth.addTileLayer("vearth", "/vearth/a{q}.jpeg?g=7234", elevationUri);
           //mgpEarth.addTileLayer("arc", "/arc/{z}/{y}/{x}", elevationUri);
           
           mgpEarth.setPosition(108.964164, 34.218175, 0);

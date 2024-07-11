@@ -259,6 +259,10 @@ bool TrackModel::isRuning() {
 
 void TrackModel::playAnimation(int repeatCount)
 {
+    if (!this->getNode()) {
+        return;
+    }
+    
     std::set<Animation*> animations;
     this->getNode()->getAllAnimations(animations);
     for (auto it = animations.begin(); it != animations.end(); ++it) {
