@@ -22,6 +22,7 @@ protected:
     //long-lat
     Coord2D cameraPosition;
     bool cameraDirty;
+    bool _zoomDirty;
     double groundHeight;
 
     //pitch
@@ -41,6 +42,7 @@ protected:
 public:
     Node* _groundNode;
     SceneView* _sceneView;
+    double maxLevel;
 public:
     Picker picker;
     EarthCtrl();

@@ -89,7 +89,7 @@ void EarthAnimation::fling(float vx, float vy)
     flingChannel->vy = vy;
     //printf("animation start: %f, %f\n", dx, dy);
 #if 1
-    float acc = 0.004f;
+    float acc = 0.0025f;
     flingChannel->acceleratedX = -acc * vx;
     flingChannel->acceleratedY = -acc * vy;
 #else

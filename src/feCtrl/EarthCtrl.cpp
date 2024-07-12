@@ -8,11 +8,13 @@
 
 FE_USING_NAMESPACE
 
+static double g_baseDistance = 0;
 
 EarthCtrl::EarthCtrl() : distanceToCenter(0), cameraDirty(true), rotationX(0), rotationZ(0)
-  , fieldOfViewY(60), _groundNode(NULL), _sceneView(NULL)
+  , fieldOfViewY(60), _groundNode(NULL), _sceneView(NULL), _zoomDirty(true), maxLevel(22)
 {
-    distanceToCenter = GeoCoordSys::earth()->getRadius()*3;
+    g_baseDistance = GeoCoordSys::earth()->getRadius() * 8;
+    distanceToCenter = GeoCoordSys::earth()->getRadius() * 2.5;
     groundHeight = 0;
     animation = new EarthAnimation();
     animation->init(this);
@@ -26,16 +28,17 @@ void EarthCtrl::finalize() {
 }
 
 void EarthCtrl::setZoom(double zoom) {
-    zoom = Math::clamp(zoom, 0.0, 20.0);
-    double dis = (GeoCoordSys::earth()->getRadius()*2 - groundHeight) / pow(2, zoom);
+    zoom = Math::clamp(zoom, 0.0, maxLevel);
+    double dis = g_baseDistance / pow(2, zoom);
     distanceToCenter =  dis + (GeoCoordSys::earth()->getRadius() + groundHeight);
 
+    _zoomDirty = true;
     invalidateCamera();
 }
 
 double EarthCtrl::getZoom() {
     double dis = distanceToCenter - (GeoCoordSys::earth()->getRadius() + groundHeight);
-    double p = (GeoCoordSys::earth()->getRadius()*2 - groundHeight) / dis;
+    double p = g_baseDistance / dis;
     return Math::log2(p);
 }
 
@@ -44,6 +47,8 @@ void EarthCtrl::scaleZoom(double scale)
     double dis = distanceToCenter - (GeoCoordSys::earth()->getRadius() + groundHeight);
     dis /= scale;
     distanceToCenter =  dis + (GeoCoordSys::earth()->getRadius() + groundHeight);
+
+    _zoomDirty = true;
     invalidateCamera();
 }
 
@@ -57,10 +62,13 @@ bool EarthCtrl::updateCamera(float elapsedTime, Camera &camera, Rectangle &viewp
     }
     cameraDirty = false;
 
-    uint64_t now = System::millisTicks();
-    if (now - lastGroundHeightUpdateTime > 500) {
-        lastGroundHeightUpdateTime = now;
-        updateGroundHeight(node);
+    if (_zoomDirty) {
+        uint64_t now = System::millisTicks();
+        if (now - lastGroundHeightUpdateTime > 500) {
+            _zoomDirty = false;
+            lastGroundHeightUpdateTime = now;
+            updateGroundHeight(node);
+        }
     }
 
     if (distanceToCenter < GeoCoordSys::earth()->getRadius()) {
@@ -121,6 +129,7 @@ bool EarthCtrl::getGroundPoint(Coord2D geo_position, Node* node, Vector3& point)
 
 bool EarthCtrl::getGroundPointByNormal(Vector3& position, Node* node, Vector3& point) {
     if (!node) return false;
+    if (position.isZero()) return false;
     Vector direction;
     position.normalize(&direction);
     direction.negate();
