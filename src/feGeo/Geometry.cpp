@@ -206,6 +206,9 @@ bool Feature::parseProperties(jc::Value* jproperties) {
 
         switch (field->type)
         {
+        case mgpEarth::FeatureField::Bool:
+            this->properties[field->index].intValue = i->as_bool();
+            break;
         case mgpEarth::FeatureField::Int:
             this->properties[field->index].intValue = i->as_int();
             break;
@@ -290,6 +293,9 @@ jc::JsonNode* Feature::save(jc::JsonAllocator* allocator)
         jc::JsonNode* jvalue = nullptr;
         switch (field->type)
         {
+        case mgpEarth::FeatureField::Bool:
+            jvalue = allocator->alloc_bool(this->properties[field->index].intValue);
+            break;
         case mgpEarth::FeatureField::Int:
             jvalue = allocator->alloc_int(this->properties[field->index].intValue);
             break;
