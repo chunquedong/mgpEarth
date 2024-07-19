@@ -13,6 +13,8 @@
 
 FE_BEGIN_NAMESPACE
 
+class TrackModel;
+
 class EarthCtrl : public Refable, public GestureListener {
 protected:
     EarthAnimation* animation;
@@ -39,20 +41,28 @@ protected:
 
     uint64_t lastGroundHeightUpdateTime;
 
+    UPtr<Node> _followNode;
+    int _followTrackModelId = 0;
+
+    Picker picker;
 public:
     Node* _groundNode;
     SceneView* _sceneView;
     double maxLevel;
 public:
-    Picker picker;
+    
     EarthCtrl();
     ~EarthCtrl();
+
+    void setFollowNode(Node* node, int followTrackModelId = -1);
 
     void finalize();
 
     void invalidateCamera() { cameraDirty = true; }
 
     EarthAnimation* getAnimation() { return animation; }
+
+    Picker* getPicker() { return &picker; }
 public:
 
     /**

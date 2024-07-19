@@ -488,7 +488,7 @@ bool EMSCRIPTEN_KEEPALIVE fe_showLoadProgress(EarthApp* self, const char* name) 
 
 bool EMSCRIPTEN_KEEPALIVE fe_syncPick(EarthApp* self, const char* name, int x, int y, char* layerName, double* target, long* idOrIndex) {
     RayQuery query;
-    Picker& picker = self->getEarthCtrl()->picker;
+    Picker& picker = *self->getEarthCtrl()->getPicker();
     Camera* _camera = self->getView()->getCamera();
     Node* _node = NULL;
     if (name && *name) {
@@ -558,7 +558,7 @@ double* EMSCRIPTEN_KEEPALIVE fe_lnglatToXyz(EarthApp* self, double lng, double l
 void EMSCRIPTEN_KEEPALIVE fe_setHighlight(EarthApp* self, const char* name, long idOrIndex) {
     Node* layer = (self->getView()->getScene()->findNode(name));
     if (!layer) return;
-    Picker& picker = self->getEarthCtrl()->picker;
+    Picker& picker = *self->getEarthCtrl()->getPicker();
     if (GeoLayer* geoLayer = dynamic_cast<GeoLayer*>(layer)) {
         picker.clearHighlight();
         Drawable* drawable = geoLayer->getDrawable();
@@ -590,7 +590,7 @@ void EMSCRIPTEN_KEEPALIVE fe_setHighlight(EarthApp* self, const char* name, long
 }
 
 void EMSCRIPTEN_KEEPALIVE fe_clearHighlight(EarthApp* self) {
-    return self->getEarthCtrl()->picker.clearHighlight();
+    return self->getEarthCtrl()->getPicker()->clearHighlight();
 }
 
 

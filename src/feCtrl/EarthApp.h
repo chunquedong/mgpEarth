@@ -27,6 +27,7 @@ class EarthApp : public Application, public PickerListener, public Refable {
 
     Form* _progressView = nullptr;
     std::function<void()> _checkProgress;
+    WeakPtr<Node> _progressNode;
  public:
     EarthApp();
     ~EarthApp();

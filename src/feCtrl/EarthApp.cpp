@@ -24,7 +24,7 @@ EarthApp::EarthApp() : earth(nullptr)
     font = Font::create("res/ui/sans.ttf");
     earthCtrl = new EarthCtrl();
     gesture.listener = earthCtrl;
-    earthCtrl->picker.listener = this;
+    earthCtrl->getPicker()->listener = this;
     g_defaultOfflineElevation = new OfflineElevation("res/fastEarth/gm_el_v1_small.png");
 }
 
@@ -63,7 +63,7 @@ void EarthApp::drawLocationText() {
 void EarthApp::render(float elapsedTime) {
     Application::render(elapsedTime);
 
-    earthCtrl->picker.render(getView()->getCamera(), getView()->getViewport());
+    earthCtrl->getPicker()->render(getView()->getCamera(), getView()->getViewport());
 #ifndef NO_BRAND
     font->start();
     Rectangle* viewport = getView()->getViewport();
@@ -164,7 +164,7 @@ void EarthApp::initialize() {
 
     earthCtrl->_sceneView = getView();
 
-    earthCtrl->picker.init(Renderer::cur());
+    earthCtrl->getPicker()->init(Renderer::cur());
 }
 
 void EarthApp::addAtmosphere() {
@@ -303,6 +303,7 @@ bool EarthApp::onPickNode(PickResult& pickResult) {
 }
 
 bool EarthApp::showLoadProgress(Node* node) {
+    _progressNode.clear();
     if (!_progressView) {
         UPtr<Form> form = Form::create();
         form->getContent()->setAutoSizeW(Control::AUTO_WRAP_CONTENT);
@@ -334,7 +335,12 @@ bool EarthApp::showLoadProgress(Node* node) {
     }
     progressBar->setValue(progress);
 
+    _progressNode = WeakPtr(node);
     _checkProgress = [=]() {
+        OwnPtr<Node, true> nodePtr = _progressNode.lockOwn();
+        if (nodePtr.isNull())
+            return;
+        Node* node = nodePtr.get();
         float progress = 0;
         if (GeoNode* geoNode = dynamic_cast<GeoNode*>(node)) {
             progress = geoNode->getProgress();

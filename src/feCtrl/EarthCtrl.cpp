@@ -5,6 +5,7 @@
 #include "feTile/TileLayer.h"
 #include "feModel/GeoCoordSys.h"
 //#include "pf2d/DrawNode.h"
+#include "feObjects/GroundNode.h"
 
 FE_USING_NAMESPACE
 
@@ -25,6 +26,7 @@ EarthCtrl::~EarthCtrl() {
 
 void EarthCtrl::finalize() {
     picker.finalize();
+    _followNode.clear();
 }
 
 void EarthCtrl::setZoom(double zoom) {
@@ -52,12 +54,22 @@ void EarthCtrl::scaleZoom(double scale)
     invalidateCamera();
 }
 
+void EarthCtrl::setFollowNode(Node* node, int followTrackModelId) {
+    if (!node) {
+        _followNode.clear();
+        _followTrackModelId = -1;
+        return;
+    }
+    _followNode = uniqueFromInstant(node);
+    _followTrackModelId = followTrackModelId;
+}
+
 bool EarthCtrl::updateCamera(float elapsedTime, Camera &camera, Rectangle &viewport)
 {
     Node* node = _groundNode;
 
     animation->update(elapsedTime);
-    if (!cameraDirty) {
+    if (!cameraDirty && _followNode.get() == nullptr) {
         return false;
     }
     cameraDirty = false;
@@ -200,7 +212,47 @@ void EarthCtrl::updateTransform() {
     Matrix lm =  rotateZ * rotateX * trans;
     
     Vector point;
-    GeoCoordSys::blToXyz(cameraPosition, point, GeoCoordSys::earth()->getRadius() + groundHeight);
+    if (_followNode.get()) {
+        Node* node = _followNode.get();
+        point = node->getTranslationWorld();
+        MultiModel* multiModel = dynamic_cast<MultiModel*>(node);
+        if (multiModel && _followTrackModelId != -1) {
+            TrackModel* tmodel = multiModel->get(_followTrackModelId);
+            if (tmodel && tmodel->getNode()) {
+                node = tmodel->getNode();
+                point = node->getTranslationWorld();
+
+                mgp::Vector3 normal;
+                mgp::Vector3 right;
+                point.normalize(&normal);
+                mgp::Vector3::cross(mgp::Vector3::unitZ(), normal, &right);
+                right.normalize();
+
+                double angle = Vector3::angle(right, tmodel->direction);
+                mgp::Vector3 crossNormal;
+                mgp::Vector3::cross(right, tmodel->direction, &crossNormal);
+                if (crossNormal.dot(normal) < 0) {
+                    angle = -angle;
+                }
+
+                double dangle = Math::toDegrees(-(angle - MATH_PI/2.0));
+
+                if (rotationZ - dangle > 180) {
+                    dangle += 360;
+                }
+                if (rotationZ - dangle < -180) {
+                    dangle -= 360;
+                }
+                double avgAngle = (rotationZ*(0.8)+dangle*0.2);
+                setRotationZ(avgAngle);
+            }
+        }
+
+        GeoCoordSys::xyzToBl(point, cameraPosition);
+    }
+    else {
+        GeoCoordSys::blToXyz(cameraPosition, point, GeoCoordSys::earth()->getRadius() + groundHeight);
+    }
     Matrix m;
     Matrix::createLookAt(point, Vector(0, 0, 0), Vector(0, 0, 1), &m, false);
 
