@@ -335,7 +335,7 @@ bool EarthApp::showLoadProgress(Node* node) {
     }
     progressBar->setValue(progress);
 
-    _progressNode = WeakPtr(node);
+    _progressNode = WeakPtr<Node>(node);
     _checkProgress = [=]() {
         OwnPtr<Node, true> nodePtr = _progressNode.lockOwn();
         if (nodePtr.isNull())
@@ -350,9 +350,11 @@ bool EarthApp::showLoadProgress(Node* node) {
         }
         if (progress >= 1.0) {
             Toolkit::cur()->setTimeout(200, [=]() {
-                getFormManager()->remove(_progressView);
-                this->_progressView = nullptr;
-                //_progressView->setVisiable(false);
+                if (_progressView) {
+                    getFormManager()->remove(_progressView);
+                    this->_progressView = nullptr;
+                    //_progressView->setVisiable(false);
+                }
             });
         }
         else {
