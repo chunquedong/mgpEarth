@@ -146,6 +146,16 @@ void TrackModel::update(float elapsedTime) {
         return;
     }
 
+    if (pathEndTime != 0) {
+        uint64_t now = System::currentTimeMillis();
+        if (now - pathEndTime > afterDelayTime) {
+            pathEndTime = 0;
+            if (onEnd) {
+                onEnd(this);
+            }
+        }
+    }
+
     if (!_isRuning) {
         if (lastUpdateTime == 0) {
             tryUpdateHeight();
@@ -202,15 +212,8 @@ void TrackModel::update(float elapsedTime) {
     }
 
     if (!ok) {
-        uint64_t now = System::currentTimeMillis();
-        if (pathEndTime == 0) {
-            pathEndTime = now;
-            return;
-        }
-
-        if (now - pathEndTime > afterDelayTime) {
-            setStop();
-        }
+        setStop();
+        pathEndTime = System::currentTimeMillis();
         return;
     }
 

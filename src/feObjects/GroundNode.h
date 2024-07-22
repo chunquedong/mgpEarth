@@ -86,6 +86,9 @@ public:
     //callback when animation end
     std::function<void(TrackModel*)> onStop;
 
+    //callback when animation end with delay time
+    std::function<void(TrackModel*)> onEnd;
+
     //callback when position changed
     std::function<void(TrackModel*)> onPositionUpdate;
 
