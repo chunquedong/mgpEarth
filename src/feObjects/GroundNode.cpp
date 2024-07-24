@@ -185,13 +185,13 @@ void TrackModel::update(float elapsedTime) {
     double beginSegmentOffset = segmentOffset;
 
     double advance = elapsedTime / 1000.0 * speed;
-    Vector3 lineDirection;
+    Vector3 lineDirection = this->direction;
     bool ok = false;
     while (lastPointIndex + 1 < path.size()) {
         Vector3& p0 = path[lastPointIndex];
         Vector3& p1 = path[lastPointIndex + 1];
         double segmentLength = p0.distance(p1);
-        
+
         if (segmentOffset + advance < segmentLength) {
             segmentOffset += advance;
             Vector3 dir = p1 - p0;
@@ -214,7 +214,7 @@ void TrackModel::update(float elapsedTime) {
     if (!ok) {
         setStop();
         pathEndTime = System::currentTimeMillis();
-        return;
+        _curPosition = path[path.size() - 1];
     }
 
     tryUpdateHeight();
@@ -224,7 +224,7 @@ void TrackModel::update(float elapsedTime) {
         direction = lineDirection;
     }
     else {
-        double blendAlpha = 0.3;
+        double blendAlpha = 0.5;
         direction = this->direction * (1.0- blendAlpha) + lineDirection * blendAlpha;
     }
 
