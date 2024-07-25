@@ -119,6 +119,7 @@ public:
     double getOffsetLength() { return _offsetLength; }
     double getCurSegmentOffset() { return segmentOffset; }
     int getCurSegmentIndex() { return lastPointIndex; }
+    double getCurHeight() { return _height; }
 private:
     void setStop();
     bool updateHeight(int stickMethod = 1);
