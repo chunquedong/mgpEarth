@@ -45,6 +45,9 @@ protected:
     //animation stop time
     uint64_t pathEndTime = 0;
 
+    //animation start time
+    uint64_t startTime = 0;
+
     //offset in curernt line segment
     double segmentOffset = 0;
 
@@ -52,6 +55,8 @@ protected:
     double _offsetLength = 0;
     bool _isRuning = false;
     Node* _node = nullptr;
+
+    //height update time
     uint64_t lastUpdateTime;
     double _height = 0;
 public:
@@ -70,6 +75,7 @@ public:
 
     //delay time to call 'onStop' after end animation
     uint64_t afterDelayTime = 0;
+    uint64_t beforeDelayTime = 0;
 
     //init pose matrix
     Matrix pose;

@@ -73,7 +73,7 @@ void GroundModel::update(float elapsedTime) {
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-TrackModel::TrackModel(): direction(Vector3::unitZ()), updateDelay(1000), lastUpdateTime(0) {
+TrackModel::TrackModel(): direction(Vector3::unitZ()), updateDelay(1000), lastUpdateTime(0), _id(-1) {
 }
 
 TrackModel::~TrackModel()
@@ -144,6 +144,14 @@ void TrackModel::update(float elapsedTime) {
     //GltfNode::update(elapsedTime);
     if (!_node) {
         return;
+    }
+
+    if (beforeDelayTime != 0 && startTime != 0) {
+        uint64_t now = System::currentTimeMillis();
+        if (now - startTime < beforeDelayTime) {
+            return;
+        }
+        startTime = 0;
     }
 
     if (pathEndTime != 0) {
@@ -239,6 +247,7 @@ void TrackModel::update(float elapsedTime) {
 }
 void TrackModel::start() {
     _isRuning = true;
+    startTime = System::currentTimeMillis();
 }
 void TrackModel::stop() {
     setStop();
@@ -332,8 +341,11 @@ void MultiModel::update(float elapsedTime) {
 }
 
 int MultiModel::add(UPtr<TrackModel> inst) {
-    int id = ++_idCount;
-    inst->_id = id;
+    int id = inst->_id;
+    if (id == -1) {
+        id = ++_idCount;
+        inst->_id = id;
+    }
     inst->parent = this;
     _instances[id] = std::move(inst);
     return id;
