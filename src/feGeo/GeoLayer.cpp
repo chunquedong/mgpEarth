@@ -333,13 +333,14 @@ void Symbolizer::addPoint(Feature* feature, Geometry* geometry, int index, int i
     _layer->coordToXyz(x, y, z, point, _layer->additionalHeight, false);
     //Vector point(x, y, z);
     if (feature) {
+        Vector4* color = _layer->getColor(id);
         if (labelField.size() > 0) {
             std::string value;
             feature->getAsStr(labelField, value);
-            _label->add(point, value, id);
+            _label->add(point, value, id, color);
         }
         else {
-            _label->add(point, "", id);
+            _label->add(point, "", id, color);
         }
     }
 }
@@ -689,6 +690,10 @@ void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double ad
             point = point - baseTranslate;
         }
     }
+}
+
+Vector4* GeoLayer::getColor(int i) {
+    return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////

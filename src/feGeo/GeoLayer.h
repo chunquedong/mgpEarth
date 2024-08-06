@@ -94,6 +94,9 @@ public:
     void initEmpty(GeometryType geoType);
     void updateData();
     void doUpdateRenderData();
+
+    //custom lable color
+    virtual Vector4* getColor(int i);
 protected:
     void update(float elapsedTime) override;
     void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
