@@ -54,17 +54,14 @@ void GroundModel::update(float elapsedTime) {
     Vector3 target;
     GeoCoordSys::blToXyz(position, target, GeoCoordSys::earth()->getRadius()+ height);
 
-    Vector3 dir; target.normalize(&dir);
     Matrix lookAtMatrix;
-    Matrix::createLookAt(target + dir * 100, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
-
-    Matrix rotateMatrix;
     if (!direction.isZero()) {
-        Vector3 up = Vector3::unitY();
-        Vector3 cross; Vector3::cross(direction, up, &cross);
-        Matrix::createRotation(cross, -Vector3::angle(direction, up), &rotateMatrix);
+        Matrix::createLookAt(target, Vector3::zero(), direction, &lookAtMatrix, false);
     }
-    this->setMatrix(lookAtMatrix * rotateMatrix * pose);
+    else {
+        Matrix::createLookAt(target, Vector3::zero(), Vector3::unitZ(), &lookAtMatrix, false);
+    }
+    this->setMatrix(lookAtMatrix * pose);
 
     dirty = false;
 }

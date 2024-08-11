@@ -8,7 +8,7 @@
 #include "feElevation/Elevation.h"
 #include "feTile/DataActor.h"
 
-XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nullptr), viewScale(1.6) {
+XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nullptr), viewScale(2.0) {
     maxLevel = 18;
     minLevel = 2;
     if (mgp::StringUtil::contains(uri, "bdimg")) {
