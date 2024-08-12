@@ -64,6 +64,8 @@ bool FeatureCollection::parse(std::string& json) {
         return false;
     }
 
+    dataVersion = value0->get_str("dataVersion", "1.0");
+
     Value* type = value0->get("type");
     if (!type || type->type() != Type::String || strcmp(type->as_str(), "FeatureCollection") != 0)
     {
@@ -105,6 +107,7 @@ void FeatureCollection::save(std::string& json)
     fs->reverse();
     root->insert_pair("features", fs);
     root->insert_pair("type", allocator.alloc_str("FeatureCollection"));
+    root->insert_pair("dataVersion", allocator.alloc_str("1.1"));
     root->to_json(json);
 }
 

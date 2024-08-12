@@ -141,6 +141,7 @@ class FeatureCollection : public mgp::Refable {
     friend class Feature;
     std::map<std::string, int> fieldIndex;
 public:
+    std::string dataVersion;
     GeometryType type;
     std::vector<mgp::UPtr<Feature> > features;
     std::vector<FeatureField> fields;
