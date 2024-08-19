@@ -102,7 +102,7 @@ void FeatureCollection::save(std::string& json)
     JsonNode* fs = allocator.allocNode(jc::Type::Array);
     for (auto it = features.begin(); it != features.end(); ++it) {
         auto jn = (*it)->save(&allocator);
-        fs->append(jn);
+        fs->insert(jn);
     }
     fs->reverse();
     root->insert_pair("features", fs);
