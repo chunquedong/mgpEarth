@@ -8,13 +8,14 @@ incDir = ./
 defines=GP_NO_LUA_BINDINGS,GP_GLFW
 //extIncDirs = /C:/soft/emsdk/upstream/emscripten/system/include/
 extConfigs.linkflags= -O3 -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES2 -sFULL_ES3 -sSAFE_HEAP=1 -sFETCH \
--gsource-map -sMODULARIZE -s EXPORT_NAME="createMyModule" -s TOTAL_MEMORY=1000MB \
+-gsource-map -sMODULARIZE -s EXPORT_NAME="createMyModule" -sALLOW_MEMORY_GROWTH=1 \
 -sEXPORTED_FUNCTIONS=_main,_malloc,_free -sPTHREAD_POOL_SIZE=4 -sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToUTF8OnStack -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,UTF8ToString \
 --js-library ../mgpPro/wasm/library.js --extern-pre-js ../mgpPro/wasm/util.js --extern-pre-js ./sdk/api/fe_api.js \
 --preload-file ../mgp/res/shaders@res/shaders \
---preload-file ../mgp/res/ui@res/ui --exclude-file ../mgp/res/ui/*.ttf \
---preload-file ../mgp/res/image/text_bubble.png@res/image/text_bubble.png \
+--preload-file ../mgp/res/ui@res/ui --exclude-file ../mgp/res/ui/*.ttf --exclude-file ../mgp/res/ui/*.png~ \
 --preload-file ../mgp/res/image/m2.png@res/image/m2.png \
---preload-file ../mgp/res/skybox@res/skybox --exclude-file ../mgp/res/skybox/newport_loft.hdr \
+--preload-file ../mgp/res/image/text_bubble.png@res/image/text_bubble.png \
+--preload-file ../mgp/res/skybox/MilkyWay@res/skybox/MilkyWay \
+--preload-file ../mgp/res/skybox/skyboxsun25deg@res/skybox/skyboxsun25deg \
 --preload-file ../mgp/res/fastEarth@res/fastEarth 
 compiler = gcc
