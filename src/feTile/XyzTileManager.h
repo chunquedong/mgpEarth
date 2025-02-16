@@ -13,6 +13,10 @@
 #include "feTile/TileManager.h"
 #include "feElevation/ElevationManager.h"
 
+#ifndef __EMSCRIPTEN__
+    #define MGP_THREAD 1
+#endif
+
 FE_BEGIN_NAMESPACE
 
 class PyramidGrid;
@@ -23,7 +27,9 @@ class XyzTileManager: public TileManager {
 
     std::string cachePath;
     SPtr<ElevationManager> elevation;
+#ifdef MGP_THREAD
     ThreadPool *threadPool;
+#endif
     SPtr<ElevationQuery> evlevationQuery;
 public:
     std::string uri;

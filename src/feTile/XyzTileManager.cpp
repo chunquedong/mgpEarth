@@ -8,7 +8,11 @@
 #include "feElevation/Elevation.h"
 #include "feTile/DataActor.h"
 
-XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nullptr), viewScale(2.0) {
+XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), 
+        #ifdef MGP_THREAD
+        threadPool(nullptr),
+        #endif
+        viewScale(2.0) {
     maxLevel = 18;
     minLevel = 2;
     if (mgp::StringUtil::contains(uri, "bdimg")) {
@@ -23,19 +27,23 @@ XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), threadPool(nul
 }
 
 XyzTileManager::~XyzTileManager() {
+#ifdef MGP_THREAD
     if (threadPool) {
         threadPool->stop();
         SAFE_DELETE(threadPool);
     }
+#endif
 }
 
 void XyzTileManager::setElevation(ElevationManager* elevation)
 {
     this->elevation = elevation;
+#ifdef MGP_THREAD
     if (!threadPool) {
         threadPool = new ThreadPool(1);
         threadPool->start();
     }
+#endif
 }
 
 void XyzTileManager::update(Camera* camera, Rectangle* viewport, Matrix* modelMatrix, bool isSendTask) {
@@ -268,7 +276,12 @@ void XyzTileManager::tryInit(TileDataPtr& tileData, bool isOverview) {
                 task->tileData = tileData;
                 task->evlevationQuery = evlevationQuery;
                 task->manager = this;
+#ifdef MGP_THREAD
                 threadPool->addTask(task);
+#else
+                task->run();
+                task->done();
+#endif
             }
         }
     }

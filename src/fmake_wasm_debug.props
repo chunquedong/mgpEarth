@@ -7,7 +7,7 @@ srcDirs = ./*
 incDir = ./
 defines=GP_NO_LUA_BINDINGS,GP_GLFW
 //extIncDirs = /C:/soft/emsdk/upstream/emscripten/system/include/
-extConfigs.linkflags= -O3 -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES2 -sFULL_ES3 -sSAFE_HEAP=1 -sFETCH \
+extConfigs.linkflags= -O3 -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES2 -sFULL_ES3 -sSAFE_HEAP=1 -sFETCH -sASSERTIONS \
 -gsource-map -sMODULARIZE -s EXPORT_NAME="createMyModule" -sALLOW_MEMORY_GROWTH=1 \
 -sEXPORTED_FUNCTIONS=_main,_malloc,_free -sPTHREAD_POOL_SIZE=4 -sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToUTF8OnStack -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,UTF8ToString \
 --js-library ../mgpPro/wasm/library.js --extern-pre-js ../mgpPro/wasm/util.js --extern-pre-js ./sdk/api/fe_api.js \
