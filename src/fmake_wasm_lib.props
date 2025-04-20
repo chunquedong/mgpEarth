@@ -7,4 +7,4 @@ srcDirs = fe3dtiles/,feCtrl/,feElevation/,feGeo/,feModel/,feObjects/,feTile/,feU
 incDir = ./
 defines=GP_NO_LUA_BINDINGS,GP_GLFW,NO_BRAND
 gcc.extConfigs.cppflags = -std=c++17
-compiler = gcc
+compiler = emcc
