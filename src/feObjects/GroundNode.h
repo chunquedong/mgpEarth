@@ -60,6 +60,7 @@ protected:
     uint64_t lastUpdateTime;
     double _height = 0;
 public:
+    int _collisionObject = 0;
     MultiModel* parent;
     int autoStickGround = 0;
     uint64_t updateDelay;
@@ -133,12 +134,13 @@ protected:
     bool tryUpdateHeight();
 };
 
-class MultiModel : public GltfNode {
+class MultiModel : public GltfNode, public PhysicsCollisionObject::CollisionListener {
 protected:
     UPtr<Node> _templateModel;
     int _idCount = 0;
     std::map<int, UPtr<TrackModel> > _instances;
 public:
+    std::function<void(int, int)> onCollisionEvent;
     EarthApp* app = NULL;
     MultiModel(const char* uri);
 
@@ -150,6 +152,11 @@ public:
     virtual void update(float elapsedTime) override;
 protected:
     virtual void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
+
+    virtual void collisionEvent(PhysicsCollisionObject::CollisionListener::EventType type,
+        const PhysicsCollisionObject::CollisionPair& collisionPair,
+        const Vector3& contactPointA = Vector3::zero(),
+        const Vector3& contactPointB = Vector3::zero()) override;
 };
 
 FE_END_NAMESPACE

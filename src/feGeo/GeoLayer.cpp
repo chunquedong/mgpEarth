@@ -243,6 +243,34 @@ bool Symbolizer::addGeometry(Feature* feature, Geometry* geometry, int id) {
     return true;
 }
 
+void bezier(const Vector3& start, const Vector3& control1, const Vector3& control2, const Vector3& end, int count,
+    std::vector<float>& outPoints)
+{
+    outPoints.push_back(start.x);
+    outPoints.push_back(start.y);
+    outPoints.push_back(start.z);
+    for (int i = 1; i <= count; i++)
+    {
+        double st = (double)i / (count + 1);
+        double dt = (1 - st);
+
+        double st2 = st * st;
+        double dt2 = dt * dt;
+
+        double t0 = dt * dt2;
+        double t1 = dt2 * st * 3;
+        double t2 = dt * st2 * 3;
+        double t3 = st * st2;
+
+        Vector3 p = start * t0 + control1 * t1 + control2 * t2 + end * t3;
+        outPoints.push_back(p.x);
+        outPoints.push_back(p.y);
+        outPoints.push_back(p.z);
+    }
+    outPoints.push_back(end.x);
+    outPoints.push_back(end.y);
+    outPoints.push_back(end.z);
+}
 
 void Symbolizer::addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int id) {
     double height = _layer->additionalHeight;
@@ -250,19 +278,72 @@ void Symbolizer::addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int
         height += outlineHeightOffset;
     }
     std::vector<float> coords;
-    Vector point;
-    //Vector3 offset;
-    for (int i = gline.startPoint; i < gline.startPoint + gline.size; ++i) {
-        int pos = i * 3;
-        double x = geometry->coordinates[pos];
-        double y = geometry->coordinates[pos + 1];
-        double z = geometry->coordinates[pos + 2];
+    
+    if (curveType == 0) {
+        Vector point;
+        //Vector3 offset;
+        for (int i = gline.startPoint; i < gline.startPoint + gline.size; ++i) {
+            int pos = i * 3;
+            double x = geometry->coordinates[pos];
+            double y = geometry->coordinates[pos + 1];
+            double z = geometry->coordinates[pos + 2];
 
-        _layer->coordToXyz(x, y, z, point, height);
+            _layer->coordToXyz(x, y, z, point, height);
 
-        coords.push_back(point.x);
-        coords.push_back(point.y);
-        coords.push_back(point.z);
+            coords.push_back(point.x);
+            coords.push_back(point.y);
+            coords.push_back(point.z);
+        }
+    }
+    else if (curveType == 1) {
+        Vector point0;
+        Vector point1;
+        Vector point2;
+        Vector point3;
+        int i = gline.startPoint;
+        for (; i+3 < gline.startPoint + gline.size; i+=3) {
+            int pos = i * 3;
+            double x = geometry->coordinates[pos];
+            double y = geometry->coordinates[pos + 1];
+            double z = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x, y, z, point0, height);
+
+            pos += 3;
+            double x1 = geometry->coordinates[pos];
+            double y1 = geometry->coordinates[pos + 1];
+            double z1 = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x1, y1, z1, point1, height);
+
+            pos += 3;
+            double x2 = geometry->coordinates[pos];
+            double y2 = geometry->coordinates[pos + 1];
+            double z2 = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x2, y2, z2, point2, height);
+
+            pos += 3;
+            double x3 = geometry->coordinates[pos];
+            double y3 = geometry->coordinates[pos + 1];
+            double z3 = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x3, y3, z3, point3, height);
+
+            bezier(point0, point1, point2, point3, 20, coords);
+        }
+
+        for (; i < gline.startPoint + gline.size; ++i) {
+            int pos = i * 3;
+            double x = geometry->coordinates[pos];
+            double y = geometry->coordinates[pos + 1];
+            double z = geometry->coordinates[pos + 2];
+
+            _layer->coordToXyz(x, y, z, point0, height);
+
+            coords.push_back(point0.x);
+            coords.push_back(point0.y);
+            coords.push_back(point0.z);
+        }
+    }
+    else {
+        abort();
     }
 
     _line->add(coords.data(), coords.size() / 3, id);

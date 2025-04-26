@@ -330,6 +330,9 @@ void MultiModel::update(float elapsedTime) {
             //std::string id = std::to_string(model->_id);
             node->setUserId(model->_id);
             model->setNode(node.get());
+            if (model->_collisionObject == 1) {
+                PhysicsCollisionObject* collisionObject = PhysicsCollisionObject::setCollisionObject(node.get(), PhysicsCollisionObject::GHOST_OBJECT);
+            }
             this->addChild(std::move(node));
         }
         model->update(elapsedTime);
@@ -382,5 +385,18 @@ void MultiModel::onReceive(Task* task, NetResponse& res, MultiRequest* req) {
         _templateModel = (UPtr<Node>(node));
         loadState = 2;
         this->setBoundsDirty();
+    }
+}
+
+void MultiModel::collisionEvent(PhysicsCollisionObject::CollisionListener::EventType type,
+    const PhysicsCollisionObject::CollisionPair& collisionPair,
+    const Vector3& contactPointA,
+    const Vector3& contactPointB) {
+    if (type == PhysicsCollisionObject::CollisionListener::COLLIDING) {
+        if (this->onCollisionEvent) {
+            int a = collisionPair.objectA->getNode()->getUserId();
+            int b = collisionPair.objectB->getNode()->getUserId();
+            this->onCollisionEvent(a, b);
+        }
     }
 }

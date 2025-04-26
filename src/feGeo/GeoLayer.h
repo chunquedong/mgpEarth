@@ -52,6 +52,7 @@ public:
     bool strokePolygon = true;
     bool pickable = true;
     double outlineHeightOffset = 100;
+    int curveType = 0;
 
     Symbolizer();
 
