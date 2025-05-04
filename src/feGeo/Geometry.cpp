@@ -11,6 +11,10 @@
 using namespace jc;
 FE_USING_NAMESPACE
 
+FeatureCollection::FeatureCollection() : type(GeometryType::Unknow) {
+    dataVersion = "1.1";
+}
+
 FeatureField* FeatureCollection::getField(const std::string& name)
 {
     auto it = fieldIndex.find(name);
@@ -66,6 +70,11 @@ bool FeatureCollection::parse(std::string& json) {
 
     dataVersion = value0->get_str("dataVersion", "1.0");
 
+    Value* crsNode = value0->get("crs");
+    if (crsNode) {
+        crs = crsNode->get_str("type");
+    }
+
     Value* type = value0->get("type");
     if (!type || type->type() != Type::String || strcmp(type->as_str(), "FeatureCollection") != 0)
     {
@@ -107,7 +116,13 @@ void FeatureCollection::save(std::string& json)
     fs->reverse();
     root->insert_pair("features", fs);
     root->insert_pair("type", allocator.alloc_str("FeatureCollection"));
-    root->insert_pair("dataVersion", allocator.alloc_str("1.1"));
+    root->insert_pair("dataVersion", allocator.alloc_str(dataVersion.c_str()));
+    
+    if (crs.size() != 0) {
+        JsonNode* crsNode = allocator.allocNode(jc::Type::Object);
+        crsNode->insert_pair("type", allocator.alloc_str(crs.c_str()));
+        root->insert_pair("crs", crsNode);
+    }
     root->to_json(json);
 }
 

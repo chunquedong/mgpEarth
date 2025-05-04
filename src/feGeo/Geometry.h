@@ -142,6 +142,7 @@ class FeatureCollection : public mgp::Refable {
     std::map<std::string, int> fieldIndex;
 public:
     std::string dataVersion;
+    std::string crs;
     GeometryType type;
     std::vector<mgp::UPtr<Feature> > features;
     std::vector<FeatureField> fields;
@@ -158,7 +159,7 @@ public:
     int removeLike(const std::string& fieldName, const std::string& value, bool one = true);
     void removeAt(int index);
 
-    FeatureCollection(): type(GeometryType::Unknow) {}
+    FeatureCollection();
     ~FeatureCollection();
 
     bool parse(std::string& json);

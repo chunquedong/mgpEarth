@@ -670,6 +670,7 @@ void GeoLayer::update(float elapsedTime)
 {
     GeoNode::update(elapsedTime);
     if (_featuresDirty) {
+        baseTranslate.set(0, 0, 0);
         doUpdateRenderData();
     }
 }
