@@ -332,6 +332,7 @@ void MultiModel::update(float elapsedTime) {
             model->setNode(node.get());
             if (model->_collisionObject == 1) {
                 PhysicsCollisionObject* collisionObject = PhysicsCollisionObject::setCollisionObject(node.get(), PhysicsCollisionObject::GHOST_OBJECT);
+                collisionObject->addCollisionListener(this);
             }
             this->addChild(std::move(node));
         }
