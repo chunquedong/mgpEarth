@@ -243,7 +243,7 @@ bool Symbolizer::addGeometry(Feature* feature, Geometry* geometry, int id) {
     return true;
 }
 
-void bezier(const Vector3& start, const Vector3& control1, const Vector3& control2, const Vector3& end, int count,
+void addCurve(const Vector3& start, const Vector3& control1, const Vector3& control2, const Vector3& end, int count,
     std::vector<float>& outPoints)
 {
     outPoints.push_back(start.x);
@@ -252,17 +252,8 @@ void bezier(const Vector3& start, const Vector3& control1, const Vector3& contro
     for (int i = 1; i <= count; i++)
     {
         double st = (double)i / (count + 1);
-        double dt = (1 - st);
+        Vector3 p = bezierCurve(start, control1, control2, end, st);
 
-        double st2 = st * st;
-        double dt2 = dt * dt;
-
-        double t0 = dt * dt2;
-        double t1 = dt2 * st * 3;
-        double t2 = dt * st2 * 3;
-        double t3 = st * st2;
-
-        Vector3 p = start * t0 + control1 * t1 + control2 * t2 + end * t3;
         outPoints.push_back(p.x);
         outPoints.push_back(p.y);
         outPoints.push_back(p.z);
@@ -270,6 +261,19 @@ void bezier(const Vector3& start, const Vector3& control1, const Vector3& contro
     outPoints.push_back(end.x);
     outPoints.push_back(end.y);
     outPoints.push_back(end.z);
+}
+
+void addCurve2(const Vector3& start, const Vector3& control1, const Vector3& control2, const Vector3& end, int count,
+    std::vector<float>& outPoints)
+{
+    for (int i = 1; i <= count; i++)
+    {
+        double st = (double)i / (count + 1);
+        Vector3 p = catmullRomSpline(start, control1, control2, end, st);
+        outPoints.push_back(p.x);
+        outPoints.push_back(p.y);
+        outPoints.push_back(p.z);
+    }
 }
 
 void Symbolizer::addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int id) {
@@ -326,7 +330,72 @@ void Symbolizer::addLine(Geometry* geometry, GeoLine& gline, bool isOutline, int
             double z3 = geometry->coordinates[pos + 2];
             _layer->coordToXyz(x3, y3, z3, point3, height);
 
-            bezier(point0, point1, point2, point3, 20, coords);
+            addCurve(point0, point1, point2, point3, 20, coords);
+        }
+
+        for (; i < gline.startPoint + gline.size; ++i) {
+            int pos = i * 3;
+            double x = geometry->coordinates[pos];
+            double y = geometry->coordinates[pos + 1];
+            double z = geometry->coordinates[pos + 2];
+
+            _layer->coordToXyz(x, y, z, point0, height);
+
+            coords.push_back(point0.x);
+            coords.push_back(point0.y);
+            coords.push_back(point0.z);
+        }
+    }
+    else if (curveType == 2) {
+        Vector point0;
+        Vector point1;
+        Vector point2;
+        Vector point3;
+        int i = gline.startPoint;
+        for (; i + 1 < gline.startPoint + gline.size; ++i) {
+            if (i - 1 < gline.startPoint) {
+                int pos = i * 3;
+                double x = geometry->coordinates[pos];
+                double y = geometry->coordinates[pos + 1];
+                double z = geometry->coordinates[pos + 2];
+                _layer->coordToXyz(x, y, z, point0, height);
+            }
+            else {
+                int pos = (i-1) * 3;
+                double x = geometry->coordinates[pos];
+                double y = geometry->coordinates[pos + 1];
+                double z = geometry->coordinates[pos + 2];
+                _layer->coordToXyz(x, y, z, point0, height);
+            }
+
+            if (i + 2 >= gline.startPoint + gline.size) {
+                int pos = (i + 1) * 3;
+                double x = geometry->coordinates[pos];
+                double y = geometry->coordinates[pos + 1];
+                double z = geometry->coordinates[pos + 2];
+                _layer->coordToXyz(x, y, z, point3, height);
+            }
+            else {
+                int pos = (i + 2) * 3;
+                double x = geometry->coordinates[pos];
+                double y = geometry->coordinates[pos + 1];
+                double z = geometry->coordinates[pos + 2];
+                _layer->coordToXyz(x, y, z, point3, height);
+            }
+
+            int pos = i * 3;
+            double x1 = geometry->coordinates[pos];
+            double y1 = geometry->coordinates[pos + 1];
+            double z1 = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x1, y1, z1, point1, height);
+
+            pos += 3;
+            double x2 = geometry->coordinates[pos];
+            double y2 = geometry->coordinates[pos + 1];
+            double z2 = geometry->coordinates[pos + 2];
+            _layer->coordToXyz(x2, y2, z2, point2, height);
+
+            addCurve2(point0, point1, point2, point3, 20, coords);
         }
 
         for (; i < gline.startPoint + gline.size; ++i) {
