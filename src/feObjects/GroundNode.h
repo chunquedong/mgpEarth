@@ -140,8 +140,9 @@ protected:
     int _idCount = 0;
     std::map<int, UPtr<TrackModel> > _instances;
 public:
-    std::function<void(int, int)> onCollisionEvent;
+    std::function<void(int id1, int id2, const char* layerName1, const char* layer2, const Vector3& pos)> onCollisionEvent;
     EarthApp* app = NULL;
+
     MultiModel(const char* uri);
 
     int add(UPtr<TrackModel> inst);

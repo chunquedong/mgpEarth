@@ -397,7 +397,9 @@ void MultiModel::collisionEvent(PhysicsCollisionObject::CollisionListener::Event
         if (this->onCollisionEvent) {
             int a = collisionPair.objectA->getNode()->getUserId();
             int b = collisionPair.objectB->getNode()->getUserId();
-            this->onCollisionEvent(a, b);
+            const char* layer1 = collisionPair.objectA->getNode()->getParent()->getName();
+            const char* layer2 = collisionPair.objectB->getNode()->getParent()->getName();
+            this->onCollisionEvent(a, b, layer1, layer2, contactPointA);
         }
     }
 }
