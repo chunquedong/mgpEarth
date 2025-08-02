@@ -20,6 +20,15 @@ void TileLayer::update(float elapsedTime) {
     //TODO
     Rectangle viewport(0, 0, 1920, 1080);
 
+    if (!isTransformInited) {
+        isTransformInited = true;
+        Matrix* rootTransform = tileManager->getRootTransform();
+        if (rootTransform) {
+            Matrix matrix = (*rootTransform) * this->getMatrix();
+            this->setMatrix(matrix);
+        }
+    }
+
     Matrix matrix = getWorldMatrix();
     tileManager->update(camera, &viewport, &matrix);
 

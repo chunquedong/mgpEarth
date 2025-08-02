@@ -128,6 +128,9 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
             TdTile* tile = static_cast<TdTile*>(tileKey->ptr);
             TileLayer* layer = new TileLayer(new TdTilesManager(res.url));
 
+            /*if (!tile->transform.isIdentity()) {
+                layer->setMatrix(tile->transform);
+            }*/
             tile->renderNode = UPtr<Node>(layer);
         }
 
@@ -143,6 +146,10 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
         scene->getRootNode()->moveChildrenTo(node.get());
         SAFE_RELEASE(scene);
 
+        //if (!tile->transform.isIdentity()) {
+        //    node->setMatrix(tile->transform);
+        //}
+
         tile->renderNode = std::move(node);
     }
 
@@ -151,4 +158,14 @@ end:
         TileKey* tile = static_cast<TileKey*>(res.id);
         onTaskDone(*tile);
     }
+}
+
+mgp::Matrix* TdTilesManager::getRootTransform() {
+    if (!tileset.root) {
+        return nullptr;
+    }
+    if (!tileset.root->transform.isIdentity()) {
+        return &tileset.root->transform;
+    }
+    return nullptr;
 }

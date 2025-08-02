@@ -278,12 +278,14 @@ Node* EarthApp::add3dtiles(const char* name, const char* uri, const Coord2D& coo
     layer->setName(name);
     getView()->getScene()->addNode(UPtr<Node>(layer));
 
-    Vector out;
-    GeoCoordSys::blToXyz(coord, out, GeoCoordSys::earth()->getRadius()+ height);
+    if (!coord.isZero() || height != 0) {
+        Vector out;
+        GeoCoordSys::blToXyz(coord, out, GeoCoordSys::earth()->getRadius() + height);
 
-    Matrix m;
-    Matrix::createLookAt(out, Vector3::zero(), Vector3::unitZ(), &m, false);
-    layer->setMatrix(m);
+        Matrix m;
+        Matrix::createLookAt(out, Vector3::zero(), Vector3::unitZ(), &m, false);
+        layer->setMatrix(m);
+    }
     //layer->rotateX(MATH_PI / 4);
     //layer->scale(10);
     return layer;

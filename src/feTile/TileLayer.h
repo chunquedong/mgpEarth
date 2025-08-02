@@ -17,6 +17,7 @@ FE_BEGIN_NAMESPACE
 class TileLayer : public Node {
     TileManager* tileManager;
     //DelayUpdater delayUpdater;
+    bool isTransformInited = false;
 public:
     float getProgress();
     //void setViewDirty() { delayUpdater.setDirty(); }

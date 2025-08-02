@@ -54,6 +54,8 @@ struct TdTile : TdCommonBase, public ITileData {
     TdTileContent content;
     std::vector<TdTile*> children;
 
+    mgp::Matrix transform;
+
     UPtr<Node> renderNode;
 
     ~TdTile();

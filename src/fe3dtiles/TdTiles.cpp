@@ -169,6 +169,21 @@ void TdTile::parse(Value* node)
             this->refine = Refinement::ADD;
         }
     }
+
+    Value* transform = json_get(node, "transform");
+    if (transform) {
+        std::vector<float> values;
+        values.reserve(16);
+        for (auto i = transform->begin(); i != transform->end(); ++i) {
+            Value* sub = *i;
+            if (sub) {
+                values.push_back(sub->as_float());
+            }
+        }
+        if (values.size() == 16) {
+            this->transform.set(values.data());
+        }
+    }
 }
 
 mgp::BoundingSphere& TdTile::bounding() {

@@ -42,6 +42,8 @@ public:
     virtual void onReceive(Task* task, NetResponse &res) override;
 
     void init();
+
+    virtual mgp::Matrix* getRootTransform() override;
 private:
     void loadData(Tile* tile);
 

@@ -93,6 +93,8 @@ public:
     void releaseCache();
 
     float getProgress();
+
+    virtual mgp::Matrix* getRootTransform() { return nullptr; };
 private:
     void searchTiles(TileDataPtr &tileView, Camera &camera, Rectangle &viewport, Matrix& modelMatrix
                   , int &count);
