@@ -44,6 +44,10 @@ void TdTilesManager::getChildren(TileDataPtr &data, std::vector<TileKey> &childr
 bool TdTilesManager::isFitLod(TileDataPtr &data, Camera &camera, Rectangle &viewport, Matrix& modelMatrix) {
     TdTile* tile = dynamic_cast<TdTile*>(data.get());
 
+    if (tile->children.size() == 0) {
+        return true;
+    }
+
     TdBoundingVolume bound;
     bound.set(tile->boundingVolume);
     bound.transform(modelMatrix);
@@ -149,6 +153,9 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
         //if (!tile->transform.isIdentity()) {
         //    node->setMatrix(tile->transform);
         //}
+
+        //modle y-up. tile bound z-up
+        node->rotateX(MATH_PI / 2);
 
         tile->renderNode = std::move(node);
     }

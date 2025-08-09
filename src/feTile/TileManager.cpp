@@ -159,6 +159,7 @@ void TileManager::searchTiles(TileDataPtr &tileView, Camera &camera, Rectangle &
     mgp::BoundingSphere bounding = tileView->bounding();
     bounding.transform(modelMatrix);
     if (!camera.getFrustum().intersects(bounding)) {
+        //auto d = tileView->getNode()->getDrawable();
         return;
     }
     
