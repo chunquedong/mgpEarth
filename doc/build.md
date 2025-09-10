@@ -22,7 +22,7 @@
 桌面版本还依赖下列库:
 - glfw
 - glew
-- openal
+- miniaudio
 - bullet
 - freetype
 - curl
@@ -33,10 +33,6 @@
 ### 构建Web版
 需要先配置fmake配置文件，见fmake项目的readme文件中的Emscripten配置。
 
-修改配置文件env/etc/famke/config.props:
-```
-compiler=gcc
-```
 
 编译Web版
 ```

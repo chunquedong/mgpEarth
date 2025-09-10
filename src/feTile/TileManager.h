@@ -31,10 +31,10 @@ union TileKey {
     }
 };
 FE_END_NAMESPACE
-FE_USING_NAMESPACE
+
 namespace std {
-  template <> struct hash<TileKey> {
-    size_t operator()(const TileKey &key) const {
+  template <> struct hash<mgpEarth::TileKey> {
+    size_t operator()(const mgpEarth::TileKey &key) const {
       return key.hashCode();
     }
   };
@@ -42,7 +42,7 @@ namespace std {
 FE_BEGIN_NAMESPACE
 
 
-class ITileData : public Refable {
+class ITileData : public mgp::Refable {
 public:
     //CF_FIELD_REF(SPtr<ITileData>, fallback)
     CF_FIELD(TileKey, parent)
@@ -54,10 +54,10 @@ public:
     virtual TileKey tileKey() = 0;
     virtual void setAsFallback(bool isFallback) {}
 };
-typedef SPtr<ITileData> TileDataPtr;
+typedef mgp::SPtr<ITileData> TileDataPtr;
 
 
-class LRUCache : public Cache<TileKey, TileDataPtr> {
+class LRUCache : public mgp::Cache<TileKey, TileDataPtr> {
 public:
     std::mutex lock;
     std::vector<TileDataPtr> toDelete;
@@ -68,15 +68,15 @@ public:
 
 class DataActor;
 
-class TileManager : public Refable, public NetListener {
+class TileManager : public mgp::Refable, public mgp::NetListener {
 protected:
     LRUCache cache;
-    HashMap<TileKey, TileDataPtr> curSearchSet;
-    HashMap<TileKey, TileDataPtr> overrviewSearchSet;
+    mgp::HashMap<TileKey, TileDataPtr> curSearchSet;
+    mgp::HashMap<TileKey, TileDataPtr> overrviewSearchSet;
 private:
     //send task container for cancle
-    HashMap<TileKey, SPtr<Task> > sendedTask;
-    Cache<TileKey, int> errorTask;
+    mgp::HashMap<TileKey, mgp::SPtr<mgp::Task> > sendedTask;
+    mgp::Cache<TileKey, int> errorTask;
     float _progress = 0;
 protected:
     bool resultDirty;
@@ -85,7 +85,7 @@ public:
 public:
     TileManager();
     virtual ~TileManager();
-    virtual void update(Camera* camera, Rectangle* viewport, Matrix* modelMatrix, bool isSendTask = true);
+    virtual void update(mgp::Camera* camera, mgp::Rectangle* viewport, mgp::Matrix* modelMatrix, bool isSendTask = true);
     void getResult(std::vector<TileDataPtr>& list);
     virtual bool resultChanged();
     void setResultDirty() { resultDirty = true; }
@@ -96,26 +96,26 @@ public:
 
     virtual mgp::Matrix* getRootTransform() { return nullptr; };
 private:
-    void searchTiles(TileDataPtr &tileView, Camera &camera, Rectangle &viewport, Matrix& modelMatrix
+    void searchTiles(TileDataPtr &tileView, mgp::Camera &camera, mgp::Rectangle &viewport, mgp::Matrix& modelMatrix
                   , int &count);
 protected:
     void sendTask(bool isOverview);
     void cancelTask();
 protected:
     virtual void onTaskDone(TileKey key);
-    virtual SPtr<Task> load(TileKey key);
+    virtual mgp::SPtr<mgp::Task> load(TileKey key);
     virtual TileDataPtr getParent(TileDataPtr t);
 protected:
     virtual TileDataPtr getRoot() = 0;
     virtual TileDataPtr makeTileData(TileKey key) = 0;
     virtual void tryInit(TileDataPtr &data, bool isOverview) {}
     virtual void getChildren(TileDataPtr &data, std::vector<TileKey> &children) = 0;
-    virtual bool isFitLod(TileDataPtr &data, Camera &camera, Rectangle &viewport, Matrix& modelMatrix) = 0;
+    virtual bool isFitLod(TileDataPtr &data, mgp::Camera &camera, mgp::Rectangle &viewport, mgp::Matrix& modelMatrix) = 0;
     
     virtual bool getUri(TileKey key, std::string &uri, std::string &file) = 0;
 
-    virtual void* decode(Task* task, NetResponse &res) = 0;
-    virtual void onReceive(Task* task, NetResponse &res) = 0;
+    virtual void* decode(mgp::Task* task, mgp::NetResponse &res) = 0;
+    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res) = 0;
 };
 
 FE_END_NAMESPACE

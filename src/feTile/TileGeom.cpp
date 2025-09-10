@@ -14,6 +14,7 @@
 #include "feElevation/Elevation.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 TileGeom::TileGeom(PyramidGrid* pyramid) : _mesh(NULL), _material(NULL), texture(NULL), _pyramid(pyramid) {
     //setRenderPass(Drawable::Custom);

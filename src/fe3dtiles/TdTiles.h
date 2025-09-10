@@ -56,7 +56,7 @@ struct TdTile : TdCommonBase, public ITileData {
 
     mgp::Matrix transform;
 
-    UPtr<Node> renderNode;
+    mgp::UPtr<mgp::Node> renderNode;
 
     ~TdTile();
 

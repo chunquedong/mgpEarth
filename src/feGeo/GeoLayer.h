@@ -17,14 +17,13 @@
 #include <float.h>
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class GeoLayer;
 
 class Symbolizer {
     friend class GeoLayer;
 public:
-    LabelSet* _label = nullptr;
+    mgp::LabelSet* _label = nullptr;
     mgp::Line* _line = nullptr;
     mgp::Polygon* _polygon = nullptr;
     GeoLayer* _layer = nullptr;
@@ -56,7 +55,7 @@ public:
 
     Symbolizer();
 
-    void initAddTo(Node* node);
+    void initAddTo(mgp::Node* node);
 
     void beginUpdate();
     void endUpdate();
@@ -73,13 +72,13 @@ public:
 class GeoLayer : public GeoNode {
     bool _featuresDirty = false;
 public:
-    UPtr<FeatureCollection> featureCollection;
+    mgp::UPtr<FeatureCollection> featureCollection;
 
     double additionalHeight = 0;
     bool queryElevation = false;
     bool isLnglat = true;
     bool polygonInterpolation = false;
-    Vector3 baseTranslate;
+    mgp::Vector3 baseTranslate;
 
     std::vector<Symbolizer> symbolizers;
 
@@ -88,19 +87,19 @@ public:
     GeoLayer(const char* uri);
     ~GeoLayer();
 
-    virtual void* decodeFile(const char* path, NetResponse& lastRes, MultiRequest* req) override;
+    virtual void* decodeFile(const char* path, mgp::NetResponse& lastRes, mgp::MultiRequest* req) override;
 protected:
-    Node* makeNode(FeatureCollection* fc);
+    mgp::Node* makeNode(FeatureCollection* fc);
 public:
     void initEmpty(GeometryType geoType);
     void updateData();
     void doUpdateRenderData();
 
     //custom lable color
-    virtual Vector4* getColor(int i);
+    virtual mgp::Vector4* getColor(int i);
 protected:
     void update(float elapsedTime) override;
-    void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
+    void onReceive(mgp::Task* task, mgp::NetResponse& res, mgp::MultiRequest* req) override;
 
 public:
     bool loadOptions(char* json_str);

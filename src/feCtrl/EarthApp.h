@@ -15,35 +15,35 @@
 FE_BEGIN_NAMESPACE
 
 
-class EarthApp : public Application, public PickerListener, public Refable {
-    Node *earth;
-    Node* atmosphere = NULL;
-    Node* _skybox = NULL;
+class EarthApp : public mgp::Application, public mgp::PickerListener, public mgp::Refable {
+    mgp::Node *earth;
+    mgp::Node* atmosphere = NULL;
+    mgp::Node* _skybox = NULL;
 
     EarthCtrl *earthCtrl;
-    Gesture gesture;
-    SPtr<ElevationManager> elevation;
-    UPtr<Font> font;
+    mgp::Gesture gesture;
+    mgp::SPtr<ElevationManager> elevation;
+    mgp::UPtr<mgp::Font> font;
 
-    Form* _progressView = nullptr;
+    mgp::Form* _progressView = nullptr;
     std::function<void()> _checkProgress;
-    WeakPtr<Node> _progressNode;
+    mgp::WeakPtr<mgp::Node> _progressNode;
  public:
     EarthApp();
     ~EarthApp();
     void initialize() override;
     void update(float elapsedTime) override;
-    bool mouseEvent(MotionEvent &event) override;
+    bool mouseEvent(mgp::MotionEvent &event) override;
     void render(float elapsedTime) override;
     void finalize() override;
 public:
-    Node* add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, int lighting);
+    mgp::Node* add3dtiles(const char* name, const char* uri, const Coord2D& coord, double height, int lighting);
     XyzTileManager* addTileLayer(const char *name, const char* uri, const char* elevationUri);
-    void addGeoNode(UPtr<GeoNode> node);
-    void insertGeoNode(UPtr<GeoNode> node);
+    void addGeoNode(mgp::UPtr<GeoNode> node);
+    void insertGeoNode(mgp::UPtr<GeoNode> node);
     void addSkybox(int dark, double minDis, double maxDis);
     bool removeNode(const char* name);
-    bool showLoadProgress(Node* node);
+    bool showLoadProgress(mgp::Node* node);
 private:
     void updateSkybox();
     void addAtmosphere();
@@ -51,18 +51,18 @@ private:
 public:
     EarthCtrl *getEarthCtrl() { return earthCtrl; }
     ElevationManager* getElevation() { return elevation.get(); }
-    Node* getEarth() { return earth; }
+    mgp::Node* getEarth() { return earth; }
 
     struct PickResult {
         std::string path;
-        Node* layer;
+        mgp::Node* layer;
         long userId;
-        Drawable* drawable;
+        mgp::Drawable* drawable;
         int drawableIndex;
     };
-    static bool getPickResult(RayQuery& result, PickResult& pickResult);
+    static bool getPickResult(mgp::RayQuery& result, PickResult& pickResult);
 protected:
-    virtual bool onPick(float x, float y, RayQuery& result) override;
+    virtual bool onPick(float x, float y, mgp::RayQuery& result) override;
 
     virtual bool onPickNode(PickResult& pickResult);
 };

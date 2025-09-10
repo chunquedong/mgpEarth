@@ -15,6 +15,7 @@
 #include "feObjects/Skybox.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 extern OfflineElevation* g_defaultOfflineElevation;
 

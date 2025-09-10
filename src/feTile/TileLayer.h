@@ -14,7 +14,7 @@
 
 FE_BEGIN_NAMESPACE
 
-class TileLayer : public Node {
+class TileLayer : public mgp::Node {
     TileManager* tileManager;
     //DelayUpdater delayUpdater;
     bool isTransformInited = false;

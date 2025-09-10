@@ -14,33 +14,32 @@
 #include "feModel/Tile.h"
 #include "feModel/Envelope.h"
 
-PF_USING_NAMESPACE
 FE_BEGIN_NAMESPACE
 
 class ElevationQuery;
 class PyramidGrid;
 
-class TileGeom : public Drawable {
-    UPtr<Mesh> _mesh;
-    UPtr<Material> _material;
+class TileGeom : public mgp::Drawable {
+    mgp::UPtr<mgp::Mesh> _mesh;
+    mgp::UPtr<mgp::Material> _material;
 
-    UPtr<Texture> texture;
-    Vector3 tranlation;
+    mgp::UPtr<mgp::Texture> texture;
+    mgp::Vector3 tranlation;
 public:
     PyramidGrid* _pyramid;
-    Vector3 getTranlation() { return tranlation; }
-    Mesh* getMesh() { return _mesh.get(); }
+    mgp::Vector3 getTranlation() { return tranlation; }
+    mgp::Mesh* getMesh() { return _mesh.get(); }
 
     TileGeom(PyramidGrid* pyramid);
     ~TileGeom();
-    void init(Image *image, Tile &tile, Tile* elevationTile, ElevationQuery* elevation);
+    void init(mgp::Image *image, Tile &tile, Tile* elevationTile, ElevationQuery* elevation);
 
-    unsigned int draw(RenderInfo* view) override;
-    bool doRaycast(RayQuery& query) override;
-    const BoundingSphere* getBoundingSphere() override;
-    Material* getMainMaterial() const override { return _material.get(); };
+    unsigned int draw(mgp::RenderInfo* view) override;
+    bool doRaycast(mgp::RayQuery& query) override;
+    const mgp::BoundingSphere* getBoundingSphere() override;
+    mgp::Material* getMainMaterial() const override { return _material.get(); };
 private:
-    UPtr<Mesh> makeMesh(double radius, Vector &center, int lod, Tile &tile, Vector3& translation, Tile* elevationTile, ElevationQuery* elevation);
+    mgp::UPtr<mgp::Mesh> makeMesh(double radius, mgp::Vector3 &center, int lod, Tile &tile, mgp::Vector3& translation, Tile* elevationTile, ElevationQuery* elevation);
 };
 
 

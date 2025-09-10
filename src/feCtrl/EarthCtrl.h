@@ -15,7 +15,7 @@ FE_BEGIN_NAMESPACE
 
 class TrackModel;
 
-class EarthCtrl : public Refable, public GestureListener {
+class EarthCtrl : public mgp::Refable, public mgp::GestureListener {
 protected:
     EarthAnimation* animation;
 
@@ -35,26 +35,26 @@ protected:
     //Coord2D lastTouchPosition;
     double fieldOfViewY;
 
-    Rectangle viewport;
+    mgp::Rectangle viewport;
 
-    Matrix cameraTransform;
+    mgp::Matrix cameraTransform;
 
     uint64_t lastGroundHeightUpdateTime;
 
-    UPtr<Node> _followNode;
+    mgp::UPtr<mgp::Node> _followNode;
     int _followTrackModelId = 0;
 
-    Picker picker;
+    mgp::Picker picker;
 public:
-    Node* _groundNode;
-    SceneView* _sceneView;
+    mgp::Node* _groundNode;
+    mgp::SceneView* _sceneView;
     double maxLevel;
 public:
     
     EarthCtrl();
     ~EarthCtrl();
 
-    void setFollowNode(Node* node, int followTrackModelId = -1);
+    void setFollowNode(mgp::Node* node, int followTrackModelId = -1);
 
     void finalize();
 
@@ -62,7 +62,7 @@ public:
 
     EarthAnimation* getAnimation() { return animation; }
 
-    Picker* getPicker() { return &picker; }
+    mgp::Picker* getPicker() { return &picker; }
 public:
 
     /**
@@ -97,23 +97,23 @@ public:
     /**
     * really do update the camera matrix
     */
-    virtual bool updateCamera(float elapsedTime, Camera &camera, Rectangle &viewport);
+    virtual bool updateCamera(float elapsedTime, mgp::Camera &camera, mgp::Rectangle &viewport);
 
     virtual void moveByPixel(float dx, float dy);
 
-    static bool getGroundPoint(Coord2D position, Node* node, Vector3& point);
-    static bool getGroundPointByNormal(Vector3& position, Node* node, Vector3& point);
-    bool getScreenGroundPoint(Coord2D screen_position, Vector3& point);
+    static bool getGroundPoint(Coord2D position, mgp::Node* node, mgp::Vector3& point);
+    static bool getGroundPointByNormal(mgp::Vector3& position, mgp::Node* node, mgp::Vector3& point);
+    bool getScreenGroundPoint(Coord2D screen_position, mgp::Vector3& point);
 protected:
-    virtual void updateCameraTransform(Camera &camera, Rectangle &viewport);
+    virtual void updateCameraTransform(mgp::Camera &camera, mgp::Rectangle &viewport);
     virtual void updateTransform();
 
 private:
 
-    double yDegreeScale(Rectangle &viewport);
-    double xDegreeScale(Rectangle &viewport, double y);
+    double yDegreeScale(mgp::Rectangle &viewport);
+    double xDegreeScale(mgp::Rectangle &viewport, double y);
 
-    void updateGroundHeight(Node* node);
+    void updateGroundHeight(mgp::Node* node);
 
 
     void onZoom(float v, int x, int y) override;

@@ -11,7 +11,6 @@
 #include "feUtil/common.h"
 #include "feModel/Envelope.h"
 
-PF_USING_NAMESPACE
 
 FE_BEGIN_NAMESPACE
 
@@ -70,10 +69,10 @@ public:
 };
 
 FE_END_NAMESPACE
-FE_USING_NAMESPACE
+
 namespace std {
-  template <> struct hash<Tile> {
-    size_t operator()(const Tile &key) const {
+  template <> struct hash<mgpEarth::Tile> {
+    size_t operator()(const mgpEarth::Tile &key) const {
       return key.hashCode();
     }
   };

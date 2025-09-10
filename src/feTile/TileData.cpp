@@ -5,7 +5,7 @@
 #include "feTile/TileGeom.hpp"
 
 FE_USING_NAMESPACE
-
+PF_USING_NAMESPACE
 
 TileData::TileData(Tile &tile, PyramidGrid *pyramid) : _tile(tile),
    geometry(nullptr), pyramid(pyramid), _node(nullptr), image(nullptr), _isFallback(false), _approximateHeight(0)

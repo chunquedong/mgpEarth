@@ -14,17 +14,16 @@
 #include "GeoLayer.h"
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class Building : public GeoNode {
 public:
-    Vector4 color;
+    mgp::Vector4 color;
     float heightScale = 4.0;
 
     Building(const char* uri);
     ~Building();
 
-    void* decodeFile(const char* path, NetResponse& lastRes, MultiRequest* req) override;
+    void* decodeFile(const char* path, mgp::NetResponse& lastRes, mgp::MultiRequest* req) override;
     bool loadOptions(char* json_str);
 };
 

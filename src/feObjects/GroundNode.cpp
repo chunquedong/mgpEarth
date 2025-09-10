@@ -4,6 +4,7 @@
 #include "feCtrl/EarthApp.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 GroundModel::GroundModel(const char* uri): GltfNode(uri), lastUpdateTime(0), height(0), dirty(true), updateDelay(1000) {
 }

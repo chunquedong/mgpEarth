@@ -13,12 +13,11 @@
 #include <float.h>
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class ElevationManager;
 class EarthCtrl;
 
-class GeoNode : public NetModel {
+class GeoNode : public mgp::NetModel {
 protected:
     bool isVisiable = false;
 public:
@@ -36,8 +35,8 @@ public:
     int lighting = 0;
     GltfNode(const char* uri);
     
-    virtual void* decodeFile(const char* path, NetResponse& lastRes, MultiRequest* req) override;
-    void scanAttachedFiles(NetResponse &res, std::vector<std::string>& urls, MultiRequest* req) override;
+    virtual void* decodeFile(const char* path, mgp::NetResponse& lastRes, mgp::MultiRequest* req) override;
+    void scanAttachedFiles(mgp::NetResponse &res, std::vector<std::string>& urls, mgp::MultiRequest* req) override;
 
 };
 

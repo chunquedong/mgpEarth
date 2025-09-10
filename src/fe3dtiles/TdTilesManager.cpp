@@ -11,6 +11,7 @@
 #define NODE_DIRTY_BOUNDS 2
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 TdTilesManager::TdTilesManager(const std::string& uri): uri(uri) {
     init();

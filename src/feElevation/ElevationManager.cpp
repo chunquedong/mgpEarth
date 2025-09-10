@@ -6,6 +6,8 @@
 #include "feModel/PyramidGrid.h"
 #include "feModel/GeoCoordSys.h"
 
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 ElevationQuery::ElevationQuery(): tiles(100)
 {

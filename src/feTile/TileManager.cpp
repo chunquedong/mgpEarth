@@ -11,7 +11,7 @@
 #include "feTile/DataActor.h"
 
 FE_USING_NAMESPACE
-
+PF_USING_NAMESPACE
 
 void LRUCache::onRemove(TileKey &key, TileDataPtr &val) {
     std::lock_guard<std::mutex> guard(lock);

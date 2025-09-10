@@ -26,11 +26,11 @@ class XyzTileManager: public TileManager {
     TileDataPtr root;
 
     std::string cachePath;
-    SPtr<ElevationManager> elevation;
+    mgp::SPtr<ElevationManager> elevation;
 #ifdef MGP_THREAD
-    ThreadPool *threadPool;
+    mgp::ThreadPool *threadPool;
 #endif
-    SPtr<ElevationQuery> evlevationQuery;
+    mgp::SPtr<ElevationQuery> evlevationQuery;
 public:
     std::string uri;
     int maxLevel;
@@ -45,7 +45,7 @@ public:
 
     void setElevation(ElevationManager* elevation);
 
-    void update(Camera* camera, Rectangle* viewport, Matrix* modelMatrix, bool isSendTask = true) override;
+    void update(mgp::Camera* camera, mgp::Rectangle* viewport, mgp::Matrix* modelMatrix, bool isSendTask = true) override;
 
     void setCachePath(const std::string& path);
 
@@ -53,11 +53,11 @@ protected:
     virtual TileDataPtr getRoot();
     virtual TileDataPtr makeTileData(TileKey key);
     virtual void getChildren(TileDataPtr &data, std::vector<TileKey> &children);
-    virtual bool isFitLod(TileDataPtr &data, Camera &camera, Rectangle &viewport, Matrix& modelMatrix);
+    virtual bool isFitLod(TileDataPtr &data, mgp::Camera &camera, mgp::Rectangle &viewport, mgp::Matrix& modelMatrix);
     virtual bool getUri(TileKey key, std::string &uri, std::string &file);
     
-    virtual void* decode(Task* task, NetResponse &res);
-    virtual void onReceive(Task* task, NetResponse &res);
+    virtual void* decode(mgp::Task* task, mgp::NetResponse &res);
+    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res);
     virtual void tryInit(TileDataPtr &data, bool isOverview);
 
     virtual TileDataPtr getParent(TileDataPtr t);

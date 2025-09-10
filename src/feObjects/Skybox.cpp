@@ -1,6 +1,7 @@
 #include "Skybox.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 SkyBox::SkyBox(std::vector<std::string>& faces) : GeoNode("") {
     this->faces.swap(faces);

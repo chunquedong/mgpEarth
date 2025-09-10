@@ -8,6 +8,8 @@
 
 #include "3rd/stb_image.h"
 
+FE_USING_NAMESPACE
+
 OfflineElevation* g_defaultOfflineElevation;
 
 OfflineElevation* OfflineElevation::cur() {

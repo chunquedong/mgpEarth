@@ -13,6 +13,8 @@
 #include <emscripten.h>
 
 using namespace jc;
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 EM_JS(void, fe_appInitialize, (void* self), {
     fe_onInitialize(self);

@@ -11,6 +11,7 @@
 
 using namespace jc;
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 Building::Building(const char* uri): GeoNode(uri) {
     color = Vector4(51 / 255.0, 153 / 255.0, 255 / 255.0, 1.0);

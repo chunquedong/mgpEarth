@@ -14,7 +14,7 @@
 #include "GeoNode.h"
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
+
 class EarthApp;
 
 class GroundModel : public GltfNode {
@@ -22,12 +22,12 @@ class GroundModel : public GltfNode {
 protected:
     Coord2D position;
     double height;
-    Vector3 direction;
+    mgp::Vector3 direction;
     bool dirty;
 public:
     int autoStickGround = 0;
     EarthApp* app = NULL;
-    Matrix pose;
+    mgp::Matrix pose;
     uint64_t updateDelay;
     GroundModel(const char* uri);
     void setPosition(const Coord2D& p, double height);
@@ -37,7 +37,7 @@ public:
 };
 
 class MultiModel;
-class TrackModel : public Refable {
+class TrackModel : public mgp::Refable {
 protected:
     //line segment index
     int lastPointIndex = 0;
@@ -54,7 +54,7 @@ protected:
     //distance from begin to current position in path
     double _offsetLength = 0;
     bool _isRuning = false;
-    Node* _node = nullptr;
+    mgp::Node* _node = nullptr;
 
     //height update time
     uint64_t lastUpdateTime;
@@ -66,7 +66,7 @@ public:
     uint64_t updateDelay;
 
     //current position
-    Vector3 _curPosition;
+    mgp::Vector3 _curPosition;
 
     //current instance id
     int _id;
@@ -79,16 +79,16 @@ public:
     uint64_t beforeDelayTime = 0;
 
     //init pose matrix
-    Matrix pose;
+    mgp::Matrix pose;
 
     //animation along path
-    std::vector<Vector3> path;
+    std::vector<mgp::Vector3> path;
 
     //init model drection
-    Vector3 direction;
+    mgp::Vector3 direction;
 
     //user define data
-    UPtr<Refable> userData;
+    mgp::UPtr<mgp::Refable> userData;
 
     //callback when animation end
     std::function<void(TrackModel*)> onStop;
@@ -102,8 +102,8 @@ public:
     TrackModel();
     ~TrackModel();
     
-    void setNode(Node* node);
-    Node* getNode() { return _node; }
+    void setNode(mgp::Node* node);
+    mgp::Node* getNode() { return _node; }
 
     void setFromLonLat(std::vector<Coord2D>& path2d, double height);
 
@@ -117,7 +117,7 @@ public:
     /**
     * play first gltf animation
     */
-    void playAnimation(int repeatCount = AnimationClip::REPEAT_INDEFINITE);
+    void playAnimation(int repeatCount = mgp::AnimationClip::REPEAT_INDEFINITE);
     void stopAnimation();
 
     /**
@@ -134,30 +134,30 @@ protected:
     bool tryUpdateHeight();
 };
 
-class MultiModel : public GltfNode, public PhysicsCollisionObject::CollisionListener {
+class MultiModel : public GltfNode, public mgp::PhysicsCollisionObject::CollisionListener {
 protected:
-    UPtr<Node> _templateModel;
+    mgp::UPtr<mgp::Node> _templateModel;
     int _idCount = 0;
-    std::map<int, UPtr<TrackModel> > _instances;
+    std::map<int, mgp::UPtr<TrackModel> > _instances;
 public:
-    std::function<void(int id1, int id2, const char* layerName1, const char* layer2, const Vector3& pos)> onCollisionEvent;
+    std::function<void(int id1, int id2, const char* layerName1, const char* layer2, const mgp::Vector3& pos)> onCollisionEvent;
     EarthApp* app = NULL;
 
     MultiModel(const char* uri);
 
-    int add(UPtr<TrackModel> inst);
+    int add(mgp::UPtr<TrackModel> inst);
     void remove(int id);
     TrackModel* get(int id);
     void clear();
 
     virtual void update(float elapsedTime) override;
 protected:
-    virtual void onReceive(Task* task, NetResponse& res, MultiRequest* req) override;
+    virtual void onReceive(mgp::Task* task, mgp::NetResponse& res, mgp::MultiRequest* req) override;
 
-    virtual void collisionEvent(PhysicsCollisionObject::CollisionListener::EventType type,
-        const PhysicsCollisionObject::CollisionPair& collisionPair,
-        const Vector3& contactPointA = Vector3::zero(),
-        const Vector3& contactPointB = Vector3::zero()) override;
+    virtual void collisionEvent(mgp::PhysicsCollisionObject::CollisionListener::EventType type,
+        const mgp::PhysicsCollisionObject::CollisionPair& collisionPair,
+        const mgp::Vector3& contactPointA = mgp::Vector3::zero(),
+        const mgp::Vector3& contactPointB = mgp::Vector3::zero()) override;
 };
 
 FE_END_NAMESPACE

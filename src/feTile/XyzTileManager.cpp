@@ -8,6 +8,9 @@
 #include "feElevation/Elevation.h"
 #include "feTile/DataActor.h"
 
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
+
 XyzTileManager::XyzTileManager(const std::string& uri): uri(uri), 
         #ifdef MGP_THREAD
         threadPool(nullptr),

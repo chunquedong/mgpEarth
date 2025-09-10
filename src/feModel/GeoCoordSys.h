@@ -13,7 +13,6 @@
 #include "feModel/Coord2D.h"
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class GeoCoordSys {
   double radius;

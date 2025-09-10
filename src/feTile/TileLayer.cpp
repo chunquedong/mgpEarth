@@ -3,6 +3,8 @@
 //#include "cppfan/Profiler.h"
 #include "feTile/TileData.h"
 
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 TileLayer::TileLayer(TileManager* tileManager) {
     //delayUpdater.setMaxUpdateDelay(20);

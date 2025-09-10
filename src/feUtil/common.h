@@ -61,6 +61,8 @@
 #undef min
 #endif
 
+FE_BEGIN_NAMESPACE
+
 namespace Math {
 
     double const PI = 3.14159265358979323846;
@@ -111,10 +113,14 @@ namespace Math {
 
 }
 
+FE_END_NAMESPACE
+
 /////////////////////////////////////////////////////////////////////////
 #include <string>
 #include <vector>
 #include "mgp_pro.h"
+
+FE_BEGIN_NAMESPACE
 
 typedef std::string Str;
 
@@ -128,6 +134,8 @@ public:
     virtual ~Callback() {}
     virtual void* call(void*) = 0;
 };
+
+FE_END_NAMESPACE
 
 #endif // COMMON_H
 

@@ -14,7 +14,6 @@
 #include "feModel/Envelope.h"
 #include "feTile/TileManager.h"
 
-PF_USING_NAMESPACE
 FE_BEGIN_NAMESPACE
 class PyramidGrid;
 class TileGeom;
@@ -33,7 +32,7 @@ private:
     Sphere boundingSphere;
     
     PyramidGrid *pyramid;
-    UPtr<Node> _node;
+    mgp::UPtr<mgp::Node> _node;
 
     bool _isFallback;
 public:
@@ -46,9 +45,9 @@ public:
     virtual void setAsFallback(bool isFallback);
 
     //attached mesh
-    UPtr<TileGeom> geometry;
+    mgp::UPtr<TileGeom> geometry;
 
-    UPtr<Image> image;
+    mgp::UPtr<mgp::Image> image;
 
 public:
 
@@ -60,11 +59,11 @@ public:
 private:
     //init boundingSphere
     void initBounding();
-    void updateTranslation(Node* node);
+    void updateTranslation(mgp::Node* node);
 public:
     void printTile(const char *name);
 public:
-    double computeViewScale(Camera &camera, Rectangle &viewport);
+    double computeViewScale(mgp::Camera &camera, mgp::Rectangle &viewport);
 };
 
 

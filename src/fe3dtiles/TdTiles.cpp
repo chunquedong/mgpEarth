@@ -10,8 +10,8 @@
 #include "jparser.hpp"
 
 using namespace jc;
-FE_USING_NAMESPACE;
-
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 TdTile::~TdTile() {
     for (auto sub : children) {

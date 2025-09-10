@@ -17,6 +17,8 @@
 #endif
 
 using namespace jc;
+FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 extern "C" {
 

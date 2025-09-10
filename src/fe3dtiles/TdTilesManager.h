@@ -18,8 +18,6 @@ FE_BEGIN_NAMESPACE
 struct TdTilesData;
 struct TdTile;
 
-using namespace mgp;
-
 
 class TdTilesManager : public TileManager {
 
@@ -38,8 +36,8 @@ public:
     //virtual void update(float elapsedTime) override;
     //virtual const BoundingSphere& getBoundingSphere() const override;
 
-    virtual void* decode(Task* task, NetResponse &res) override;
-    virtual void onReceive(Task* task, NetResponse &res) override;
+    virtual void* decode(mgp::Task* task, mgp::NetResponse &res) override;
+    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res) override;
 
     void init();
 
@@ -50,7 +48,7 @@ private:
     virtual TileDataPtr getRoot();
     virtual TileDataPtr makeTileData(TileKey key);
     virtual void getChildren(TileDataPtr &data, std::vector<TileKey> &children);
-    virtual bool isFitLod(TileDataPtr &data, Camera &camera, Rectangle &viewport, Matrix& modelMatrix);
+    virtual bool isFitLod(TileDataPtr &data, mgp::Camera &camera, mgp::Rectangle &viewport, mgp::Matrix& modelMatrix);
     virtual bool getUri(TileKey key, std::string &uri, std::string &file);
 };
 

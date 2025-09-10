@@ -13,6 +13,7 @@
 
 using namespace jc;
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 static void parserColor(Value* json, const char* name, Vector4& color) {
     Value* lineColor = json->get(name);

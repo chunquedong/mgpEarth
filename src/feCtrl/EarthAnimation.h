@@ -13,7 +13,6 @@
 #include "feModel/Coord2D.h"
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class EarthCtrl;
 
@@ -76,7 +75,7 @@ public:
     virtual void doUpdate(float elapsedTime, float percentComplete);
 };
 
-class EarthAnimation : public Refable {
+class EarthAnimation : public mgp::Refable {
     FlingAnimChannel *flingChannel = NULL;
     ZoomAnimChannel* zoomChannel = NULL;
     RotateAnimChannel* rotateChannel = NULL;

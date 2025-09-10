@@ -4,6 +4,7 @@
 #include "feCtrl/EarthCtrl.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 GeoNode::GeoNode(const char* uri): NetModel(uri) {
 }

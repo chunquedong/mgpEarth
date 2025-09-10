@@ -14,7 +14,6 @@
 #include "GeoNode.h"
 
 FE_BEGIN_NAMESPACE
-PF_USING_NAMESPACE
 
 class SkyBox : public GeoNode {
 public:

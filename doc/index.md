@@ -7,8 +7,6 @@ mgpEarth 3D GIS Engine
 
 [3D模型加载](gltf.md)
 
-[部署](deploy.md)
-
 [授权协议](license.md)
 
 [构建](build.md)

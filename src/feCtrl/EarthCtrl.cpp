@@ -8,6 +8,7 @@
 #include "feObjects/GroundNode.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 static double g_baseDistance = 0;
 

@@ -10,6 +10,7 @@
 #include "feModel/Mercator.h"
 
 FE_USING_NAMESPACE
+PF_USING_NAMESPACE
 
 const double GeoCoordSys::earthRadius = 6378137.0;
 

@@ -14,13 +14,13 @@
 FE_BEGIN_NAMESPACE
 
 struct ViewState {
-    Camera camera;
-    Rectangle viewport;
-    Matrix modelMatrix;
+    mgp::Camera camera;
+    mgp::Rectangle viewport;
+    mgp::Matrix modelMatrix;
     ~ViewState();
 };
 
-class DataActor : public SimpleActor {
+class DataActor : public mgp::SimpleActor {
     ViewState newestState;
     ViewState curState;
 
@@ -35,7 +35,7 @@ public:
     ~DataActor();
 
     void sendMakeData();
-    void sendViewUpdate(Camera* camera, Rectangle* viewport, Matrix* modelMatrix);
+    void sendViewUpdate(mgp::Camera* camera, mgp::Rectangle* viewport, mgp::Matrix* modelMatrix);
 
     void getResult(std::vector<TileDataPtr>& list);
     bool resultChanged();

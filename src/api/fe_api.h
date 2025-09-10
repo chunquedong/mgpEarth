@@ -12,6 +12,8 @@
     #include <emscripten.h>
 #endif
 
+FE_BEGIN_NAMESPACE
+
 extern "C" {
 
 void EMSCRIPTEN_KEEPALIVE fe_showFps(EarthApp* self, bool show);
@@ -65,3 +67,5 @@ double* EMSCRIPTEN_KEEPALIVE fe_lnglatToXyz(EarthApp* self, double lng, double l
 void EMSCRIPTEN_KEEPALIVE fe_clearHighlight(EarthApp* self);
 
 }
+
+FE_END_NAMESPACE
