@@ -107,7 +107,7 @@ void* TdTilesManager::decode(Task* task, NetResponse &res) {
         //stream->endian = Endian::Big;
         TdB3dm b3dm;
         b3dm.loadB3dm(stream);
-
+        
         GltfLoader loader;
         loader.lighting = lighting;
         UPtr<Scene> scene = loader.loadFromBuf(b3dm.gltf.data(), b3dm.gltf.size());
@@ -126,6 +126,8 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
     
     if (res.id == NULL || FileSystem::getExtension(res.url.c_str()) == ".JSON") {
         if (!res.id) {
+            gltfUpAxisZ = res.result.find("gltfUpAxis") != std::string::npos;
+
             tileset.parse(res.result);
         }
         else {
@@ -155,8 +157,10 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
         //    node->setMatrix(tile->transform);
         //}
 
-        //modle y-up. tile bound z-up
-        node->rotateX(MATH_PI / 2);
+        if (!gltfUpAxisZ) {
+            //modle y-up. tile bound z-up
+            node->rotateX(MATH_PI / 2);
+        }
 
         tile->renderNode = std::move(node);
     }

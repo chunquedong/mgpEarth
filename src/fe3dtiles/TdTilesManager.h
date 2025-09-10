@@ -27,6 +27,8 @@ class TdTilesManager : public TileManager {
 
     std::map<std::string, std::string> tokens;
 
+    bool gltfUpAxisZ = false;
+
 public:
     int lighting = 0;
 
