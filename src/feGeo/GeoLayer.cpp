@@ -795,12 +795,12 @@ Node* GeoLayer::makeNode(FeatureCollection* fc) {
     return node.take();
 }
 
-void GeoLayer::onReceive(Task* task, NetResponse& res, MultiRequest* req)
+void GeoLayer::onReceive(NetResponse& res, MultiRequest* req)
 {
     if (res.decodeResult) {
         this->removeAllChildren();
     }
-    GeoNode::onReceive(task, res, req);
+    GeoNode::onReceive(res, req);
 }
 
 void GeoLayer::coordToXyz(double x, double y, double z, Vector& point, double additionalHeight, bool doTranslate) {

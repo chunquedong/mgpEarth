@@ -152,7 +152,7 @@ public:
 
     virtual void update(float elapsedTime) override;
 protected:
-    virtual void onReceive(mgp::Task* task, mgp::NetResponse& res, mgp::MultiRequest* req) override;
+    virtual void onReceive(mgp::NetResponse& res, mgp::MultiRequest* req) override;
 
     virtual void collisionEvent(mgp::PhysicsCollisionObject::CollisionListener::EventType type,
         const mgp::PhysicsCollisionObject::CollisionPair& collisionPair,

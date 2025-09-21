@@ -381,7 +381,7 @@ void MultiModel::clear()
     _instances.clear();
 }
 
-void MultiModel::onReceive(Task* task, NetResponse& res, MultiRequest* req) {
+void MultiModel::onReceive(NetResponse& res, MultiRequest* req) {
     if (res.decodeResult) {
         Node* node = (Node*)res.decodeResult;
         _templateModel = (UPtr<Node>(node));

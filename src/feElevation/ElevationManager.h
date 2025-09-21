@@ -47,7 +47,7 @@ protected:
 
     LRUCache cache;
     std::list<ElevationQuery*> querys;
-    mgp::HashMap<Tile, mgp::SPtr<ElevationRequest> > sendedTask;
+    mgp::HashMap<Tile, sric::SharedPtr<ElevationRequest> > sendedTask;
 
     PyramidGrid* pyramid;
     std::string cachePath;
@@ -67,13 +67,13 @@ public:
     Tile getTileAtBL(double longitude, double latitude, int level);
     void cancel(ElevationQuery* query);
 
-    virtual void* decode(mgp::Task* task, mgp::NetResponse& res);
-    virtual void onReceive(mgp::Task* task, mgp::NetResponse& res);
+    virtual void* decode(mgp::HttpClient* task, mgp::NetResponse& res);
+    virtual void onReceive(mgp::HttpClient* task, mgp::NetResponse& res);
 
     virtual bool getUri(TileKey key, std::string& uri, std::string& file);
     void setCachePath(const std::string& path);
 private:
-    mgp::SPtr<ElevationRequest> load(Tile key);
+    sric::SharedPtr<ElevationRequest> load(Tile key);
     
 };
 

@@ -76,7 +76,7 @@ void TdTilesManager::init() {
     //std::string uri = FileSystem::getDirectoryName(this->uri.c_str());
     //uri += "?v=2";
 
-    SPtr<HttpClient> client = HttpClient::create();
+    auto client = HttpClient::create();
     client->useCache = true;
     client->url = uri;
     client->id = NULL;
@@ -97,7 +97,7 @@ void TdTilesManager::init() {
 //    return _bounds;
 //}
 
-void* TdTilesManager::decode(Task* task, NetResponse &res) {
+void* TdTilesManager::decode(HttpClient* task, NetResponse &res) {
     if (res.id == NULL) {
         return NULL;
     }
@@ -119,7 +119,7 @@ void* TdTilesManager::decode(Task* task, NetResponse &res) {
     return NULL;
 }
 
-void TdTilesManager::onReceive(Task* task, NetResponse &res) {
+void TdTilesManager::onReceive(HttpClient* task, NetResponse &res) {
     if ((res.statusCode >= 0 && res.statusCode < 200) || res.statusCode >= 400) {
         goto end;
     }
@@ -131,7 +131,7 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
             tileset.parse(res.result);
         }
         else {
-            TileKey* tileKey = static_cast<TileKey*>(res.id);
+            TileKey* tileKey = static_cast<TileKey*>((void*)res.id);
             TdTile* tile = static_cast<TdTile*>(tileKey->ptr);
             TileLayer* layer = new TileLayer(new TdTilesManager(res.url));
 
@@ -145,7 +145,7 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
         return;
     }
     else if (res.decodeResult) {
-        TileKey* tileKey = static_cast<TileKey*>(res.id);
+        TileKey* tileKey = static_cast<TileKey*>((void*)res.id);
         TdTile* tile = static_cast<TdTile*>(tileKey->ptr);
         Scene* scene = static_cast<Scene*>(res.decodeResult);
 
@@ -167,7 +167,7 @@ void TdTilesManager::onReceive(Task* task, NetResponse &res) {
 
 end:
     if (res.id) {
-        TileKey* tile = static_cast<TileKey*>(res.id);
+        TileKey* tile = static_cast<TileKey*>((void*)res.id);
         onTaskDone(*tile);
     }
 }

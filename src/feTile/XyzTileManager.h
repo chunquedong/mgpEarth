@@ -56,8 +56,8 @@ protected:
     virtual bool isFitLod(TileDataPtr &data, mgp::Camera &camera, mgp::Rectangle &viewport, mgp::Matrix& modelMatrix);
     virtual bool getUri(TileKey key, std::string &uri, std::string &file);
     
-    virtual void* decode(mgp::Task* task, mgp::NetResponse &res);
-    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res);
+    virtual void* decode(mgp::HttpClient* task, mgp::NetResponse &res);
+    virtual void onReceive(mgp::HttpClient* task, mgp::NetResponse &res);
     virtual void tryInit(TileDataPtr &data, bool isOverview);
 
     virtual TileDataPtr getParent(TileDataPtr t);

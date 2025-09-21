@@ -18,6 +18,7 @@
 - jsonc
 - draco
 - mgpPro
+- sric
 
 桌面版本还依赖下列库:
 - glfw

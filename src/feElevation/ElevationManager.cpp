@@ -190,7 +190,7 @@ ElevationManager::~ElevationManager()
     auto it = sendedTask.begin();
     while (it != sendedTask.end()) {
         it->second->cancel();
-        it->second->release();
+        //it->second->release();
         ++it;
     }
     sendedTask.clear();
@@ -220,14 +220,14 @@ SPtr<ElevationQuery> ElevationManager::fromTiles(std::set<Tile>& tiles) {
 
         if (data->getState() == 0) {
             if (!sendedTask.contains(tile)) {
-                SPtr<ElevationRequest> task = load(tile);
+                auto task = load(tile);
                 task->queryCount = 1;
-                if (task.get()) {
+                if (task.getPtr()) {
                     sendedTask.set(tile, task);
                 }
             }
             else {
-                SPtr<ElevationRequest> empty;
+                sric::SharedPtr<ElevationRequest> empty;
                 sendedTask.get(tile, empty)->queryCount++;
             }
         }
@@ -256,33 +256,33 @@ Tile ElevationManager::getTileAtBL(double longitude, double latitude, int level)
     return getTileAt(coord.x, coord.y, level);
 }
 
-SPtr<ElevationRequest> ElevationManager::load(Tile tile) {
+sric::SharedPtr<ElevationRequest> ElevationManager::load(Tile tile) {
 
     std::string url;
     std::string file;
     TileKey key;
     key.tile = tile;
     if (!getUri(key, url, file)) {
-        return SPtr<ElevationRequest>();
+        return sric::SharedPtr<ElevationRequest>();
     }
     
-    ElevationRequest* client = new ElevationRequest();
+    auto client = sric::makePtr<ElevationRequest>();
     client->tileKey = tile;
     client->useCache = true;
     client->url = url;
     client->cacheFile = file;
-    client->id = &client->tileKey;
+    client->id = (uint64_t) & client->tileKey;
     client->listener = this;
     client->send();
     
-    return SPtr<ElevationRequest>(client);
+    return (client);
 }
 
 void ElevationManager::cancel(ElevationQuery* query) {
     for (auto it = query->tiles.begin(); it != query->tiles.end(); ++it) {
-        SPtr<ElevationRequest> empty;
-        SPtr<ElevationRequest> req = sendedTask.get(it->first, empty);
-        if (req.get()) {
+        sric::SharedPtr<ElevationRequest> empty;
+        auto req = sendedTask.get(it->first, empty);
+        if (req.getPtr()) {
             req->queryCount--;
             if (req->queryCount == 0) {
                 req->cancel();
@@ -327,7 +327,7 @@ void ElevationManager::setCachePath(const std::string& path)
     cachePath = path;
 }
 
-void* ElevationManager::decode(Task* task, NetResponse& res)
+void* ElevationManager::decode(HttpClient* task, NetResponse& res)
 {
     //TileKey* tile = static_cast<TileKey*>(res.id);
     Image* image = Image::createFromBuf(res.result.data(), res.result.size(), false).take();
@@ -337,9 +337,9 @@ void* ElevationManager::decode(Task* task, NetResponse& res)
     return image;
 }
 
-void ElevationManager::onReceive(Task* t, NetResponse& res)
+void ElevationManager::onReceive(HttpClient* client, NetResponse& res)
 {
-    TileKey* tile = static_cast<TileKey*>(res.id);
+    TileKey* tile = static_cast<TileKey*>((void*)res.id);
 
     TileDataPtr val;
     TileData* data = dynamic_cast<TileData*>(cache._get(*tile, val).get());
@@ -347,9 +347,9 @@ void ElevationManager::onReceive(Task* t, NetResponse& res)
         data->image = UPtr<Image>((Image*)res.decodeResult);
     }
 
-    SPtr<ElevationRequest>  task;
+    sric::SharedPtr<ElevationRequest>  task;
     task = sendedTask.get(tile->tile, task);
-    if (task.get() == nullptr || task->isCanceled()) {
+    if (task.getPtr() == nullptr || task->isCanceled()) {
         return;
     }
     sendedTask.remove(tile->tile);

@@ -38,8 +38,8 @@ public:
     //virtual void update(float elapsedTime) override;
     //virtual const BoundingSphere& getBoundingSphere() const override;
 
-    virtual void* decode(mgp::Task* task, mgp::NetResponse &res) override;
-    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res) override;
+    virtual void* decode(mgp::HttpClient* task, mgp::NetResponse &res) override;
+    virtual void onReceive(mgp::HttpClient* task, mgp::NetResponse &res) override;
 
     void init();
 

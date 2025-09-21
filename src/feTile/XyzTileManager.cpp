@@ -198,7 +198,7 @@ bool XyzTileManager::getUri(TileKey key, std::string &uri, std::string &file) {
     return true;
 }
 
-void* XyzTileManager::decode(Task* task, NetResponse &res) {
+void* XyzTileManager::decode(HttpClient* task, NetResponse &res) {
     //TileKey* tile = static_cast<TileKey*>(res.id);
     Image* image = Image::createFromBuf(res.result.data(), res.result.size(), false).take();
     if (!image) return NULL;
@@ -207,7 +207,7 @@ void* XyzTileManager::decode(Task* task, NetResponse &res) {
         return image;
     }
     else {
-        TileKey* tile = static_cast<TileKey*>(res.id);
+        TileKey* tile = static_cast<TileKey*>((void*)res.id);
         TileGeom *geometry = new TileGeom(pyramid);
         geometry->init(image, tile->tile, NULL, NULL);
         SAFE_RELEASE(image);
@@ -216,8 +216,8 @@ void* XyzTileManager::decode(Task* task, NetResponse &res) {
     //return image;
 }
 
-void XyzTileManager::onReceive(Task* task, NetResponse &res) {
-    TileKey* tile = static_cast<TileKey*>(res.id);
+void XyzTileManager::onReceive(HttpClient* task, NetResponse &res) {
+    TileKey* tile = static_cast<TileKey*>((void*)res.id);
     
     TileDataPtr val;
     TileData* data = dynamic_cast<TileData*>(cache._get(*tile, val).get());

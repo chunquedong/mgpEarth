@@ -75,7 +75,7 @@ protected:
     mgp::HashMap<TileKey, TileDataPtr> overrviewSearchSet;
 private:
     //send task container for cancle
-    mgp::HashMap<TileKey, mgp::SPtr<mgp::Task> > sendedTask;
+    mgp::HashMap<TileKey, sric::SharedPtr<mgp::HttpClient> > sendedTask;
     mgp::Cache<TileKey, int> errorTask;
     float _progress = 0;
 protected:
@@ -103,7 +103,7 @@ protected:
     void cancelTask();
 protected:
     virtual void onTaskDone(TileKey key);
-    virtual mgp::SPtr<mgp::Task> load(TileKey key);
+    virtual sric::SharedPtr<mgp::HttpClient> load(TileKey key);
     virtual TileDataPtr getParent(TileDataPtr t);
 protected:
     virtual TileDataPtr getRoot() = 0;
@@ -114,8 +114,8 @@ protected:
     
     virtual bool getUri(TileKey key, std::string &uri, std::string &file) = 0;
 
-    virtual void* decode(mgp::Task* task, mgp::NetResponse &res) = 0;
-    virtual void onReceive(mgp::Task* task, mgp::NetResponse &res) = 0;
+    virtual void* decode(mgp::HttpClient* task, mgp::NetResponse &res) = 0;
+    virtual void onReceive(mgp::HttpClient* task, mgp::NetResponse &res) = 0;
 };
 
 FE_END_NAMESPACE

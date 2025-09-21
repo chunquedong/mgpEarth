@@ -99,7 +99,7 @@ public:
     virtual mgp::Vector4* getColor(int i);
 protected:
     void update(float elapsedTime) override;
-    void onReceive(mgp::Task* task, mgp::NetResponse& res, mgp::MultiRequest* req) override;
+    void onReceive(mgp::NetResponse& res, mgp::MultiRequest* req) override;
 
 public:
     bool loadOptions(char* json_str);

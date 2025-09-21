@@ -234,8 +234,8 @@ void TileManager::sendTask(bool isOverview)
     
         if (tileView->getState() == 0) {
             if (!sendedTask.contains(tileKey) && !errorTask.contains(tileKey)) {
-                SPtr<Task> task = load(tileKey);
-                if (task.get()) {
+                auto task = load(tileKey);
+                if (task.getPtr()) {
                     sendedTask.set(tileKey, task);
                 }
             }
@@ -248,9 +248,9 @@ void TileManager::sendTask(bool isOverview)
 
 void TileManager::onTaskDone(TileKey key) {
     //remove from sendTask
-    SPtr<Task>  task;
+    sric::SharedPtr<HttpClient>  task;
     task = sendedTask.get(key, task);
-    if (task.get() == nullptr || task->isCanceled()) {
+    if (task.getPtr() == nullptr || task->isCanceled()) {
         return;
     }
     sendedTask.remove(key);
@@ -272,22 +272,22 @@ public:
     TileKey tileKey{};
 };
 
-SPtr<Task> TileManager::load(TileKey key) {
+sric::SharedPtr<HttpClient> TileManager::load(TileKey key) {
 
     std::string url;
     std::string file;
     if (!getUri(key, url, file)) {
-        return SPtr<Task>();
+        return sric::SharedPtr<HttpClient>();
     }
     
-    TileRequest* client = new TileRequest();
+    auto client = sric::makePtr<TileRequest>();
     client->tileKey = key;
     client->useCache = true;
     client->url = url;
     client->cacheFile = file;
-    client->id = &client->tileKey;
+    client->id = (uint64_t)&client->tileKey;
     client->listener = this;
     client->send();
     
-    return SPtr<Task>(client);
+    return (client);
 }
