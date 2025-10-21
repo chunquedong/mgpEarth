@@ -116,6 +116,12 @@ void* TdTilesManager::decode(HttpClient* task, NetResponse &res) {
         delete stream;
         return scene.take();
     }
+    else if (FileSystem::getExtension(res.url.c_str()) == ".GLB") {
+        GltfLoader loader;
+        loader.lighting = lighting;
+        UPtr<Scene> scene = loader.loadFromBuf(res.result.data(), res.result.size());
+        return scene.take();
+    }
     return NULL;
 }
 
