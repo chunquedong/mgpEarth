@@ -162,6 +162,8 @@ public:
     FeatureCollection();
     ~FeatureCollection();
 
+    void clear();
+
     bool parse(std::string& json);
     void save(std::string& json);
 };

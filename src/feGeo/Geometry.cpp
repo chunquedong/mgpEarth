@@ -58,6 +58,12 @@ FeatureCollection::~FeatureCollection() {
     features.clear();
 }
 
+void FeatureCollection::clear() {
+    features.clear();
+    fields.clear();
+    fieldIndex.clear();
+}
+
 bool FeatureCollection::parse(std::string& json) {
     JsonAllocator allocator;
     JsonParser parser(&allocator);
