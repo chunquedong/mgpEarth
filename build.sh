@@ -1,3 +1,3 @@
 
 
-fan fmake src/fmake_wasm.props
+fmake src/fmake_wasm.props
