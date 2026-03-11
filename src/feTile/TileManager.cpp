@@ -235,7 +235,7 @@ void TileManager::sendTask(bool isOverview)
         if (tileView->getState() == 0) {
             if (!sendedTask.contains(tileKey) && !errorTask.contains(tileKey)) {
                 auto task = load(tileKey);
-                if (task.getPtr()) {
+                if (task.get()) {
                     sendedTask.set(tileKey, task);
                 }
             }
@@ -250,7 +250,7 @@ void TileManager::onTaskDone(TileKey key) {
     //remove from sendTask
     sric::SharedPtr<HttpClient>  task;
     task = sendedTask.get(key, task);
-    if (task.getPtr() == nullptr || task->isCanceled()) {
+    if (task.get() == nullptr || task->isCanceled()) {
         return;
     }
     sendedTask.remove(key);

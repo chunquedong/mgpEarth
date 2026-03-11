@@ -222,7 +222,7 @@ SPtr<ElevationQuery> ElevationManager::fromTiles(std::set<Tile>& tiles) {
             if (!sendedTask.contains(tile)) {
                 auto task = load(tile);
                 task->queryCount = 1;
-                if (task.getPtr()) {
+                if (task.get()) {
                     sendedTask.set(tile, task);
                 }
             }
@@ -282,7 +282,7 @@ void ElevationManager::cancel(ElevationQuery* query) {
     for (auto it = query->tiles.begin(); it != query->tiles.end(); ++it) {
         sric::SharedPtr<ElevationRequest> empty;
         auto req = sendedTask.get(it->first, empty);
-        if (req.getPtr()) {
+        if (req.get()) {
             req->queryCount--;
             if (req->queryCount == 0) {
                 req->cancel();
@@ -349,7 +349,7 @@ void ElevationManager::onReceive(HttpClient* client, NetResponse& res)
 
     sric::SharedPtr<ElevationRequest>  task;
     task = sendedTask.get(tile->tile, task);
-    if (task.getPtr() == nullptr || task->isCanceled()) {
+    if (task.get() == nullptr || task->isCanceled()) {
         return;
     }
     sendedTask.remove(tile->tile);

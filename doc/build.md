@@ -9,7 +9,6 @@
 - Python 3
 - Node.js
 - [Emscripten](https://emscripten.org/docs/getting_started/downloads.html)
-- [Fanx](https://github.com/fanx-dev/fanx/releases)
 - [fmake](https://github.com/)
 
 ### 依赖的第三方库
@@ -44,10 +43,10 @@ sh build.sh
 
 编译
 ```
-fan famke src/fmake.props -debug
+famke src/fmake.props -debug
 ```
 生成IDE项目文件
 ```
-fan famke src/fmake.props -debug -G
+famke src/fmake.props -debug -G
 ```
 
